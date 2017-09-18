@@ -4,6 +4,12 @@ import sys
 import importlib
 
 
+class DefaultDict(dict):
+    def __missing__(self, key):
+        value = self[key] = type(self)()
+        return value
+
+
 def get_instances_from_package(package, sub_type_of):
     instances = []
     prefix = package.__name__ + '.'

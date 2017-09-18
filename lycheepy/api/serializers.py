@@ -1,7 +1,8 @@
-from simplyrestful.serializers import Serializer
-from simplyrestful.models import get_or_create
 from simplyrestful.database import session
-from models import *
+from simplyrestful.models import get_or_create
+from simplyrestful.serializers import Serializer
+
+from lycheepy.models import *
 
 
 class ProcessSerializer(Serializer):

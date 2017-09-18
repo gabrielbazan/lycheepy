@@ -6,8 +6,8 @@ from lycheepy.utils import get_instances_from_package
 from lycheepy.wps import processes
 
 
-# from chain.chain import Chain as ProcessingChain
-# from lycheepy.api.models import Chain
+from lycheepy.wps.chaining.chain import Chain as ProcessingChain
+from lycheepy.models import Chain
 
 
 class ServiceBuilder(object):
@@ -19,17 +19,15 @@ class ServiceBuilder(object):
     def _get_processes():
         return get_instances_from_package(processes, Process)
 
-    """
     @staticmethod
     def _get_chains(processes_list):
         processes_dict = {p.identifier: p for p in processes_list}
         chains = []
-        chains_models = Chain.objects.all()
+        chains_models = Chain.query.all()
         for chain_model in chains_models:
             chain = ProcessingChain(chain_model, processes_dict)
             chains.append(chain)
         return chains
-    """
 
     def _add_processes(self, processes_list):
         self.service.processes = {p.identifier: p for p in processes_list}
@@ -43,13 +41,11 @@ class ServiceBuilder(object):
         self._add_processes(self._get_processes())
         return self
 
-    """
     def add_chains(self):
         processes_list = self._get_processes()
         chains_list = self._get_chains(processes_list)
         self._add_processes(processes_list + chains_list)
         return self
-    """
 
     def build(self):
         return self.service
