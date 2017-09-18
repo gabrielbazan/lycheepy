@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 
 
 from simplyrestful.settings import configure_from_module
-configure_from_module('settings')
+configure_from_module('lycheepy.settings')
 
 from simplyrestful.database import engine
 from simplyrestful.models.model import Model
