@@ -1,5 +1,6 @@
 venv/
 .idea/
-lycheepy/wps/outputs/*
-lycheepy/wps/logs/*
-lycheepy/wps/workdir/*
+lycheepy/wps/outputs/*.xml
+lycheepy/wps/logs/*.log
+lycheepy/wps/logs/*.sqlite*
+lycheepy/wps/workdir/*.xml
