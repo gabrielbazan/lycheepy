@@ -6,14 +6,10 @@ import uuid
 from pywps.app.WPSRequest import WPSRequest
 from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
 
-app = Celery(
-    'lycheepy',
-    broker='pyamqp://guest@localhost//',
-    backend='rpc://',
-    include=[
-        'lycheepy.wps.service'
-    ]
-)
+
+app = Celery('lycheepy')
+
+app.config_from_object('lycheepy.wps.chaining.distribution.broker_configuration')
 
 
 class ProcessCaller(Task):

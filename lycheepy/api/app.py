@@ -1,4 +1,5 @@
 import os
+
 from flask import Response, send_from_directory, abort
 from flask_cors import CORS
 from simplyrestful.app import app, api
@@ -16,11 +17,12 @@ cross_origin = CORS(app, resources={r"*": {"origins": "*"}})
 
 add_resource(api, ProcessResource)
 add_resource(api, ChainResource)
+add_resource(api, ExecutionResource)
 
 
 @app.route('/wps', methods=['GET', 'POST'])
 def wps():
-    return ServiceBuilder().add_processes().build()  # .add_chains()
+    return ServiceBuilder().add_chains().build()
 
 
 @app.route('/outputs/' + '<filename>')
@@ -43,4 +45,4 @@ def serve_static(filename):
 
 
 if __name__ == '__main__':
-    app.run(host=HOST, port=PORT, debug=DEBUG, threaded=True)
+    app.run(host=HOST, port=PORT, debug=DEBUG)  # threaded=True

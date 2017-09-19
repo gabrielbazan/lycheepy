@@ -37,7 +37,7 @@ class Chain(PublisherProcess):
             inputs=self.get_inputs(),
             outputs= self.get_outputs(),
             version=self.model.version,
-            metadata=[Metadata(metadata.value) for metadata in self.model.metadata.all()],
+            metadata=[Metadata(metadata.value) for metadata in self.model.meta_data],
 
             # Check if all the involved processes support it?
             # Or only the ones that provide the chain outputs?
@@ -60,7 +60,7 @@ class Chain(PublisherProcess):
             outputs.extend(process_outputs)
             self.outputs_data[process] = [output.identifier for output in process_outputs]
 
-        for output_data in self.model.extraOutputs.all():
+        for output_data in self.model.extra_outputs:
             process = output_data.process.identifier
             output = output_data.identifier
 
@@ -81,18 +81,18 @@ class Chain(PublisherProcess):
         return [node for node, degree in self.graph.in_degree_iter() if len(self.graph.successors(node)) is 0]
 
     def build_graph(self):
-        for step in self.model.steps.all():
+        for step in self.model.steps:
             before = step.before.identifier
             after = step.after.identifier
 
             self.graph.add_edge(before, after)
 
-            for match in step.match.all():
+            for match in step.matches:
                 output = match.output.identifier
                 input = match.input.identifier
                 self.match[after][before][output] = input
 
-            for output in step.publish.all():
+            for output in step.publishables:
                 process = output.process.identifier
                 if process not in self.products:
                     self.products[process] = []
