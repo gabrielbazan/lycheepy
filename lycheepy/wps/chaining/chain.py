@@ -8,26 +8,22 @@ from simplyrestful.database import session
 
 from lycheepy.utils import DefaultDict
 from lycheepy.models import Execution
+from lycheepy.wps.service import ProcessesGateway
 from lycheepy.wps.chaining.publisher_process import PublisherProcess
 from lycheepy.wps.chaining.distribution.broker import run_process
 from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
 
 
 class Chain(PublisherProcess):
-
-    def __init__(self, model, processes):
-
-        self.processes = processes
-
+    def __init__(self, model):
         self.model = model
 
-        self.graph = nx.DiGraph()
+        self.graph = self._build_graph()
+
         self.match = DefaultDict()
         self.products = dict()
 
         self.outputs_data = dict()
-
-        self.build_graph()
 
         self.execution = None
 
@@ -51,14 +47,14 @@ class Chain(PublisherProcess):
     def get_inputs(self):
         inputs = []
         for p in self.get_nodes_without_predecessors():
-            inputs.extend(self.processes[p].inputs)
+            inputs.extend(ProcessesGateway.get(p).inputs)
         return inputs
 
     def get_outputs(self):
         outputs = []
 
         for process in self.get_nodes_without_successors():
-            process_outputs = self.processes[process].outputs
+            process_outputs = ProcessesGateway.get(process).outputs
             outputs.extend(process_outputs)
             self.outputs_data[process] = [output.identifier for output in process_outputs]
 
@@ -66,7 +62,7 @@ class Chain(PublisherProcess):
             process = output_data.process.identifier
             output = output_data.identifier
 
-            process_outputs = {o.identifier: o for o in self.processes[process].outputs}
+            process_outputs = {o.identifier: o for o in ProcessesGateway.get(process).outputs}
 
             outputs.append(process_outputs[output])
 
@@ -82,12 +78,13 @@ class Chain(PublisherProcess):
     def get_nodes_without_successors(self):
         return [node for node, degree in self.graph.in_degree_iter() if len(self.graph.successors(node)) is 0]
 
-    def build_graph(self):
+    def _build_graph(self):
+        g = nx.DiGraph()
         for step in self.model.steps:
             before = step.before.identifier
             after = step.after.identifier
 
-            self.graph.add_edge(before, after)
+            g.add_edge(before, after)
 
             for match in step.matches:
                 output = match.output.identifier
@@ -99,6 +96,7 @@ class Chain(PublisherProcess):
                 if process not in self.products:
                     self.products[process] = []
                 self.products[process].append(output.identifier)
+        return g
 
     def get_anti_chain(self):
         anti_chain = [a[0] if len(a) == 1 else a for a in list(nx.antichains(self.graph))]

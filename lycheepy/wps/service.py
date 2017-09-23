@@ -6,7 +6,6 @@ from simplyrestful.database import session
 
 from lycheepy.utils import get_instances_from_package
 from lycheepy.models import Chain, Step, StepMatch
-from lycheepy.wps.chaining.chain import Chain as ProcessingChain
 from lycheepy.settings import WPS_CONFIG_FILE, PROCESSES_PACKAGE
 
 
@@ -26,40 +25,46 @@ class ServiceBuilder(object):
         return self.service
 
 
-class ProcessesFactory(object):
-    processes = {
-        process.identifier: process
-        for process in get_instances_from_package(PROCESSES_PACKAGE, Process)
-    }
-
-    @staticmethod
-    def create(identifier):
-        return ProcessesFactory.processes.get(identifier)
-
-    @staticmethod
-    def create_all():
-        return ProcessesFactory.processes
-
-
-class ChainsFactory(object):
-    chains = {}
+class ProcessesGateway(object):
+    _processes = {}
 
     @staticmethod
     def _load_instances():
-        chains_models = session.query(Chain).options(
+        ProcessesGateway._processes = {
+            process.identifier: process
+            for process in get_instances_from_package(PROCESSES_PACKAGE, Process)
+        }
+
+    @staticmethod
+    def all():
+        if not ProcessesGateway._processes:
+            ProcessesGateway._load_instances()
+        return ProcessesGateway._processes
+
+    @staticmethod
+    def get(identifier):
+        return ProcessesGateway.all().get(identifier)
+
+
+class ChainsGateway(object):
+    _chains = {}
+
+    @staticmethod
+    def _load_instances():
+        from lycheepy.wps.chaining.chain import Chain as ProcessingChain
+        models = session.query(Chain).options(
             joinedload(Chain.steps).joinedload(Step.matches).joinedload(StepMatch.step),
             joinedload(Chain.steps).joinedload(Step.chain)
         ).all()
-        for chain_model in chains_models:
-            chain = ProcessingChain(chain_model, ProcessesFactory.create_all())
-            ChainsFactory.chains[chain_model.identifier] = chain
+        for model in models:
+            ChainsGateway._chains[model.identifier] = ProcessingChain(model)
 
     @staticmethod
-    def create_all():
-        if not ChainsFactory.chains:
-            ChainsFactory._load_instances()
-        return ChainsFactory.chains
+    def all():
+        if not ChainsGateway._chains:
+            ChainsGateway._load_instances()
+        return ChainsGateway._chains
 
     @staticmethod
-    def create(identifier):
-        return ChainsFactory.create_all().get(identifier)
+    def get(identifier):
+        return ChainsGateway.all().get(identifier)

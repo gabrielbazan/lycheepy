@@ -16,9 +16,9 @@ app.config_from_object(broker_configuration)
 
 @app.task
 def run_process(process, wps_request_json):
-    from lycheepy.wps.service import ServiceBuilder, ProcessesFactory
+    from lycheepy.wps.service import ServiceBuilder, ProcessesGateway
 
-    service = ServiceBuilder().add(ProcessesFactory.create(process)).build()
+    service = ServiceBuilder().add(ProcessesGateway.get(process)).build()
 
     request = WPSRequest()
     request.json = json.loads(wps_request_json)
