@@ -1,3 +1,4 @@
+from sqlalchemy.sql import or_
 from simplyrestful.database import session
 from simplyrestful.models import get_or_create
 from simplyrestful.serializers import Serializer
@@ -18,30 +19,21 @@ class ProcessSerializer(Serializer):
         outputs = data.get('outputs', [])
         metadata = data.get('metadata', [])
 
-        for input in inputs:
-            instance.inputs.append(
-                Input(
-                    identifier=input.get('identifier'),
-                    title=input.get('title'),
-                    abstract=input.get('abstract')
-                )
-            )
+        instance.inputs = [self._deserialize_parameter(Input, p) for p in inputs]
+        instance.outputs = [self._deserialize_parameter(Output, p) for p in outputs]
 
-        for output in outputs:
-            instance.outputs.append(
-                Output(
-                    identifier=output.get('identifier'),
-                    title=output.get('title'),
-                    abstract=output.get('abstract')
-                )
-            )
-
-        for m in metadata:
-            instance.meta_data.append(
-                get_or_create(session, Metadata, value=m)[0]
-            )
+        instance.meta_data = [get_or_create(session, Metadata, value=m)[0] for m in metadata]
 
         return instance
+
+    def _deserialize_parameter(self, model, parameter):
+        return get_or_create(
+            session,
+            model,
+            identifier=parameter.get('identifier'),
+            title=parameter.get('title'),
+            abstract=parameter.get('abstract')
+        )[0]
 
     def serialize(self, instance):
         return dict(
@@ -93,22 +85,24 @@ class ChainSerializer(Serializer):
         matches = s.get('match', [])
         before = Process.query.filter_by(identifier=s.get('before')).one()
         after = Process.query.filter_by(identifier=s.get('after')).one()
-        step = Step(before=before, after=after)
 
-        for output_identifier in publish:
-            # TODO: Search for the output of the After process?
-            output = Output.query.filter_by(process=before, identifier=output_identifier).one_or_none()
-            if not output:
-                output = Output.query.filter_by(process=after, identifier=output_identifier).one_or_none()
-            step.publishables.append(output)
+        step = get_or_create(session, Step, before=before, after=after)[0]
 
-        for m in matches:
-            output = Output.query.filter_by(process=before, identifier=m.get('output')).one()
-            input = Input.query.filter_by(process=after, identifier=m.get('input')).one()
-            step.matches.append(
-                StepMatch(input=input, output=output)
-            )
+        step.publishables = [self._deserialize_step_output(o, before, after) for o in publish]
+        step.matches = [self._deserialize_step_match(m ,before, after) for m in matches]
+
         return step
+
+    def _deserialize_step_output(self, output_identifier, before, after):
+        return Output.query.filter(
+            Output.identifier == output_identifier,
+            or_(Output.process == before, Output.process == after)
+        ).one()
+
+    def _deserialize_step_match(self, m, before, after):
+        output = Output.query.filter_by(process=before, identifier=m.get('output')).one()
+        input = Input.query.filter_by(process=after, identifier=m.get('input')).one()
+        return get_or_create(session, StepMatch, input=input, output=output)[0]
 
     def serialize(self, instance):
         # TODO: Blows if an not-existent ID is requested

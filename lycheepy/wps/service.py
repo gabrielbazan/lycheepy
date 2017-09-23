@@ -5,9 +5,12 @@ from lycheepy.settings import WPS_CONFIG_FILE
 from lycheepy.utils import get_instances_from_package
 from lycheepy.wps import processes
 
-
 from lycheepy.wps.chaining.chain import Chain as ProcessingChain
 from lycheepy.models import Chain
+
+from simplyrestful.database import session
+from sqlalchemy.orm import joinedload
+from lycheepy.models import Step, StepMatch
 
 
 class ServiceBuilder(object):
@@ -23,7 +26,12 @@ class ServiceBuilder(object):
     def _get_chains(processes_list):
         processes_dict = {p.identifier: p for p in processes_list}
         chains = []
-        chains_models = Chain.query.all()
+
+        chains_models = session.query(Chain).options(
+            joinedload(Chain.steps).joinedload(Step.matches).joinedload(StepMatch.step),
+            joinedload(Chain.steps).joinedload(Step.chain)
+        ).all()
+
         for chain_model in chains_models:
             chain = ProcessingChain(chain_model, processes_dict)
             chains.append(chain)

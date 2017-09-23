@@ -4,10 +4,12 @@ from datetime import datetime
 import networkx as nx
 from pywps.app.Common import Metadata
 
+from simplyrestful.database import session
+
 from lycheepy.utils import DefaultDict
 from lycheepy.models import Execution
 from lycheepy.wps.chaining.publisher_process import PublisherProcess
-from lycheepy.wps.chaining.distribution.broker import ProcessCaller
+from lycheepy.wps.chaining.distribution.broker import run_process
 from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
 
 
@@ -127,8 +129,8 @@ class Chain(PublisherProcess):
 
             level = level if type(level) is list else [level]
 
-            if len(level) == 0:
-                process = level
+            if len(level) == 1:  # 0 ???
+                process = level[0]
                 outputs[process] = self.run_process(process, request_json, outputs, async=False)
             else:
                 for process in level:
@@ -149,13 +151,13 @@ class Chain(PublisherProcess):
         return wps_response
 
     def _begin_execution(self):
-        self.execution = Execution(chain=self.model, id=self.uuid)
-        self.execution.save()
+        self.execution = Execution(chain=self.model, id=self.uuid, status=Execution.PROCESSING)
+        session.add(self.execution)
 
     def _end_execution(self):
         self.execution.status = Execution.SUCCESS
         self.execution.end = datetime.now()
-        self.execution.save()
+        session.add(self.execution)
 
     def run_process(self, process, request_json, outputs, async=False):
         request_json['identifiers'] = [process]
@@ -166,9 +168,9 @@ class Chain(PublisherProcess):
             request_json['inputs'] = self.get_process_inputs(outputs, process)
 
         if async:
-            return ProcessCaller().delay(location, json.dumps(request_json))
+            return run_process.delay(location, json.dumps(request_json))
         else:
-            return ProcessCaller().run(location, json.dumps(request_json))
+            return run_process(location, json.dumps(request_json))
 
     def get_process_inputs(self, outputs, p):
         inputs = {}

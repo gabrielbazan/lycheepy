@@ -4,9 +4,8 @@ from pywps import Process, LiteralInput, LiteralOutput
 class A(Process):
 
     def __init__(self):
-
         inputs = [LiteralInput('number', 'number', data_type="integer")]
-        outputs = [LiteralOutput('plus', 'plus', data_type="integer")]
+        outputs = [LiteralOutput('number', 'number', data_type="integer")]
 
         super(A, self).__init__(
             self._handler,
@@ -22,5 +21,5 @@ class A(Process):
         )
 
     def _handler(self, request, response):
-        response.outputs['plus'].data = request.inputs['number'][0].data + 1
+        response.outputs['number'].data = request.inputs['number'][0].data + 1
         return response

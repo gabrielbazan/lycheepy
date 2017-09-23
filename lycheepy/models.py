@@ -62,6 +62,10 @@ class Execution(Model):
     chain = relationship('Chain', backref='executions')
     status = Column(Text)
 
+    SUCCESS = 'SUCCESS'
+    PROCESSING = 'PROCESSING'
+    ERROR = 'ERROR'
+
 
 class Metadata(Model):
     __tablename__ = 'metadata'

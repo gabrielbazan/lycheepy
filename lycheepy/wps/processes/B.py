@@ -4,7 +4,6 @@ from pywps import Process, LiteralInput, LiteralOutput
 class B(Process):
 
     def __init__(self):
-
         inputs = [LiteralInput('number', 'number', data_type="integer")]
         outputs = [LiteralOutput('plus', 'plus', data_type="integer")]
 

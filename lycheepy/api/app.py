@@ -26,11 +26,11 @@ def wps():
 
 
 @app.route('/outputs/' + '<filename>')
-def outputfile(filename):
-    targetfile = os.path.join('outputs', filename)
-    if os.path.isfile(targetfile):
-        file_ext = os.path.splitext(targetfile)[1]
-        with open(targetfile, mode='rb') as f:
+def output_file(filename):
+    target_file = os.path.join('outputs', filename)
+    if os.path.isfile(target_file):
+        file_ext = os.path.splitext(target_file)[1]
+        with open(target_file, mode='rb') as f:
             file_bytes = f.read()
         mime_type = None
         if 'xml' in file_ext:
@@ -45,4 +45,4 @@ def serve_static(filename):
 
 
 if __name__ == '__main__':
-    app.run(host=HOST, port=PORT, debug=DEBUG)  # threaded=True
+    app.run(host=HOST, port=PORT, debug=DEBUG, threaded=True)

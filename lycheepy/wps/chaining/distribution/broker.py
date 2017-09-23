@@ -1,4 +1,4 @@
-from celery import Celery, Task
+from celery import Celery
 
 import json
 import uuid
@@ -6,29 +6,29 @@ import uuid
 from pywps.app.WPSRequest import WPSRequest
 from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
 
+from lycheepy.wps.chaining.distribution import broker_configuration
 
 app = Celery('lycheepy')
 
-app.config_from_object('lycheepy.wps.chaining.distribution.broker_configuration')
+app.config_from_object(broker_configuration)
 
 
-class ProcessCaller(Task):
+@app.task
+def run_process(process, wps_request_json):
+    from lycheepy.wps.service import ServiceBuilder
 
-    def run(self, process, wps_request_json):
-        from lycheepy.wps.service import ServiceBuilder
+    service = ServiceBuilder().add_process(process['module'], process['class']).build()
 
-        service = ServiceBuilder().add_process(process['module'], process['class']).build()
+    request = WPSRequest()
+    request.json = json.loads(wps_request_json)
+    request.status = 'false'
 
-        request = WPSRequest()
-        request.json = json.loads(wps_request_json)
-        request.status = 'false'
+    identifier = service.processes.keys()[0]
 
-        identifier = service.processes.keys()[0]
+    # Use chain's execution UUID
+    response = service.processes[identifier].execute(
+        request,
+        uuid.uuid1()
+    )
 
-        # Use chain's execution UUID
-        response = service.processes[identifier].execute(
-            request,
-            uuid.uuid1()
-        )
-
-        return OutputsSerializer.to_json(response.outputs)
+    return OutputsSerializer.to_json(response.outputs)
