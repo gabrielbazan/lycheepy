@@ -11,3 +11,5 @@ WPS_CONFIG_FILE = '/home/gpc/src/lycheepy/lycheepy/wps/pywps.cfg'
 GEO_REPOSITORY_URL = 'gpc:8080/geoserver'
 
 PROCESSES_PACKAGE = 'lycheepy.wps.processes'
+
+PROCESS_EXECUTION_TIMEOUT = 30

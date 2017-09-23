@@ -7,6 +7,7 @@ from pywps.app.Common import Metadata
 from simplyrestful.database import session
 
 from lycheepy.utils import DefaultDict
+from lycheepy.settings import PROCESS_EXECUTION_TIMEOUT
 from lycheepy.models import Execution
 from lycheepy.wps.service import ProcessesGateway
 from lycheepy.wps.chaining.publisher_process import PublisherProcess
@@ -20,10 +21,8 @@ class Chain(PublisherProcess):
 
         self.graph = self._build_graph()
 
-        self.match = DefaultDict()
-        self.products = dict()
-
-        self.outputs_data = dict()
+        self.match = self._get_match()
+        self.products = self._get_products()
 
         self.execution = None
 
@@ -32,10 +31,12 @@ class Chain(PublisherProcess):
             self.model.identifier,
             self.model.title,
             abstract=self.model.abstract,
-            inputs=self.get_inputs(),
-            outputs= self.get_outputs(),
             version=self.model.version,
-            metadata=[Metadata(metadata.value) for metadata in self.model.meta_data],
+
+            inputs=self._get_inputs(),
+            outputs=self._get_outputs(),
+
+            metadata=self._get_metadata(),
 
             # Check if all the involved processes support it?
             # Or only the ones that provide the chain outputs?
@@ -44,64 +45,60 @@ class Chain(PublisherProcess):
             status_supported=True
         )
 
-    def get_inputs(self):
-        inputs = []
-        for p in self.get_nodes_without_predecessors():
-            inputs.extend(ProcessesGateway.get(p).inputs)
-        return inputs
+    def _get_inputs(self):
+        return [
+            process_input
+            for process in self._get_nodes_without_predecessors()
+            for process_input in ProcessesGateway.get(process).inputs
+        ]
 
-    def get_outputs(self):
-        outputs = []
+    def _get_outputs(self):
+        return [
+            process_output
+            for process in self._get_nodes_without_successors()
+            for process_output in ProcessesGateway.get(process).outputs
+        ]
 
-        for process in self.get_nodes_without_successors():
-            process_outputs = ProcessesGateway.get(process).outputs
-            outputs.extend(process_outputs)
-            self.outputs_data[process] = [output.identifier for output in process_outputs]
-
-        for output_data in self.model.extra_outputs:
-            process = output_data.process.identifier
-            output = output_data.identifier
-
-            process_outputs = {o.identifier: o for o in ProcessesGateway.get(process).outputs}
-
-            outputs.append(process_outputs[output])
-
-            if process not in self.outputs_data:
-                self.outputs_data[process] = []
-            self.outputs_data[process].append(output)
-
-        return outputs
-
-    def get_nodes_without_predecessors(self):
+    def _get_nodes_without_predecessors(self):
         return [node for node, degree in self.graph.in_degree_iter() if degree is 0]
 
-    def get_nodes_without_successors(self):
+    def _get_nodes_without_successors(self):
         return [node for node, degree in self.graph.in_degree_iter() if len(self.graph.successors(node)) is 0]
+
+    def _get_metadata(self):
+        return [Metadata(metadata.value) for metadata in self.model.meta_data]
 
     def _build_graph(self):
         g = nx.DiGraph()
         for step in self.model.steps:
-            before = step.before.identifier
-            after = step.after.identifier
-
-            g.add_edge(before, after)
-
-            for match in step.matches:
-                output = match.output.identifier
-                input = match.input.identifier
-                self.match[after][before][output] = input
-
-            for output in step.publishables:
-                process = output.process.identifier
-                if process not in self.products:
-                    self.products[process] = []
-                self.products[process].append(output.identifier)
+            g.add_edge(step.before.identifier, step.after.identifier)
         return g
 
-    def get_anti_chain(self):
+    def _get_match(self):
+        match = DefaultDict()
+        for step in self.model.steps:
+            before = step.before.identifier
+            after = step.after.identifier
+            for match in step.matches:
+                output = match.output.identifier
+                input_identifier = match.input.identifier
+                self.match[after][before][output] = input_identifier
+        return match
+
+    def _get_products(self):
+        products = dict()
+        for step in self.model.steps:
+            for output in step.publishables:
+                process = output.process.identifier
+                if process not in products:
+                    products[process] = []
+                products[process].append(output.identifier)
+        return products
+
+    @property
+    def anti_chain(self):
         anti_chain = [a[0] if len(a) == 1 else a for a in list(nx.antichains(self.graph))]
         anti_chain.pop(0)
-
         return list(
             reversed(
                 [
@@ -120,26 +117,21 @@ class Chain(PublisherProcess):
 
         self._begin_execution()
 
-        for level in self.get_anti_chain():
+        for level in self.anti_chain:
             results = dict()
 
-            request_json = json.loads(wps_request.json)
+            processes = level if type(level) is list else [level]
 
-            level = level if type(level) is list else [level]
+            # TODO: Use Celery groups or chains (chains would include publishing)
+            for process in processes:
+                results[process] = self.run_process(process, json.loads(wps_request.json), outputs)
 
-            if len(level) == 1:  # 0 ???
-                process = level[0]
-                outputs[process] = self.run_process(process, request_json, outputs, async=False)
-            else:
-                for process in level:
-                    results[process] = self.run_process(process, request_json, outputs, async=True)
-
-                for process in level:
-                    outputs[process] = results[process].get(30)  # TODO: Timeout config in seconds
+            for process in processes:
+                outputs[process] = results[process].get(PROCESS_EXECUTION_TIMEOUT)
 
             # Publish. TODO: Define where it should be done. In the celery task?
-            # Yes. In the Celery task, to run publication in paralel
-            for process in level:
+            # Yes. In the Celery task, to run publication in parallel
+            for process in processes:
                 self.publish(process, outputs[process])
 
         self.set_outputs_values(wps_response, outputs)
@@ -157,16 +149,13 @@ class Chain(PublisherProcess):
         self.execution.end = datetime.now()
         session.add(self.execution)
 
-    def run_process(self, process, request_json, outputs, async=False):
+    def run_process(self, process, request_json, outputs):
         request_json['identifiers'] = [process]
 
-        if process not in self.get_nodes_without_predecessors():
+        if process not in self._get_nodes_without_predecessors():
             request_json['inputs'] = self.get_process_inputs(outputs, process)
 
-        if async:
-            return run_process.delay(process, json.dumps(request_json))
-        else:
-            return run_process(process, json.dumps(request_json))
+        return run_process.delay(process, json.dumps(request_json))
 
     def get_process_inputs(self, outputs, p):
         inputs = {}
@@ -177,12 +166,12 @@ class Chain(PublisherProcess):
         return inputs
 
     def set_outputs_values(self, wps_response, execution_outputs):
-        for process, outputs in self.outputs_data.iteritems():
-            for output in outputs:
-                # TODO: Handle outputs with multiple occurrences
+        for process in self._get_nodes_without_successors():
+            for output in ProcessesGateway.get(process).outputs:
+                output_identifier = output.identifier
                 OutputsSerializer.add_data(
-                    execution_outputs[process][output][0],
-                    wps_response.outputs[output]
+                    execution_outputs[process][output_identifier][0],  # TODO: Handle outputs with multiple occurrences
+                    wps_response.outputs[output_identifier]
                 )
 
     def publish(self, process, outputs):
