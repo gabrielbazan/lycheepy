@@ -1,12 +1,13 @@
-from celery import Celery
-
 import json
 import uuid
 
+from celery import Celery
+
 from pywps.app.WPSRequest import WPSRequest
-from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
 
 from lycheepy.wps.chaining.distribution import broker_configuration
+from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
+
 
 app = Celery('lycheepy')
 
@@ -15,9 +16,9 @@ app.config_from_object(broker_configuration)
 
 @app.task
 def run_process(process, wps_request_json):
-    from lycheepy.wps.service import ServiceBuilder
+    from lycheepy.wps.service import ServiceBuilder, ProcessesFactory
 
-    service = ServiceBuilder().add_process(process['module'], process['class']).build()
+    service = ServiceBuilder().add(ProcessesFactory.create(process)).build()
 
     request = WPSRequest()
     request.json = json.loads(wps_request_json)

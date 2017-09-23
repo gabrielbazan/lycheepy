@@ -161,16 +161,14 @@ class Chain(PublisherProcess):
 
     def run_process(self, process, request_json, outputs, async=False):
         request_json['identifiers'] = [process]
-        process_obj = self.processes[process]
-        location = {'class': process_obj.__class__.__name__, 'module': process_obj.__module__}
 
         if process not in self.get_nodes_without_predecessors():
             request_json['inputs'] = self.get_process_inputs(outputs, process)
 
         if async:
-            return run_process.delay(location, json.dumps(request_json))
+            return run_process.delay(process, json.dumps(request_json))
         else:
-            return run_process(location, json.dumps(request_json))
+            return run_process(process, json.dumps(request_json))
 
     def get_process_inputs(self, outputs, p):
         inputs = {}

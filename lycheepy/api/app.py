@@ -10,7 +10,7 @@ configure_from_module('lycheepy.settings')
 
 from resources import *
 from lycheepy.settings import HOST, PORT, DEBUG
-from lycheepy.wps.service import ServiceBuilder
+from lycheepy.wps.service import ServiceBuilder, ProcessesFactory, ChainsFactory
 
 cross_origin = CORS(app, resources={r"*": {"origins": "*"}})
 
@@ -22,7 +22,11 @@ add_resource(api, ExecutionResource)
 
 @app.route('/wps', methods=['GET', 'POST'])
 def wps():
-    return ServiceBuilder().add_chains().build()
+    return ServiceBuilder().extend(
+        ProcessesFactory.create_all()
+    ).extend(
+        ChainsFactory.create_all()
+    ).build()
 
 
 @app.route('/outputs/' + '<filename>')
