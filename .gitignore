@@ -4,3 +4,4 @@ lycheepy/wps/outputs/*.xml
 lycheepy/wps/logs/*.log
 lycheepy/wps/logs/*.sqlite*
 lycheepy/wps/workdir/*.xml
+tests/cosmo-skymed/*

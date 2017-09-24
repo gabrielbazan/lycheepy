@@ -60,13 +60,13 @@ def publish(products, process, outputs, chain_identifier, execution_id):
         'application/gml+xml': 'publish_features'
     }
     for product in products:
-        for output in outputs:
-            mime_type = output['data_format']['mime_type']
-            if mime_type in mime_types:
-                product_identifier = '{}:{}:{}:{}'.format(
-                    chain_identifier, execution_id, process, product
-                )
-                getattr(GeoServerRepository(), mime_types[mime_type])(
-                    product_identifier,
-                    output['file']
-                )
+        output = outputs[product][0]  # TODO: Handle multiple occurrences for same output
+        mime_type = output['data_format']['mime_type']
+        if mime_type in mime_types:
+            product_identifier = '{}:{}:{}:{}'.format(
+                chain_identifier, execution_id, process, product
+            )
+            getattr(GeoServerRepository(), mime_types[mime_type])(
+                product_identifier,
+                output['file']
+            )

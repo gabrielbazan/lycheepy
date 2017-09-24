@@ -63,15 +63,15 @@ class ChainBuilder(object):
         }
 
     def _build_match(self):
-        match = DefaultDict()
+        matches = DefaultDict()
         for step in self.model.steps:
             before = step.before.identifier
             after = step.after.identifier
             for match in step.matches:
                 output = match.output.identifier
                 input_identifier = match.input.identifier
-                match[after][before][output] = input_identifier
-        return match
+                matches[after][before][output] = input_identifier
+        return matches
 
     def _build_products(self):
         products = dict()

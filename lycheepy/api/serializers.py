@@ -19,20 +19,21 @@ class ProcessSerializer(Serializer):
         outputs = data.get('outputs', [])
         metadata = data.get('metadata', [])
 
-        instance.inputs = [self._deserialize_parameter(Input, p) for p in inputs]
-        instance.outputs = [self._deserialize_parameter(Output, p) for p in outputs]
+        instance.inputs = [self._deserialize_parameter(Input, instance, p) for p in inputs]
+        instance.outputs = [self._deserialize_parameter(Output, instance, p) for p in outputs]
 
         instance.meta_data = [get_or_create(session, Metadata, value=m)[0] for m in metadata]
 
         return instance
 
-    def _deserialize_parameter(self, model, parameter):
+    def _deserialize_parameter(self, model, process, parameter):
         return get_or_create(
             session,
             model,
             identifier=parameter.get('identifier'),
             title=parameter.get('title'),
-            abstract=parameter.get('abstract')
+            abstract=parameter.get('abstract'),
+            process=process
         )[0]
 
     def serialize(self, instance):
@@ -76,20 +77,20 @@ class ChainSerializer(Serializer):
 
         instance.meta_data = [get_or_create(session, Metadata, value=m)[0] for m in metadata]
 
-        instance.steps = [self._deserialize_step(s) for s in steps]
+        instance.steps = [self._deserialize_step(s, instance) for s in steps]
 
         return instance
 
-    def _deserialize_step(self, s):
+    def _deserialize_step(self, s, chain):
         publish = s.get('publish', [])
         matches = s.get('match', [])
         before = Process.query.filter_by(identifier=s.get('before')).one()
         after = Process.query.filter_by(identifier=s.get('after')).one()
 
-        step = get_or_create(session, Step, before=before, after=after)[0]
+        step = get_or_create(session, Step, before=before, after=after, chain=chain)[0]
 
         step.publishables = [self._deserialize_step_output(o, before, after) for o in publish]
-        step.matches = [self._deserialize_step_match(m ,before, after) for m in matches]
+        step.matches = [self._deserialize_step_match(m, before, after, step) for m in matches]
 
         return step
 
@@ -99,10 +100,10 @@ class ChainSerializer(Serializer):
             or_(Output.process == before, Output.process == after)
         ).one()
 
-    def _deserialize_step_match(self, m, before, after):
+    def _deserialize_step_match(self, m, before, after, step):
         output = Output.query.filter_by(process=before, identifier=m.get('output')).one()
         input = Input.query.filter_by(process=after, identifier=m.get('input')).one()
-        return get_or_create(session, StepMatch, input=input, output=output)[0]
+        return get_or_create(session, StepMatch, input=input, output=output, step=step)[0]
 
     def serialize(self, instance):
         # TODO: Blows if an not-existent ID is requested

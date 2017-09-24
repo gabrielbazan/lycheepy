@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
@@ -56,9 +58,9 @@ class ExtraOutput(Model):
 class Execution(Model):
     __tablename__ = 'execution'
     id = Column(Text, primary_key=True)
-    start = Column(DateTime, nullable=False)
+    start = Column(DateTime, nullable=False, default=datetime.utcnow)
     end = Column(DateTime)
-    chain_identifier = Column(Integer, ForeignKey('chain.identifier'), nullable=False)
+    chain_identifier = Column(Text, ForeignKey('chain.identifier'), nullable=False)
     chain = relationship('Chain', backref='executions')
     status = Column(Text)
 

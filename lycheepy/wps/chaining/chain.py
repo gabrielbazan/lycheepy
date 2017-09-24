@@ -64,14 +64,16 @@ class Chain(PublisherProcess):
         return wps_response
 
     def _begin_execution(self):
-        execution = Execution(chain_identifier=self.identifier, id=self.uuid, status=Execution.PROCESSING)
+        execution = Execution(chain_identifier=self.identifier, id=str(self.uuid), status=Execution.PROCESSING)
         session.add(execution)
+        session.flush()
         return execution
 
     def _end_execution(self, execution):
         execution.status = Execution.SUCCESS
         execution.end = datetime.now()
         session.add(execution)
+        session.commit()
 
     def _get_execution_group(self, processes, wps_request, outputs):
         group = dict()
