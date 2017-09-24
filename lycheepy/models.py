@@ -58,7 +58,7 @@ class Execution(Model):
     id = Column(Text, primary_key=True)
     start = Column(DateTime, nullable=False)
     end = Column(DateTime)
-    chain_id = Column(Integer, ForeignKey('chain.id'), nullable=False)
+    chain_identifier = Column(Integer, ForeignKey('chain.identifier'), nullable=False)
     chain = relationship('Chain', backref='executions')
     status = Column(Text)
 

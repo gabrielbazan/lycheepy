@@ -21,12 +21,12 @@ def run_process(process, wps_request_json):
     service = ServiceBuilder().add(ProcessesGateway.get(process)).build()
 
     request = WPSRequest()
-    request.json = json.loads(wps_request_json)
+    request.json = wps_request_json
     request.status = 'false'
 
     identifier = service.processes.keys()[0]
 
-    # Use chain's execution UUID
+    # TODO: Use chain's execution UUID?
     response = service.processes[identifier].execute(
         request,
         uuid.uuid1()

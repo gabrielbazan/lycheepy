@@ -51,13 +51,13 @@ class ChainsGateway(object):
 
     @staticmethod
     def _load_instances():
-        from lycheepy.wps.chaining.chain import Chain as ProcessingChain
+        from lycheepy.wps.chaining.chain_builder import ChainBuilder
         models = session.query(Chain).options(
             joinedload(Chain.steps).joinedload(Step.matches).joinedload(StepMatch.step),
             joinedload(Chain.steps).joinedload(Step.chain)
         ).all()
         for model in models:
-            ChainsGateway._chains[model.identifier] = ProcessingChain(model)
+            ChainsGateway._chains[model.identifier] = ChainBuilder(model).build()
 
     @staticmethod
     def all():
