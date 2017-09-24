@@ -3,17 +3,16 @@ from datetime import datetime
 
 from simplyrestful.database import session
 
-from lycheepy.settings import PROCESS_EXECUTION_TIMEOUT
 from lycheepy.models import Execution
 from lycheepy.wps.service import ProcessesGateway
 from lycheepy.wps.chaining.publisher_process import PublisherProcess
-from lycheepy.wps.chaining.distribution.broker import run_process
+from lycheepy.wps.chaining.distribution.broker import run_processes
 from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
+from lycheepy.settings import PROCESS_EXECUTION_TIMEOUT
 
 
 class Chain(PublisherProcess):
     def __init__(self, identifier, title, metadata, inputs, outputs, anti_chains, predecessors, successors, match, products, abstract='', version='None'):
-        self.execution = None
         self.anti_chains = anti_chains
         self.predecessors = predecessors
         self.successors = successors
@@ -45,36 +44,65 @@ class Chain(PublisherProcess):
     def _handle(self, wps_request, wps_response):
         outputs = dict()
 
-        self._begin_execution()
+        execution = self._begin_execution()
 
         for level in self.anti_chains:
-            results = dict()
-
             processes = level if type(level) is list else [level]
 
-            # TODO: Use Celery groups or chains (chains would include publishing)
-            for process in processes:
-                request_json = json.loads(wps_request.json)
-                request_json['identifiers'] = [process]
-
-                if process not in self.without_predecessors:
-                    inputs = {}
-                    for s in self.predecessors.get(process):
-                        for k, output in outputs[s].iteritems():
-                            input_name = self.match[process][s][k] if k in self.match[process][s] else k
-                            inputs[input_name] = output
-                    request_json['inputs'] = inputs
-
-                results[process] = run_process.delay(process, request_json)
-
-            for process in processes:
-                outputs[process] = results[process].get(PROCESS_EXECUTION_TIMEOUT)
+            self._load_outputs(
+                run_processes(
+                    self._get_processes_requests(
+                        processes, wps_request, outputs
+                    )
+                ).get(PROCESS_EXECUTION_TIMEOUT),
+                outputs
+            )
 
             # Publish. TODO: Define where it should be done. In the celery task?
             # Yes. In the Celery task, to run publication in parallel
             for process in processes:
                 self.publish(process, outputs[process])
 
+        self._set_output_values(outputs, wps_response)
+
+        self._end_execution(execution)
+
+        return wps_response
+
+    def _begin_execution(self):
+        execution = Execution(chain_identifier=self.identifier, id=self.uuid, status=Execution.PROCESSING)
+        session.add(execution)
+        return execution
+
+    def _end_execution(self, execution):
+        execution.status = Execution.SUCCESS
+        execution.end = datetime.now()
+        session.add(execution)
+
+    def _get_processes_requests(self, processes, wps_request, outputs):
+        group = dict()
+        for process in processes:
+            request_json = json.loads(wps_request.json)
+            request_json['identifiers'] = [process]
+            request_json['inputs'] = self._get_process_inputs(process, request_json, outputs)
+            group[process] = request_json
+        return group
+
+    def _get_process_inputs(self, process, request_json, outputs):
+        inputs = request_json['inputs']
+        if process not in self.without_predecessors:
+            inputs = dict()
+            for s in self.predecessors.get(process):
+                for k, output in outputs[s].iteritems():
+                    input_name = self.match[process][s][k] if k in self.match[process][s] else k
+                    inputs[input_name] = output
+        return inputs
+
+    def _load_outputs(self, results, outputs):
+        for result in results:
+            outputs[result['process']] = result['output']
+
+    def _set_output_values(self, outputs, wps_response):
         # TODO: Set values of extra-outputs
         for process in self.without_successors:
             for output in ProcessesGateway.get(process).outputs:
@@ -83,19 +111,6 @@ class Chain(PublisherProcess):
                     outputs[process][output_identifier][0],  # TODO: Handle outputs with multiple occurrences
                     wps_response.outputs[output_identifier]
                 )
-
-        self._end_execution()
-
-        return wps_response
-
-    def _begin_execution(self):
-        self.execution = Execution(chain_identifier=self.identifier, id=self.uuid, status=Execution.PROCESSING)
-        session.add(self.execution)
-
-    def _end_execution(self):
-        self.execution.status = Execution.SUCCESS
-        self.execution.end = datetime.now()
-        session.add(self.execution)
 
     def publish(self, process, outputs):
         m = {
