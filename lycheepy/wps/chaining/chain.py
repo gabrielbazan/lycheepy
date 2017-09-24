@@ -48,20 +48,14 @@ class Chain(PublisherProcess):
 
         for level in self.anti_chains:
             processes = level if type(level) is list else [level]
-
             self._load_outputs(
                 run_processes(
-                    self._get_processes_requests(
+                    self._get_execution_group(
                         processes, wps_request, outputs
                     )
                 ).get(PROCESS_EXECUTION_TIMEOUT),
                 outputs
             )
-
-            # Publish. TODO: Define where it should be done. In the celery task?
-            # Yes. In the Celery task, to run publication in parallel
-            for process in processes:
-                self.publish(process, outputs[process])
 
         self._set_output_values(outputs, wps_response)
 
@@ -79,14 +73,22 @@ class Chain(PublisherProcess):
         execution.end = datetime.now()
         session.add(execution)
 
-    def _get_processes_requests(self, processes, wps_request, outputs):
+    def _get_execution_group(self, processes, wps_request, outputs):
         group = dict()
         for process in processes:
             request_json = json.loads(wps_request.json)
             request_json['identifiers'] = [process]
             request_json['inputs'] = self._get_process_inputs(process, request_json, outputs)
-            group[process] = request_json
+            group[process] = dict(
+                request=request_json,
+                products=self._get_process_products(process),
+                chain_identifier=self.identifier,
+                execution_id=self.uuid
+            )
         return group
+
+    def _get_process_products(self, process):
+        return self.products[process] if process in self.products else []
 
     def _get_process_inputs(self, process, request_json, outputs):
         inputs = request_json['inputs']
@@ -111,25 +113,3 @@ class Chain(PublisherProcess):
                     outputs[process][output_identifier][0],  # TODO: Handle outputs with multiple occurrences
                     wps_response.outputs[output_identifier]
                 )
-
-    def publish(self, process, outputs):
-        m = {
-            'application/x-ogc-wcs; version=2.0': 'publish_raster',
-            'application/gml+xml': 'publish_features'
-        }
-        if process in self.products:
-            for product in self.products[process]:
-                for output in outputs[product]:
-                    mime_type = output['data_format']['mime_type']
-                    if mime_type in m:
-                        product_identifier = '{}:{}:{}'.format(process, self.uuid, product)
-                        getattr(self.get_repository(), m[mime_type])(
-                            self,
-                            product_identifier,
-                            output['file']
-                        )
-
-    # TODO: Chain class should be abstract? And implement this method in child classes
-    def get_repository(self):
-        from publishing.geo_server_repository import GeoServerRepository
-        return GeoServerRepository()
