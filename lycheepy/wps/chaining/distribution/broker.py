@@ -6,6 +6,7 @@ from pywps.app.WPSRequest import WPSRequest
 
 from lycheepy.wps.chaining.distribution import broker_configuration
 from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
+from lycheepy.wps.chaining.publishing.geo_server_repository import GeoServerRepository
 
 
 app = Celery('lycheepy')
@@ -65,12 +66,7 @@ def publish(products, process, outputs, chain_identifier, execution_id):
                 product_identifier = '{}:{}:{}:{}'.format(
                     chain_identifier, execution_id, process, product
                 )
-                getattr(get_repository(), mime_types[mime_type])(
+                getattr(GeoServerRepository(), mime_types[mime_type])(
                     product_identifier,
                     output['file']
                 )
-
-# TODO: Chain class should be abstract? And implement this method in child classes
-def get_repository():
-    from lycheepy.wps.chaining.publishing.geo_server_repository import GeoServerRepository
-    return GeoServerRepository()

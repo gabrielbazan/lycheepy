@@ -10,9 +10,9 @@ class GeoServerRepository(Repository):
     def __init__(self):
         super(GeoServerRepository, self).__init__()
         self.catalog = Catalog("{}geoserver/rest".format(GEO_REPOSITORY_URL))
-        self.workspace = self.get_workspace()
+        self.workspace = self._get_workspace()
 
-    def get_workspace(self):
+    def _get_workspace(self):
         workspace = self.catalog.get_workspace(WORKSPACE_NAME)
         if not workspace:
             workspace = self.catalog.create_workspace(WORKSPACE_NAME, WORKSPACE_NAME)
