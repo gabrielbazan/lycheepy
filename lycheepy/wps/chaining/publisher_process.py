@@ -1,5 +1,5 @@
 from pywps import Process
-from publishing.repository import Repository
+from lycheepy.wps.chaining.publication.repository import Repository
 
 
 class PublisherProcess(Process):

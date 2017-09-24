@@ -6,7 +6,7 @@ from pywps.app.WPSRequest import WPSRequest
 
 from lycheepy.wps.chaining.distribution import broker_configuration
 from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
-from lycheepy.wps.chaining.publishing import RepositoryFactory
+from lycheepy.wps.chaining.publication import RepositoryFactory
 from lycheepy.settings import REPOSITORIES
 
 
