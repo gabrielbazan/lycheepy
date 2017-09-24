@@ -6,7 +6,8 @@ from pywps.app.WPSRequest import WPSRequest
 
 from lycheepy.wps.chaining.distribution import broker_configuration
 from lycheepy.wps.chaining.distribution.serialization import OutputsSerializer
-from lycheepy.wps.chaining.publishing.geo_server_repository import GeoServerRepository
+from lycheepy.wps.chaining.publishing import RepositoryFactory
+from lycheepy.settings import REPOSITORIES
 
 
 app = Celery('lycheepy')
@@ -66,7 +67,10 @@ def publish(products, process, outputs, chain_identifier, execution_id):
             product_identifier = '{}:{}:{}:{}'.format(
                 chain_identifier, execution_id, process, product
             )
-            getattr(GeoServerRepository(), mime_types[mime_type])(
-                product_identifier,
-                output['file']
-            )
+            for kind, repositories in REPOSITORIES.iteritems():
+                for configuration in repositories:
+                    repository = RepositoryFactory.create(kind, configuration)
+                    getattr(repository,mime_types[mime_type])(
+                        product_identifier,
+                        output['file']
+                    )

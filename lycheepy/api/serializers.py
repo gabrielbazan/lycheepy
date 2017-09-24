@@ -1,4 +1,5 @@
 from sqlalchemy.sql import or_
+
 from simplyrestful.database import session
 from simplyrestful.models import get_or_create
 from simplyrestful.serializers import Serializer
@@ -21,7 +22,6 @@ class ProcessSerializer(Serializer):
 
         instance.inputs = [self._deserialize_parameter(Input, instance, p) for p in inputs]
         instance.outputs = [self._deserialize_parameter(Output, instance, p) for p in outputs]
-
         instance.meta_data = [get_or_create(session, Metadata, value=m)[0] for m in metadata]
 
         return instance
@@ -135,3 +135,10 @@ class ChainSerializer(Serializer):
 
 class ExecutionSerializer(Serializer):
     model = Execution
+
+    # TODO: Symplyrestful should format properties as camelcase automatically
+    def serialize(self, instance):
+        serialized = super(ExecutionSerializer, self).serialize(instance)
+        serialized['chainIdentifier'] = serialized['chain_identifier']
+        del serialized['chain_identifier']
+        return serialized
