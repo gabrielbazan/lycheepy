@@ -1,1 +1,1 @@
-# simply-restful
+# LycheePy
