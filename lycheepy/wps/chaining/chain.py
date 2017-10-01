@@ -96,10 +96,11 @@ class Chain(PublisherProcess):
         inputs = request_json['inputs']
         if process not in self.without_predecessors:
             inputs = dict()
-            for s in self.predecessors.get(process):
-                for k, output in outputs[s].iteritems():
-                    input_name = self.match[process][s][k] if k in self.match[process][s] else k
-                    inputs[input_name] = output
+            for before in self.predecessors.get(process):
+                for output_identifier, value in outputs[before].iteritems():
+                    match = self.match[process][before]
+                    input_identifier = match[output_identifier] if output_identifier in match else output_identifier
+                    inputs[input_identifier] = value
         return inputs
 
     def _load_outputs(self, results, outputs):

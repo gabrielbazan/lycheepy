@@ -1,6 +1,6 @@
 from pywps.app.Common import Metadata
 
-import networkx as nx
+from networkx import DiGraph
 
 from lycheepy.utils import DefaultDict
 from lycheepy.wps.service import ProcessesGateway
@@ -68,9 +68,9 @@ class ChainBuilder(object):
             before = step.before.identifier
             after = step.after.identifier
             for match in step.matches:
-                output = match.output.identifier
+                output_identifier = match.output.identifier
                 input_identifier = match.input.identifier
-                matches[after][before][output] = input_identifier
+                matches[after][before][output_identifier] = input_identifier
         return matches
 
     def _build_products(self):
@@ -84,7 +84,7 @@ class ChainBuilder(object):
         return products
 
     def __build_graph(self):
-        g = nx.DiGraph()
+        g = DiGraph()
         for step in self.model.steps:
             g.add_edge(step.before.identifier, step.after.identifier)
         return g

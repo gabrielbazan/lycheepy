@@ -5,6 +5,7 @@ from simplyrestful.models import get_or_create
 from simplyrestful.serializers import Serializer
 
 from lycheepy.models import *
+from lycheepy.api.validators import *
 
 
 class ProcessSerializer(Serializer):
@@ -65,6 +66,7 @@ class ProcessSerializer(Serializer):
 
 class ChainSerializer(Serializer):
     model = Chain
+    validators = [ChainValidator]
 
     def deserialize(self, data, instance):
         instance.identifier = data.get('identifier', instance.identifier)
@@ -106,8 +108,6 @@ class ChainSerializer(Serializer):
         return get_or_create(session, StepMatch, input=input, output=output, step=step)[0]
 
     def serialize(self, instance):
-        # TODO: Blows if an not-existent ID is requested
-        # It should be solved by simplyrestful
         return dict(
             id=instance.id,
             identifier=instance.identifier,
