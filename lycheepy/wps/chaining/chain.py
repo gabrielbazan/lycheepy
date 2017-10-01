@@ -108,7 +108,6 @@ class Chain(PublisherProcess):
             outputs[result['process']] = result['output']
 
     def _set_output_values(self, outputs, wps_response):
-        # TODO: Set values of extra-outputs
         for process in self.without_successors:
             for output in ProcessesGateway.get(process).outputs:
                 output_identifier = output.identifier

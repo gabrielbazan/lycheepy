@@ -47,14 +47,6 @@ class Output(Describable):
     process = relationship('Process', backref='outputs')
 
 
-class ExtraOutput(Model):
-    __tablename__ = 'extra_output'
-    chain_id = Column(Integer, ForeignKey('chain.id'), primary_key=True)
-    chain = relationship('Chain', backref='extra_outputs')
-    output_id = Column(Integer, ForeignKey('output.id'), primary_key=True)
-    output = relationship('Output')
-
-
 class Execution(Model):
     __tablename__ = 'execution'
     id = Column(Text, primary_key=True)

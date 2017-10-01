@@ -40,7 +40,6 @@ class ChainBuilder(object):
         ]
 
     def _build_outputs(self):
-        # TODO: Add extra-outputs
         return [
             process_output
             for process in self.__get_nodes_without_successors()

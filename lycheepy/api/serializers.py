@@ -79,9 +79,14 @@ class ChainSerializer(Serializer):
 
         instance.meta_data = [get_or_create(session, Metadata, value=m)[0] for m in metadata]
 
-        instance.steps = [self._deserialize_step(s, instance) for s in steps]
+        instance.steps = self._deserialize_steps(instance, steps)
 
         return instance
+
+    def _deserialize_steps(self, instance, steps):
+        new_steps = [self._deserialize_step(s, instance) for s in steps]
+        [session.delete(s) for s in instance.steps if s not in new_steps]
+        return new_steps
 
     def _deserialize_step(self, s, chain):
         publish = s.get('publish', [])
@@ -92,9 +97,14 @@ class ChainSerializer(Serializer):
         step = get_or_create(session, Step, before=before, after=after, chain=chain)[0]
 
         step.publishables = [self._deserialize_step_output(o, before, after) for o in publish]
-        step.matches = [self._deserialize_step_match(m, before, after, step) for m in matches]
+        step.matches = self._deserialize_step_matches(step, matches, before, after)
 
         return step
+
+    def _deserialize_step_matches(self, step, matches, before, after):
+        new_matches = [self._deserialize_step_match(m, before, after, step) for m in matches]
+        [session.delete(m) for m in step.matches if m not in new_matches]
+        return new_matches
 
     def _deserialize_step_output(self, output_identifier, before, after):
         return Output.query.filter(
