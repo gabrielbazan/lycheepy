@@ -29,6 +29,7 @@ class Chain(Describable):
     __tablename__ = 'chain'
     version = Column(Text, nullable=False)
     meta_data = relationship('Metadata', secondary='chain_metadata', backref='chains')
+    publishables = relationship('Output', secondary='publishable_output')
 
 
 class Input(Describable):
@@ -88,12 +89,11 @@ class Step(Model):
     before = relationship('Process', foreign_keys=before_id)
     chain_id = Column(Integer, ForeignKey('chain.id'), nullable=False)
     chain = relationship('Chain', backref='steps')
-    publishables = relationship('Output', secondary='publishable_output')
 
 
 class PublishableOutput(Model):
     __tablename__ = 'publishable_output'
-    step_id = Column(Integer, ForeignKey('step.id'), primary_key=True)
+    chain_id = Column(Integer, ForeignKey('chain.id'), primary_key=True)
     output_id = Column(Integer, ForeignKey('output.id'), primary_key=True)
 
 

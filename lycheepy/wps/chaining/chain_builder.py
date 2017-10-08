@@ -74,12 +74,11 @@ class ChainBuilder(object):
 
     def _build_products(self):
         products = dict()
-        for step in self.model.steps:
-            for output in step.publishables:
-                process = output.process.identifier
-                if process not in products:
-                    products[process] = []
-                products[process].append(output.identifier)
+        for output in self.model.publishables:
+            process = output.process.identifier
+            if process not in products:
+                products[process] = []
+            products[process].append(output.identifier)
         return products
 
     def __build_graph(self):

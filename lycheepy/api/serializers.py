@@ -1,5 +1,3 @@
-from sqlalchemy.sql import or_
-
 from simplyrestful.database import session
 from simplyrestful.models import get_or_create
 from simplyrestful.serializers import Serializer
@@ -76,12 +74,20 @@ class ChainSerializer(Serializer):
 
         steps = data.get('steps', [])
         metadata = data.get('metadata', [])
+        publish = data.get('publish', [])
 
         instance.meta_data = [get_or_create(session, Metadata, value=m)[0] for m in metadata]
 
         instance.steps = self._deserialize_steps(instance, steps)
 
+        instance.publishables = [
+            self._deserialize_publishable(p, o) for p, outputs in publish.iteritems() for o in outputs
+        ]
+
         return instance
+
+    def _deserialize_publishable(self, process, output):
+        return Output.query.filter(Output.identifier == output, Output.process.has(identifier=process)).one()
 
     def _deserialize_steps(self, instance, steps):
         new_steps = [self._deserialize_step(s, instance) for s in steps]
@@ -89,32 +95,24 @@ class ChainSerializer(Serializer):
         return new_steps
 
     def _deserialize_step(self, s, chain):
-        publish = s.get('publish', [])
-        matches = s.get('match', [])
+        matches = s.get('match', {})
         before = Process.query.filter_by(identifier=s.get('before')).one()
         after = Process.query.filter_by(identifier=s.get('after')).one()
 
         step = get_or_create(session, Step, before=before, after=after, chain=chain)[0]
 
-        step.publishables = [self._deserialize_step_output(o, before, after) for o in publish]
         step.matches = self._deserialize_step_matches(step, matches, before, after)
 
         return step
 
     def _deserialize_step_matches(self, step, matches, before, after):
-        new_matches = [self._deserialize_step_match(m, before, after, step) for m in matches]
+        new_matches = [self._deserialize_step_match(o, i, before, after, step) for o, i in matches.iteritems()]
         [session.delete(m) for m in step.matches if m not in new_matches]
         return new_matches
 
-    def _deserialize_step_output(self, output_identifier, before, after):
-        return Output.query.filter(
-            Output.identifier == output_identifier,
-            or_(Output.process == before, Output.process == after)
-        ).one()
-
-    def _deserialize_step_match(self, m, before, after, step):
-        output = Output.query.filter_by(process=before, identifier=m.get('output')).one()
-        input = Input.query.filter_by(process=after, identifier=m.get('input')).one()
+    def _deserialize_step_match(self, output, input, before, after, step):
+        output = Output.query.filter_by(process=before, identifier=output).one()
+        input = Input.query.filter_by(process=after, identifier=input).one()
         return get_or_create(session, StepMatch, input=input, output=output, step=step)[0]
 
     def serialize(self, instance):
@@ -129,18 +127,24 @@ class ChainSerializer(Serializer):
                 dict(
                     before=step.before.identifier,
                     after=step.after.identifier,
-                    match=[
-                        dict(
-                            output=match.output.identifier,
-                            input=match.input.identifier
-                        )
+                    match={
+                        match.output.identifier: match.input.identifier
                         for match in step.matches
-                    ],
-                    publish=[p.identifier for p in step.publishables]
+                    }
                 )
                 for step in instance.steps
-            ]
+            ],
+            publish=self._serialize_publish(instance)
         )
+
+    def _serialize_publish(self, instance):
+        publish = dict()
+        for o in instance.publishables:
+            p = o.process.identifier
+            if p not in publish:
+                publish[p] = []
+            publish[p].append(o.identifier)
+        return publish
 
 
 class ExecutionSerializer(Serializer):

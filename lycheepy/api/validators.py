@@ -1,6 +1,6 @@
+from networkx import DiGraph, is_directed_acyclic_graph
 from simplyrestful.validators import Validator
 from simplyrestful.exceptions import Conflict
-from networkx import DiGraph, is_directed_acyclic_graph
 from lycheepy.models import Process, Output
 
 
@@ -40,8 +40,8 @@ class ChainValidator(Validator):
         has = False
         for step in steps:
             if step.get('after') == process:
-                for match in step.get('match', []):
-                    if match.get('input') == process_input:
+                for o, i in step.get('match', {}).iteritems():
+                    if i == process_input:
                         has = True
         return has
 
