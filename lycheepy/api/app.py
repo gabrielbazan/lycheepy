@@ -24,6 +24,7 @@ add_resource(api, ExecutionResource)
 
 @app.route('/wps', methods=['GET', 'POST'])
 def wps():
+    ChainsGateway._load_instances()  # TODO: Reload on chains CUD
     return ServiceBuilder().extend(
         ProcessesGateway.all()
     ).extend(

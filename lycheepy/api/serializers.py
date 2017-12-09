@@ -91,8 +91,12 @@ class ChainSerializer(Serializer):
 
     def _deserialize_steps(self, instance, steps):
         new_steps = [self._deserialize_step(s, instance) for s in steps]
-        [session.delete(s) for s in instance.steps if s not in new_steps]
+        [self._delete_step(s) for s in instance.steps if s not in new_steps]
         return new_steps
+
+    def _delete_step(self, step):
+        [session.delete(m) for m in step.matches]
+        session.delete(step)
 
     def _deserialize_step(self, s, chain):
         matches = s.get('match', {})
