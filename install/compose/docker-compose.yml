@@ -1,0 +1,19 @@
+version: '2'
+services:
+    geoserver:
+        build: ./geoserver/
+        ports:
+        - "8080:8080"
+        expose:
+        - "8080"
+    database:
+        build: ./database/
+        expose:
+        - "5432"
+    webserver:
+        build: ./webserver/
+        ports:
+        - "80:80"
+        expose:
+        - "80"
+
