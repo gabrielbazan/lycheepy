@@ -1,19 +1,42 @@
 version: '2'
 services:
-    geoserver:
-        build: ./geoserver/
-        ports:
-        - "8080:8080"
+    # Geospatial repository
+    # Exposes OGC services and a configuration API through the 8080 port
+    repository:
+        build: ./repository/
         expose:
         - "8080"
-    database:
-        build: ./database/
-        expose:
-        - "5432"
-    webserver:
-        build: ./webserver/
-        ports:
-        - "80:80"
+    # Exposes the WPS interface
+    # Publishes on the Broker
+    wps:
+        build: ./wps/
         expose:
         - "80"
+    # Exposes a configuration API
+    configuration:
+        build: ./configuration/
+        expose:
+        - "80"
+
+    # Reverse proxy to the Repository, WPS, and Configuration
+    proxy:
+        build: ./proxy/
+        ports:
+        - "80:80"
+ 
+    # Persists the Configuration
+    persistence:
+        build: ./persistence/
+        expose:
+        - "5432"
+
+    # Receives tasks from the WPS, which are consumed by the Workers
+    broker:
+        build: ./broker/
+        expose:
+        - "5672"
+    
+    # Consumes from the broker
+    worker:
+        build: ./worker/
 
