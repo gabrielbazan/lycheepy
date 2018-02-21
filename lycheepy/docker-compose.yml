@@ -9,12 +9,12 @@ services:
     # Exposes the WPS interface
     # Publishes on the Broker
     wps:
-        build: ../install/compose/wps
+        build: wps
         expose:
         - "80"
     # Exposes a configuration API
     configuration:
-        build: ../install/compose/configuration
+        build: configuration
         expose:
         - "80"
 
