@@ -1,8 +1,15 @@
 server {
     listen 80;
 
-    location / {
-        include proxy_params;
-        proxy_pass http://unix:/home/user/myproject/myproject.sock;
+    location /configuration/ {
+        proxy_pass http://configuration/;
+    }
+    
+    location /wps/ {
+        proxy_pass http://wps/;
+    }
+    
+    location /repository/ {
+        proxy_pass http://repository/;
     }
 }
