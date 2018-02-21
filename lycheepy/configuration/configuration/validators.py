@@ -1,7 +1,7 @@
 from networkx import DiGraph, is_directed_acyclic_graph
 from simplyrestful.validators import Validator
 from simplyrestful.exceptions import Conflict
-from lycheepy.models import Process, Output
+from models import Process, Output
 
 
 class ChainValidator(Validator):

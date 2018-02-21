@@ -4,9 +4,9 @@ from pywps import Service, Process
 
 from simplyrestful.database import session
 
-from lycheepy.utils import get_instances_from_package
-from lycheepy.models import Chain, Step, StepMatch
-from lycheepy.settings import WPS_CONFIG_FILE, PROCESSES_PACKAGE
+from utils import get_instances_from_package
+from lycheepy.configuration.configuration.models import Chain, Step, StepMatch  # TODO: Access configuration through Configuration's API
+from settings import WPS_CONFIG_FILE, PROCESSES_PACKAGE
 
 
 class ServiceBuilder(object):

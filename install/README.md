@@ -1,2 +1,0 @@
-# LycheePy Installation
-

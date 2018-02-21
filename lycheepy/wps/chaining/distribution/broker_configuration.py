@@ -1,7 +1,7 @@
-broker_url = 'pyamqp://guest@localhost//'
+broker_url = 'pyamqp://guest@broker//'
 
 result_backend = 'rpc://'
 
 include = [
-    'lycheepy.wps.service'
+    'wps.service'
 ]

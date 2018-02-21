@@ -2,10 +2,10 @@ from pywps.app.Common import Metadata
 
 from networkx import DiGraph
 
-from lycheepy.utils import DefaultDict
-from lycheepy.wps.service import ProcessesGateway
-from lycheepy.wps.chaining.chain import Chain
-from lycheepy.wps.chaining.anti_chains import AntiChainsBuilder
+from wps.utils import DefaultDict
+from wps.service import ProcessesGateway
+from wps.chaining.chain import Chain
+from wps.chaining.anti_chains import AntiChainsBuilder
 
 
 class ChainBuilder(object):
