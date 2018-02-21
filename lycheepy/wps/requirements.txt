@@ -2,7 +2,8 @@ flask
 flask_cors
 sqlalchemy
 simplyrestful
-pywps
 networkx
+gunicorn
 gsconfig
 celery
+pywps

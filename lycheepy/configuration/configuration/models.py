@@ -1,11 +1,9 @@
 from datetime import datetime
-
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
-
 from simplyrestful.settings import configure_from_module
-configure_from_module('lycheepy.settings')
+configure_from_module('settings')
 
 from simplyrestful.database import engine
 from simplyrestful.models.model import Model
