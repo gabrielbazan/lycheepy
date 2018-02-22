@@ -2,6 +2,8 @@ FROM nginx
 
 ADD lycheepy /etc/nginx/sites-enabled/
 
-RUN rm /etc/nginx/sites-enabled/default
+RUN nginx -c /etc/nginx/sites-enabled/lycheepy -t
 
-CMD sudo service nginx restart
+RUN service nginx reload
+
+CMD ["nginx", "-g", "daemon off;"]

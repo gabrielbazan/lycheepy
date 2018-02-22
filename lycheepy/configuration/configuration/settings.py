@@ -1,4 +1,4 @@
-DATABASE = 'postgresql://postgres:postgres@persistence/lycheepy'
+DATABASE = 'postgresql://lycheepy:lycheepy@persistence/lycheepy'
 HOST = '0.0.0.0'
 PORT = 5000
 DEBUG = True
