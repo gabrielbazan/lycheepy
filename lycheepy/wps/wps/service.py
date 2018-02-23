@@ -1,12 +1,7 @@
-#from sqlalchemy.orm import joinedload
-
 from pywps import Service, Process
-
-# from simplyrestful.database import session
-
 from utils import get_instances_from_package
-# from lycheepy.configuration.configuration.models import Chain, Step, StepMatch  # TODO: Access configuration through Configuration's API
-from settings import WPS_CONFIG_FILE, PROCESSES_PACKAGE
+from settings import WPS_CONFIG_FILE, PROCESSES_PACKAGE, CHAINS_CONFIGURATION_URI
+from requests import get
 
 
 class ServiceBuilder(object):
@@ -26,7 +21,7 @@ class ServiceBuilder(object):
 
 
 class ProcessesGateway(object):
-    _processes = {}
+    _processes = dict()
 
     @staticmethod
     def _load_instances():
@@ -47,20 +42,19 @@ class ProcessesGateway(object):
 
 
 class ChainsGateway(object):
-    _chains = {}
+    _chains = dict()
 
     @staticmethod
     def _load_instances():
-        """
-        from lycheepy.wps.chaining.chain_builder import ChainBuilder
-        models = session.query(Chain).options(
-            joinedload(Chain.steps).joinedload(Step.matches).joinedload(StepMatch.step),
-            joinedload(Chain.steps).joinedload(Step.chain)
-        ).all()
-        for model in models:
-            ChainsGateway._chains[model.identifier] = ChainBuilder(model).build()
-        """
-        pass
+        from chaining.chain_builder import ChainBuilder
+        ChainsGateway._chains = {
+            chain.get('identifier'): ChainBuilder(chain).build()
+            for chain in ChainsGateway._retrieve_chains()
+        }
+
+    @staticmethod
+    def _retrieve_chains():
+        return get(CHAINS_CONFIGURATION_URI).json().get('results')
 
     @staticmethod
     def all():

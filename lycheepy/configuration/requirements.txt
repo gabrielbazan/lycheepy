@@ -2,5 +2,5 @@ flask
 flask_cors
 sqlalchemy
 simplyrestful
-networkx
+networkx==1.11
 gunicorn

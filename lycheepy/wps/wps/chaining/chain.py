@@ -4,11 +4,11 @@ from datetime import datetime
 from simplyrestful.database import session
 
 # from lycheepy.models import Execution  # TODO
-from wps.service import ProcessesGateway
-from wps.chaining.publisher_process import PublisherProcess
-from wps.chaining.distribution.broker import run_processes
-from wps.chaining.distribution.serialization import OutputsSerializer
-from wps.settings import PROCESS_EXECUTION_TIMEOUT
+from service import ProcessesGateway
+from chaining.publisher_process import PublisherProcess
+from chaining.distribution.broker import run_processes
+from chaining.distribution.serialization import OutputsSerializer
+from settings import PROCESS_EXECUTION_TIMEOUT
 
 
 class Chain(PublisherProcess):

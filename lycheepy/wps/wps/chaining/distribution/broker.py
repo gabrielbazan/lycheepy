@@ -4,10 +4,10 @@ from celery import Celery, group
 
 from pywps.app.WPSRequest import WPSRequest
 
-from wps.chaining.distribution import broker_configuration
-from wps.chaining.distribution.serialization import OutputsSerializer
-from wps.chaining.publication import RepositoryFactory
-from wps.settings import REPOSITORIES
+from chaining.distribution import broker_configuration
+from chaining.distribution.serialization import OutputsSerializer
+from chaining.publication import RepositoryFactory
+from settings import REPOSITORIES
 
 
 app = Celery('lycheepy')
@@ -32,7 +32,7 @@ def run_processes(processes):
 
 @app.task
 def run_process(process, wps_request_json, products, chain_identifier, execution_id):
-    from wps.service import ServiceBuilder, ProcessesGateway
+    from service import ServiceBuilder, ProcessesGateway
 
     service = ServiceBuilder().add(ProcessesGateway.get(process)).build()
 

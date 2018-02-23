@@ -2,10 +2,10 @@ from pywps.app.Common import Metadata
 
 from networkx import DiGraph
 
-from wps.utils import DefaultDict
-from wps.service import ProcessesGateway
-from wps.chaining.chain import Chain
-from wps.chaining.anti_chains import AntiChainsBuilder
+from utils import DefaultDict
+from service import ProcessesGateway
+from chaining.chain import Chain
+from chaining.anti_chains import AntiChainsBuilder
 
 
 class ChainBuilder(object):
@@ -15,8 +15,8 @@ class ChainBuilder(object):
 
     def build(self):
         return Chain(
-            self.model.identifier,
-            self.model.title,
+            self.model.get('identifier'),
+            self.model.get('title'),
             self._build_metadata(),
             self._build_inputs(),
             self._build_outputs(),
@@ -25,12 +25,12 @@ class ChainBuilder(object):
             self._build_successors(),
             self._build_match(),
             self._build_products(),
-            abstract=self.model.abstract,
-            version=self.model.version
+            abstract=self.model.get('abstract'),
+            version=self.model.get('version')
         )
 
     def _build_metadata(self):
-        return [Metadata(metadata.value) for metadata in self.model.meta_data]
+        return [Metadata(metadata) for metadata in self.model.get('metadata')]
 
     def _build_inputs(self):
         return [
@@ -63,28 +63,23 @@ class ChainBuilder(object):
 
     def _build_match(self):
         matches = DefaultDict()
-        for step in self.model.steps:
-            before = step.before.identifier
-            after = step.after.identifier
-            for match in step.matches:
-                output_identifier = match.output.identifier
-                input_identifier = match.input.identifier
-                matches[after][before][output_identifier] = input_identifier
+        for step in self.model.get('steps'):
+            before = step.get('before')
+            after = step.get('after')
+            for output, process_input in step.get('match').iteritems():
+                matches[after][before][output] = process_input
         return matches
 
     def _build_products(self):
-        products = dict()
-        for output in self.model.publishables:
-            process = output.process.identifier
-            if process not in products:
-                products[process] = []
-            products[process].append(output.identifier)
-        return products
+        return {
+            process: outputs
+            for process, outputs in self.model.get('publish').iteritems()
+        }
 
     def __build_graph(self):
         g = DiGraph()
-        for step in self.model.steps:
-            g.add_edge(step.before.identifier, step.after.identifier)
+        for step in self.model.get('steps'):
+            g.add_edge(step.get('before'), step.get('after'))
         return g
 
     def __get_nodes_without_predecessors(self):

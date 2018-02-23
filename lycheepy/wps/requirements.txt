@@ -1,8 +1,9 @@
 flask
 flask_cors
 simplyrestful
-networkx
+networkx==1.11
 gunicorn
 gsconfig
 celery
 pywps
+requests

@@ -16,11 +16,10 @@ from pywps.configuration import get_config_value
 
 @application.route('/', methods=['GET', 'POST'])
 def wps():
-    #ChainsGateway._load_instances()  # TODO: Reload on chains CUD
     return ServiceBuilder().extend(
         ProcessesGateway.all()
-    #).extend(
-    #    ChainsGateway.all()
+    ).extend(
+        ChainsGateway.all()
     ).build()
 
 

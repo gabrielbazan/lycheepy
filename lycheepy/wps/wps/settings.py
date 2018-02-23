@@ -13,3 +13,5 @@ REPOSITORIES = {
         }
     ]
 }
+
+CHAINS_CONFIGURATION_URI = 'http://configuration/chains'
