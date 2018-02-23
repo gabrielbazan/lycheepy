@@ -1,11 +1,11 @@
-from sqlalchemy.orm import joinedload
+#from sqlalchemy.orm import joinedload
 
 from pywps import Service, Process
 
-from simplyrestful.database import session
+# from simplyrestful.database import session
 
 from utils import get_instances_from_package
-from lycheepy.configuration.configuration.models import Chain, Step, StepMatch  # TODO: Access configuration through Configuration's API
+# from lycheepy.configuration.configuration.models import Chain, Step, StepMatch  # TODO: Access configuration through Configuration's API
 from settings import WPS_CONFIG_FILE, PROCESSES_PACKAGE
 
 
@@ -51,6 +51,7 @@ class ChainsGateway(object):
 
     @staticmethod
     def _load_instances():
+        """
         from lycheepy.wps.chaining.chain_builder import ChainBuilder
         models = session.query(Chain).options(
             joinedload(Chain.steps).joinedload(Step.matches).joinedload(StepMatch.step),
@@ -58,6 +59,8 @@ class ChainsGateway(object):
         ).all()
         for model in models:
             ChainsGateway._chains[model.identifier] = ChainBuilder(model).build()
+        """
+        pass
 
     @staticmethod
     def all():

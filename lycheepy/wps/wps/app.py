@@ -2,30 +2,29 @@ import os
 
 from flask import Response, abort
 from flask_cors import CORS
-from simplyrestful.app import app
+from simplyrestful.app import app as application
 from simplyrestful.settings import configure_from_module
 
 configure_from_module('settings')
 
-from settings import HOST, PORT, DEBUG
 from service import ServiceBuilder, ProcessesGateway, ChainsGateway
 
-cross_origin = CORS(app, resources={r"*": {"origins": "*"}})
+cross_origin = CORS(application, resources={r"*": {"origins": "*"}})
 
 from pywps.configuration import get_config_value
 
 
-@app.route('/wps', methods=['GET', 'POST'])
+@application.route('/', methods=['GET', 'POST'])
 def wps():
-    ChainsGateway._load_instances()  # TODO: Reload on chains CUD
+    #ChainsGateway._load_instances()  # TODO: Reload on chains CUD
     return ServiceBuilder().extend(
         ProcessesGateway.all()
-    ).extend(
-        ChainsGateway.all()
+    #).extend(
+    #    ChainsGateway.all()
     ).build()
 
 
-@app.route('/wps/outputs/<execution_id>/<filename>')
+@application.route('/outputs/<execution_id>/<filename>')
 def output_file(execution_id, filename):
     ServiceBuilder().build()
     outputs_dir = get_config_value('server', 'outputpath')
@@ -40,7 +39,3 @@ def output_file(execution_id, filename):
         return Response(file_bytes, content_type=mime_type)
     else:
         abort(404)
-
-
-if __name__ == '__main__':
-    app.run(host=HOST, port=PORT, debug=DEBUG, threaded=True)
