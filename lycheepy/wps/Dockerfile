@@ -9,5 +9,5 @@ WORKDIR /root/
 RUN virtualenv venv
 RUN /root/venv/bin/pip install -r requirements.txt
 
-CMD ./wait-service.sh persistence 5432; \
+CMD ./wait-service.sh configuration 80; \
     cd /root/wps; /root/venv/bin/gunicorn -b 0.0.0.0:80 wsgi
