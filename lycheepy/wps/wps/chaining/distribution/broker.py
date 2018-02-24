@@ -57,8 +57,7 @@ def run_process(process, wps_request_json, products, chain_identifier, execution
 
 def publish(products, process, outputs, chain_identifier, execution_id):
     mime_types = {
-        'application/x-ogc-wcs; version=2.0': 'publish_raster',
-        'application/gml+xml': 'publish_features'
+        'application/x-ogc-wcs; version=2.0': 'publish'
     }
     for product in products:
         output = outputs[product][0]  # TODO: Handle multiple occurrences for same output

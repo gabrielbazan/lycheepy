@@ -1,1 +1,1 @@
-from repository_factory import RepositoryFactory
+from repository_factory import Repositories, RepositoryFactory

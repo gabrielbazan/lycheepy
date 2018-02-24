@@ -1,9 +1,5 @@
 import json
 from datetime import datetime
-
-from simplyrestful.database import session
-
-# from lycheepy.models import Execution  # TODO
 from service import ProcessesGateway
 from chaining.publisher_process import PublisherProcess
 from chaining.distribution.broker import run_processes
@@ -64,16 +60,18 @@ class Chain(PublisherProcess):
         return wps_response
 
     def _begin_execution(self):
-        execution = Execution(chain_identifier=self.identifier, id=str(self.uuid), status=Execution.PROCESSING)
-        session.add(execution)
-        session.flush()
-        return execution
+        #execution = Execution(chain_identifier=self.identifier, id=str(self.uuid), status=Execution.PROCESSING)
+        #session.add(execution)
+        #session.flush()
+        #return execution
+        return
 
     def _end_execution(self, execution):
-        execution.status = Execution.SUCCESS
-        execution.end = datetime.now()
-        session.add(execution)
-        session.commit()
+        #execution.status = Execution.SUCCESS
+        #execution.end = datetime.now()
+        #session.add(execution)
+        #session.commit()
+        pass
 
     def _get_execution_group(self, processes, wps_request, outputs):
         group = dict()

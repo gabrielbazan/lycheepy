@@ -2,11 +2,16 @@ from geo_server_repository import GeoServerRepository
 from ftp_repository import FtpRepository
 
 
+class Repositories(object):
+    GEO_SERVER = 'GEO_SERVER'
+    FTP = 'FTP'
+
+
 class RepositoryFactory(object):
-    map = dict(
-        GEO_SERVER=GeoServerRepository,
-        FTP=FtpRepository
-    )
+    map = {
+        Repositories.GEO_SERVER: GeoServerRepository,
+        Repositories.FTP: FtpRepository
+    }
 
     @staticmethod
     def create(kind, configuration):

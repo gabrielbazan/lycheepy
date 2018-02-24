@@ -1,3 +1,6 @@
+from chaining.publication import Repositories
+
+
 WPS_CONFIG_FILE = '/root/wps/pywps.cfg'
 
 PROCESSES_PACKAGE = 'processes'
@@ -5,7 +8,7 @@ PROCESSES_PACKAGE = 'processes'
 PROCESS_EXECUTION_TIMEOUT = 30
 
 REPOSITORIES = {
-    'GEO_SERVER': [
+    Repositories.GEO_SERVER: [
         {
             'protocol': 'http',
             'host': 'repository',

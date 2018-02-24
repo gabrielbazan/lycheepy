@@ -15,10 +15,8 @@ class GeoServerRepository(Repository):
             workspace = self.catalog.create_workspace(workspace, workspace)
         return workspace
 
-    def publish_raster(self, name, raster_file):
+    def publish(self, name, raster_file):
         self.catalog.create_coveragestore(name, raster_file, self.workspace, True)
         return '{}/geoserver/wcs?SERVICE=WCS&REQUEST=GetCoverage&VERSION=2.0.1&CoverageId={}'.format(
             self.url, name
         )
-
-    def publish_features(self, name, features_file): raise NotImplementedError
