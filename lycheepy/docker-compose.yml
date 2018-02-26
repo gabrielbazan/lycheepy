@@ -14,6 +14,7 @@ services:
       - "80"
     depends_on:
       - persistence
+      - processes
   broker:
     build: broker
     expose:
@@ -40,3 +41,19 @@ services:
     build: worker
     depends_on:
       - broker
+      - processes
+  processes:
+    build: processes
+    expose:
+      - "20"
+      - "21"
+    environment:
+      FTP_USER: lycheepy
+      FTP_PASS: lycheepy
+    ports:
+      - "20:20"
+      - "21:21"
+  index:
+    build: index
+    expose:
+      - "6379"
