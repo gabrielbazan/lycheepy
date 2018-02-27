@@ -6,8 +6,8 @@ services:
       - "5432"
     environment:
       POSTGRES_USER: lycheepy
-      POSTGRES_PASS: lycheepy
-      POSTGRES_DBNAME: lycheepy
+      POSTGRES_PASSWORD: lycheepy
+      POSTGRES_DB: lycheepy
 #    ports:
 #      - "5432:5432"
   configuration:
