@@ -1,0 +1,3 @@
+[submodule "lycheepy/configuration/configuration/lycheepy.index"]
+	path = lycheepy/configuration/configuration/index
+	url = https://github.com/gabrielbazan/lycheepy.index.git
