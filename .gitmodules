@@ -1,6 +1,6 @@
 [submodule "lycheepy/configuration/configuration/lycheepy.index"]
-	path = lycheepy/configuration/configuration/index
+	path = lycheepy/configuration/configuration/gateways/index
 	url = https://github.com/gabrielbazan/lycheepy.index.git
 [submodule "lycheepy/configuration/configuration/lycheepy.processes"]
-	path = lycheepy/configuration/configuration/processes
+	path = lycheepy/configuration/configuration/gateways/processes
 	url = https://github.com/gabrielbazan/lycheepy.processes.git
