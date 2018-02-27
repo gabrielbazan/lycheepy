@@ -8,6 +8,8 @@ services:
       POSTGRES_USER: lycheepy
       POSTGRES_PASS: lycheepy
       POSTGRES_DBNAME: lycheepy
+#    ports:
+#      - "5432:5432"
   configuration:
     build: configuration
     expose:
@@ -50,9 +52,9 @@ services:
     environment:
       FTP_USER: lycheepy
       FTP_PASS: lycheepy
-    ports:
-      - "20:20"
-      - "21:21"
+#    ports:
+#      - "20:20"
+#      - "21:21"
   index:
     build: index
     expose:

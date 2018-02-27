@@ -1,65 +1,8 @@
 from simplyrestful.database import session
 from simplyrestful.models import get_or_create
 from simplyrestful.serializers import Serializer
-
 from models import *
 from validators import *
-
-
-class ProcessSerializer(Serializer):
-    model = Process
-
-    def deserialize(self, data, instance):
-        instance.identifier = data.get('identifier', instance.identifier)
-        instance.title = data.get('title', instance.title)
-        instance.abstract = data.get('abstract', instance.abstract)
-        instance.version = data.get('version', instance.version)
-
-        inputs = data.get('inputs', [])
-        outputs = data.get('outputs', [])
-        metadata = data.get('metadata', [])
-
-        instance.inputs = [self._deserialize_parameter(Input, instance, p) for p in inputs]
-        instance.outputs = [self._deserialize_parameter(Output, instance, p) for p in outputs]
-        instance.meta_data = [get_or_create(session, Metadata, value=m)[0] for m in metadata]
-
-        return instance
-
-    def _deserialize_parameter(self, model, process, parameter):
-        return get_or_create(
-            session,
-            model,
-            identifier=parameter.get('identifier'),
-            title=parameter.get('title'),
-            abstract=parameter.get('abstract'),
-            process=process
-        )[0]
-
-    def serialize(self, instance):
-        return dict(
-            id=instance.id,
-            identifier=instance.identifier,
-            title=instance.title,
-            abstract=instance.abstract,
-            version=instance.version,
-            inputs=[
-                dict(
-                    identifier=i.identifier,
-                    title=i.title,
-                    abstract=i.abstract
-                )
-                for i in instance.inputs
-            ],
-            outputs=[
-                dict(
-                    identifier=o.identifier,
-                    title=o.title,
-                    abstract=o.abstract
-                )
-                for o in instance.outputs
-            ],
-            metadata=[m.value for m in instance.meta_data]
-        )
 
 
 class ChainSerializer(Serializer):
@@ -149,14 +92,3 @@ class ChainSerializer(Serializer):
                 publish[p] = []
             publish[p].append(o.identifier)
         return publish
-
-
-class ExecutionSerializer(Serializer):
-    model = Execution
-
-    # TODO: Symplyrestful should format properties as camelcase automatically
-    def serialize(self, instance):
-        serialized = super(ExecutionSerializer, self).serialize(instance)
-        serialized['chainIdentifier'] = serialized['chain_identifier']
-        del serialized['chain_identifier']
-        return serialized

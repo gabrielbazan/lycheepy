@@ -4,3 +4,4 @@ sqlalchemy
 simplyrestful
 networkx==1.11
 gunicorn
+redis

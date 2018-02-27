@@ -1,4 +1,4 @@
-from ftp import Ftp
+from lycheepy.configuration.configuration.ftp import Ftp
 
 
 class ProcessesGateway(object):
