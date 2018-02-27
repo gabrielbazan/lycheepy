@@ -2,5 +2,5 @@
 	path = lycheepy/configuration/configuration/index
 	url = https://github.com/gabrielbazan/lycheepy.index.git
 [submodule "lycheepy/configuration/configuration/lycheepy.processes"]
-	path = lycheepy/configuration/configuration/processes/lycheepy.processes
+	path = lycheepy/configuration/configuration/processes
 	url = https://github.com/gabrielbazan/lycheepy.processes.git
