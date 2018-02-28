@@ -6,8 +6,8 @@ from simplyrestful.database import session
 from simplyrestful.models import get_or_create
 
 from models import *
-from processes import ProcessesGateway
-from index import IndexGateway
+from gateways.processes import ProcessesGateway
+from gateways.index import IndexGateway
 from settings import *
 
 

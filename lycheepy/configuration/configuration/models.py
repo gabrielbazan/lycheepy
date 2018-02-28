@@ -106,5 +106,25 @@ class StepMatch(Model):
     step = relationship('Step', backref='matches')
 
 
+class Format(Model):
+    __tablename__ = 'format'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False, unique=True)
+    mime_type = Column(Text, nullable=False, unique=True)
+    extension = Column(Text, nullable=False)
+
+
+class DataType(Model):
+    __tablename__ = 'type'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False, unique=True)
+
+
+class ParameterType(Model):
+    __tablename__ = 'parameter_type'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False, unique=True)
+
+
 if __name__ == '__main__':
     Model.metadata.create_all(engine, checkfirst=True)
