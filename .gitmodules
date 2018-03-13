@@ -4,3 +4,6 @@
 [submodule "lycheepy/configuration/configuration/lycheepy.processes"]
 	path = lycheepy/configuration/configuration/gateways/processes
 	url = https://github.com/gabrielbazan/lycheepy.processes.git
+[submodule "lycheepy/configuration/configuration/gateways/lycheepy.processes"]
+	path = lycheepy/configuration/configuration/gateways/processes
+	url = https://github.com/gabrielbazan/lycheepy.processes.git
