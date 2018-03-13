@@ -1,1 +1,1 @@
-FROM fauria/vsftpd
+FROM million12/vsftpd

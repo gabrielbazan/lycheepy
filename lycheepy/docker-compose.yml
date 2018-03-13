@@ -8,8 +8,6 @@ services:
       POSTGRES_USER: lycheepy
       POSTGRES_PASSWORD: lycheepy
       POSTGRES_DB: lycheepy
-#    ports:
-#      - "5432:5432"
   configuration:
     build: configuration
     expose:
@@ -17,20 +15,20 @@ services:
     depends_on:
       - persistence
       - processes
-  broker:
-    build: broker
-    expose:
-      - "5672"
+#  broker:
+#    build: broker
+#    expose:
+#      - "5672"
   wps:
     build: wps
     expose:
       - "80"
     depends_on:
       - configuration
-  repository:
-    build: repository
-    expose:
-      - "8080"
+#  repository:
+#    build: repository
+#    expose:
+#      - "8080"
   proxy:
     build: proxy
     ports:
@@ -38,12 +36,12 @@ services:
     depends_on:
       - configuration
       - wps
-      - repository
-  worker:
-    build: worker
-    depends_on:
-      - broker
-      - processes
+#      - repository
+#  worker:
+#    build: worker
+#    depends_on:
+#      - broker
+#      - processes
   processes:
     build: processes
     expose:
@@ -52,10 +50,4 @@ services:
     environment:
       FTP_USER: lycheepy
       FTP_PASS: lycheepy
-#    ports:
-#      - "20:20"
-#      - "21:21"
-  index:
-    build: index
-    expose:
-      - "6379"
+      LOG_STDOUT: "true"

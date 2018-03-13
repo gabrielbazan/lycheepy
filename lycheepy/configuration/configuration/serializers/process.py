@@ -1,4 +1,5 @@
 import os
+from tempfile import mkdtemp
 from werkzeug import secure_filename
 from flask import request
 from simplyrestful.serializers import Serializer
@@ -15,14 +16,6 @@ from settings import *
 class ProcessSerializer(Serializer):
     model = Process
     validators = [ProcessValidator]
-
-    processes = ProcessesGateway(
-        PROCESSES_GATEWAY_HOST,
-        PROCESSES_GATEWAY_USER,
-        PROCESSES_GATEWAY_PASS,
-        PROCESSES_GATEWAY_TIMEOUT,
-        PROCESSES_GATEWAY_DIRECTORY
-    )
 
     def create(self, data):
         self.save_file(creation=True)
@@ -105,9 +98,15 @@ class ProcessSerializer(Serializer):
             raise Conflict('The process file extension is not accepted')
 
         if process_file:
-            path = os.path.join(PROCESSES_TEMPORAL_DIRECTORY, secure_filename(process_file.filename))
+            path = os.path.join(mkdtemp(), secure_filename(process_file.filename))
             process_file.save(path)
-            self.processes.add(path)
+            ProcessesGateway(
+                PROCESSES_GATEWAY_HOST,
+                PROCESSES_GATEWAY_USER,
+                PROCESSES_GATEWAY_PASS,
+                PROCESSES_GATEWAY_TIMEOUT,
+                PROCESSES_GATEWAY_DIRECTORY
+            ).add(path)
             os.remove(path)
 
     @staticmethod
