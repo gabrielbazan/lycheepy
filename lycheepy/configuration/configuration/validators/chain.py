@@ -1,11 +1,13 @@
 from networkx import DiGraph, is_directed_acyclic_graph
-from simplyrestful.validators import Validator
 from simplyrestful.exceptions import Conflict
 from models import Process, Output
+from validators.executable import ExecutableValidator
 
 
-class ChainValidator(Validator):
-    def validate(self, data):
+class ChainValidator(ExecutableValidator):
+
+    def validate(self, data, instance=None):
+        super(ChainValidator, self).validate(data, instance=instance)
         steps = data.get('steps', [])
         self._validate_at_least_one_step(steps)
         graph = self._build_digraph(steps)

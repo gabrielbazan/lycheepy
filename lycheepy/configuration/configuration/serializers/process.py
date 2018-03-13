@@ -4,15 +4,17 @@ from flask import request
 from simplyrestful.serializers import Serializer
 from simplyrestful.database import session
 from simplyrestful.models import get_or_create
+from simplyrestful.exceptions import Conflict
 
 from models import *
+from validators import ProcessValidator
 from gateways.processes import ProcessesGateway
-from gateways.index import IndexGateway
 from settings import *
 
 
 class ProcessSerializer(Serializer):
     model = Process
+    validators = [ProcessValidator]
 
     processes = ProcessesGateway(
         PROCESSES_GATEWAY_HOST,
@@ -22,22 +24,14 @@ class ProcessSerializer(Serializer):
         PROCESSES_GATEWAY_DIRECTORY
     )
 
-    index = IndexGateway(
-        INDEX_GATEWAY_HOST,
-        INDEX_GATEWAY_PORT,
-        INDEX_GATEWAY_DB
-    )
-
     def create(self, data):
-        self.save_file()
+        self.save_file(creation=True)
         serial = super(ProcessSerializer, self).create(data)
-        self.index.publish(data.get('identifier'), serial)
         return serial
 
     def update(self, identifier, data):
-        self.save_file()
+        self.save_file(creation=False)
         serial = super(ProcessSerializer, self).update(identifier, data)
-        self.index.publish(identifier, serial)
         return serial
 
     def deserialize(self, data, instance):
@@ -56,14 +50,19 @@ class ProcessSerializer(Serializer):
 
         return instance
 
-    def _deserialize_parameter(self, model, process, parameter):
+    @staticmethod
+    def _deserialize_parameter(model, process, parameter):
+        format_name = parameter.get('format')
+        data_type = parameter.get('dataType')
         return get_or_create(
             session,
             model,
             identifier=parameter.get('identifier'),
             title=parameter.get('title'),
             abstract=parameter.get('abstract'),
-            process=process
+            process=process,
+            format=Format.query.filter_by(name=format_name).one() if format_name else None,
+            data_type=DataType.query.filter_by(name=data_type).one() if data_type else None
         )[0]
 
     def serialize(self, instance):
@@ -77,7 +76,9 @@ class ProcessSerializer(Serializer):
                 dict(
                     identifier=i.identifier,
                     title=i.title,
-                    abstract=i.abstract
+                    abstract=i.abstract,
+                    format=i.format.name if i.format else None,
+                    dataType=i.data_type.name if i.data_type else None
                 )
                 for i in instance.inputs
             ],
@@ -85,24 +86,30 @@ class ProcessSerializer(Serializer):
                 dict(
                     identifier=o.identifier,
                     title=o.title,
-                    abstract=o.abstract
+                    abstract=o.abstract,
+                    format=o.format.name if o.format else None,
+                    dataType=o.data_type.name if o.data_type else None
                 )
                 for o in instance.outputs
             ],
             metadata=[m.value for m in instance.meta_data]
         )
 
-    def save_file(self):
-        process_file = request.files.get('file')
-        if process_file and self.is_valid_file(process_file.filename):
-            self.processes.add(self.save_locally(process_file))
+    def save_file(self, creation=True):
+        process_file = request.files.get(PROCESS_FILE_FIELD)
+
+        if creation and not process_file:
+            raise Conflict('The process file is required')
+
+        if process_file and not self.is_valid_file(process_file.filename):
+            raise Conflict('The process file extension is not accepted')
+
+        if process_file:
+            path = os.path.join(PROCESSES_TEMPORAL_DIRECTORY, secure_filename(process_file.filename))
+            process_file.save(path)
+            self.processes.add(path)
+            os.remove(path)
 
     @staticmethod
     def is_valid_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_PROCESSES_EXTENSIONS
-
-    @staticmethod
-    def save_locally(process_file):
-        path = os.path.join(PROCESSES_TEMPORAL_DIRECTORY, secure_filename(process_file.filename))
-        process_file.save(path)
-        return path

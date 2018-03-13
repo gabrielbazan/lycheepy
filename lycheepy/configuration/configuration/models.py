@@ -1,5 +1,4 @@
-from datetime import datetime
-from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from simplyrestful.settings import configure_from_module
@@ -34,8 +33,12 @@ class Input(Describable):
     __tablename__ = 'input'
     __table_args__ = (UniqueConstraint('process_id', 'identifier'),)
     identifier = Column(Text, nullable=False)
-    process_id = Column(Integer, ForeignKey('process.id'), nullable=False)
+    process_id = Column(Integer, ForeignKey('process.id'))
     process = relationship('Process', backref='inputs')
+    format_id = Column(Integer, ForeignKey('format.id'))
+    format = relationship('Format')
+    data_type_id = Column(Integer, ForeignKey('data_type.id'))
+    data_type = relationship('DataType')
 
 
 class Output(Describable):
@@ -44,20 +47,10 @@ class Output(Describable):
     identifier = Column(Text, nullable=False)
     process_id = Column(Integer, ForeignKey('process.id'), nullable=False)
     process = relationship('Process', backref='outputs')
-
-
-class Execution(Model):
-    __tablename__ = 'execution'
-    id = Column(Text, primary_key=True)
-    start = Column(DateTime, nullable=False, default=datetime.utcnow)
-    end = Column(DateTime)
-    chain_identifier = Column(Text, ForeignKey('chain.identifier'), nullable=False)
-    chain = relationship('Chain', backref='executions')
-    status = Column(Text)
-
-    SUCCESS = 'SUCCESS'
-    PROCESSING = 'PROCESSING'
-    ERROR = 'ERROR'
+    format_id = Column(Integer, ForeignKey('format.id'))
+    format = relationship('Format')
+    data_type_id = Column(Integer, ForeignKey('data_type.id'))
+    data_type = relationship('DataType')
 
 
 class Metadata(Model):
@@ -115,13 +108,7 @@ class Format(Model):
 
 
 class DataType(Model):
-    __tablename__ = 'type'
-    id = Column(Integer, primary_key=True)
-    name = Column(Text, nullable=False, unique=True)
-
-
-class ParameterType(Model):
-    __tablename__ = 'parameter_type'
+    __tablename__ = 'data_type'
     id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False, unique=True)
 

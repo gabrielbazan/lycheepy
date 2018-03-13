@@ -1,10 +1,10 @@
+from simplyrestful.settings import configure_from_module
+configure_from_module('settings')
 from simplyrestful.database import session
-from models import DataType, Format, ParameterType
+from models import DataType, Format
 
 
 objects = [
-    ParameterType(name='literal'),
-    ParameterType(name='complex'),
     DataType(name='float'),
     DataType(name='boolean'),
     DataType(name='integer'),

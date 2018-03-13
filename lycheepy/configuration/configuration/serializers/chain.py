@@ -2,7 +2,7 @@ from simplyrestful.database import session
 from simplyrestful.models import get_or_create
 from simplyrestful.serializers import Serializer
 from models import *
-from validators import *
+from validators import ChainValidator
 
 
 class ChainSerializer(Serializer):
