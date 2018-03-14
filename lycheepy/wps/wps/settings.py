@@ -1,9 +1,13 @@
+
+
+CONFIGURATION_URL = 'http://192.168.1.108:5000'
+#CONFIGURATION_URL = 'http://configuration'
+
+CONFIGURATION_FILE = '/root/wps/pywps.cfg'
+
+
+"""
 from chaining.publication import Repositories
-
-
-WPS_CONFIG_FILE = '/root/wps/pywps.cfg'
-
-PROCESSES_PACKAGE = 'processes'
 
 PROCESS_EXECUTION_TIMEOUT = 30
 
@@ -16,5 +20,4 @@ REPOSITORIES = {
         }
     ]
 }
-
-CHAINS_CONFIGURATION_URI = 'http://configuration/chains'
+"""
