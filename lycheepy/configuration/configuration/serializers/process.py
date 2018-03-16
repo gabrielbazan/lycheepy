@@ -18,12 +18,12 @@ class ProcessSerializer(Serializer):
     validators = [ProcessValidator]
 
     def create(self, data):
-        self.save_file(creation=True)
+        self.save_file(data.get('identifier'), creation=True)
         serial = super(ProcessSerializer, self).create(data)
         return serial
 
     def update(self, identifier, data):
-        self.save_file(creation=False)
+        self.save_file(data.get('identifier'), creation=False)
         serial = super(ProcessSerializer, self).update(identifier, data)
         return serial
 
@@ -88,7 +88,7 @@ class ProcessSerializer(Serializer):
             metadata=[m.value for m in instance.meta_data]
         )
 
-    def save_file(self, creation=True):
+    def save_file(self, identifier, creation=True):
         process_file = request.files.get(PROCESS_FILE_FIELD)
 
         if creation and not process_file:
@@ -106,7 +106,7 @@ class ProcessSerializer(Serializer):
                 PROCESSES_GATEWAY_PASS,
                 PROCESSES_GATEWAY_TIMEOUT,
                 PROCESSES_GATEWAY_DIRECTORY
-            ).add(path)
+            ).add(identifier, path)
             os.remove(path)
 
     @staticmethod

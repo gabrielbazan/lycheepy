@@ -1,6 +1,6 @@
 from pywps import Service
 from gateways.configuration import ConfigurationGateway
-from process_metadata_builder import ProcessMetadataBuilder
+from gateways.broker.process_metadata_builder import ProcessMetadataBuilder
 
 
 class ServiceBuilder(object):

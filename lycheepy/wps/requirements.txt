@@ -3,7 +3,6 @@ flask_cors
 simplyrestful
 networkx==1.11
 gunicorn
-gsconfig
 celery
 pywps
 requests
