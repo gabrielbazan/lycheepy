@@ -13,5 +13,5 @@ RUN mkdir /root/wps/outputs
 RUN mkdir /root/wps/workdir
 RUN mkdir /root/wps/logs
 
-CMD ./wait-service.sh configuration 80; \
+CMD ./wait-service.sh configuration 80 && \
     cd /root/wps; /root/venv/bin/gunicorn -b 0.0.0.0:80 wsgi

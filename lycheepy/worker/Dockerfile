@@ -12,5 +12,5 @@ RUN /root/venv/bin/pip install -r requirements.txt
 
 RUN mkdir /root/worker/processes/
 
-CMD ./wait-service.sh broker 5672; \
+CMD ./wait-service.sh broker 5672 && \
     cd /root/worker; /root/venv/bin/celery -A distribution.worker worker --loglevel=info

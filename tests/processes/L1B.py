@@ -28,7 +28,7 @@ class L1B(Process):
 
     def _handler(self, request, response):
 
-        response.outputs['MDG'].file = '/home/gpc/src/lycheepy/tests/cosmo-skymed/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLK.tif'
+        response.outputs['MDG'].file = '/root/workdir/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLK.tif'
         response.outputs['MDG'].as_reference = True
 
         return response
