@@ -15,8 +15,6 @@ class RepositoryFactory(object):
 
     @staticmethod
     def create(kind, configuration):
-        print 'kind: ', kind
-        print 'configuration: ', configuration
         if kind not in RepositoryFactory.map:
             raise NotImplementedError('Integration not implemented for "{}" repositories'.format(kind))
         return RepositoryFactory.map.get(kind)(**configuration)

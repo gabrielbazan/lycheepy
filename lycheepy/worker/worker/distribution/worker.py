@@ -25,14 +25,7 @@ def run_process(identifier, wps_request_json):
         PROCESSES_GATEWAY_DIRECTORY
     )
 
-    print identifier
-    print wps_request_json
-
-    i = processes.get_instance(identifier, LOCAL_PROCESSES_REPOSITORY)
-
-    print i
-
-    service = Service([i], 'the_cfg_file')
+    service = Service([processes.get_instance(identifier, LOCAL_PROCESSES_REPOSITORY)], 'the_cfg_file')
 
     request = WPSRequest()
     request.json = wps_request_json
@@ -56,17 +49,12 @@ def run_chain_process(identifier, wps_request_json, products, chain_identifier, 
 
 
 def publish(products, process, outputs, chain_identifier, execution_id):
-    print 'products: ', products
-    print 'outputs: ', outputs
     for output_identifier, output in outputs.iteritems():
-        print output_identifier, output
         if output_identifier in products:
             product_identifier = '{}:{}:{}:{}'.format(
                 chain_identifier, execution_id, process, output_identifier
             )
-            print product_identifier
             for occurrence in output:
-                print occurrence
                 for kind, repositories in REPOSITORIES.iteritems():
                     for config in repositories:
                         RepositoryFactory.create(kind, config).publish(product_identifier, occurrence.get('file'))
