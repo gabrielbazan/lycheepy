@@ -44,4 +44,4 @@ class ConfigurationGateway(object):
         return process if process else self.get_chain(identifier)
 
     def get_executables_metadata(self):
-        return self.get_processes()  #  + self.get_chains()
+        return self.get_processes() + self.get_chains()

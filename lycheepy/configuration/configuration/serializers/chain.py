@@ -81,7 +81,27 @@ class ChainSerializer(Serializer):
                 )
                 for step in instance.steps
             ],
-            publish=self._serialize_publish(instance)
+            publish=self._serialize_publish(instance),
+            inputs=[
+                dict(
+                    identifier=i.identifier,
+                    title=i.title,
+                    abstract=i.abstract,
+                    format=i.format.name if i.format else None,
+                    dataType=i.data_type.name if i.data_type else None
+                )
+                for i in instance.inputs
+            ],
+            outputs=[
+                dict(
+                    identifier=o.identifier,
+                    title=o.title,
+                    abstract=o.abstract,
+                    format=o.format.name if o.format else None,
+                    dataType=o.data_type.name if o.data_type else None
+                )
+                for o in instance.outputs
+            ]
         )
 
     def _serialize_publish(self, instance):

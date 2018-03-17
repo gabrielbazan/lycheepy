@@ -7,6 +7,8 @@ configure_from_module('settings')
 from simplyrestful.database import engine
 from simplyrestful.models.model import Model
 
+from networkx import DiGraph
+
 
 class Describable(Model):
     __abstract__ = True
@@ -27,6 +29,23 @@ class Chain(Describable):
     version = Column(Text, nullable=False)
     meta_data = relationship('Metadata', secondary='chain_metadata', backref='chains')
     publishables = relationship('Output', secondary='publishable_output')
+
+    @property
+    def graph(self):
+        graph = DiGraph()
+        for step in self.steps:
+            graph.add_edge(step.before.identifier, step.after.identifier)
+        return graph
+
+    @property
+    def inputs(self):
+        processes = [node for node, degree in self.graph.in_degree_iter() if degree is 0]
+        return Input.query.filter(Input.process.has(Process.identifier.in_(processes))).all()
+
+    @property
+    def outputs(self):
+        processes = [node for node, degree in self.graph.in_degree_iter() if len(self.graph.successors(node)) is 0]
+        return Output.query.filter(Output.process.has(Process.identifier.in_(processes))).all()
 
 
 class Input(Describable):
