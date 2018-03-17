@@ -1,5 +1,5 @@
 from pywps import LiteralInput, ComplexInput, LiteralOutput, ComplexOutput, FORMATS, Format
-from process_metadata import ProcessMetadata
+from executable_adapter import ExecutableAdapter
 
 
 class MetadataBuilder(object):
@@ -8,26 +8,28 @@ class MetadataBuilder(object):
         self.metadata = metadata
 
 
-class ProcessMetadataBuilder(MetadataBuilder):
+class ExecutableAdapterBuilder(MetadataBuilder):
 
     def build(self):
-        return ProcessMetadata(
+        return ExecutableAdapter(
             [
-                ProcessMetadataInputBuilder(input_metadata).build()
+                ExecutableAdapterInputBuilder(input_metadata).build()
                 for input_metadata in self.metadata.get('inputs')
             ],
             [
-                ProcessMetadataOutputBuilder(input_metadata).build()
+                ExecutableAdapterOutputBuilder(input_metadata).build()
                 for input_metadata in self.metadata.get('outputs')
             ],
             self.metadata.get('identifier'),
             self.metadata.get('version'),
             self.metadata.get('title'),
-            self.metadata.get('abstract')
+            self.metadata.get('abstract'),
+            self.metadata,
+            is_chain='steps' in self.metadata
         )
 
 
-class ProcessMetadataParameterBuilder(MetadataBuilder):
+class ExecutableAdapterParameterBuilder(MetadataBuilder):
     literal = None
     complex = None
 
@@ -42,11 +44,11 @@ class ProcessMetadataParameterBuilder(MetadataBuilder):
         return parameter
 
 
-class ProcessMetadataInputBuilder(ProcessMetadataParameterBuilder):
+class ExecutableAdapterInputBuilder(ExecutableAdapterParameterBuilder):
     literal = LiteralInput
     complex = ComplexInput
 
 
-class ProcessMetadataOutputBuilder(ProcessMetadataParameterBuilder):
+class ExecutableAdapterOutputBuilder(ExecutableAdapterParameterBuilder):
     literal = LiteralOutput
     complex = ComplexOutput

@@ -1,6 +1,6 @@
 from pywps import Service
 from gateways.configuration import ConfigurationGateway
-from gateways.broker.process_metadata_builder import ProcessMetadataBuilder
+from adapter import ExecutableAdapterBuilder
 
 
 class ServiceBuilder(object):
@@ -20,7 +20,7 @@ class ServiceBuilder(object):
     def add_executables(self):
         self.extend(
             {
-                executable.get('identifier'): ProcessMetadataBuilder(executable).build()
+                executable.get('identifier'): ExecutableAdapterBuilder(executable).build()
                 for executable in self.configuration.get_executables_metadata()
             }
         )

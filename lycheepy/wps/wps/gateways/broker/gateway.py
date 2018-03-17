@@ -1,5 +1,4 @@
-from celery import Celery
-
+from celery import Celery,group
 
 
 class BrokerGateway(object):
@@ -16,4 +15,23 @@ class BrokerGateway(object):
         def run_process(identifier, wps_request_json):
             pass
 
+        @self.app.task(name='run_chain_process')
+        def run_chain_process(identifier, wps_request_json, products, chain_identifier, execution_id):
+            pass
+
         self.run_process = run_process
+        self.run_chain_process = run_chain_process
+
+    def run_processes(self, processes):
+        return group(
+            [
+                self.run_chain_process.s(
+                    process,
+                    data['request'],
+                    data['products'],
+                    data['chain_identifier'],
+                    data['execution_id']
+                )
+                for process, data in processes.iteritems()
+            ]
+        ).apply_async()

@@ -1,13 +1,12 @@
 from pywps import Process
-from gateways.broker import BrokerGateway
+from executor import Executor
 from gateways.broker.serialization import OutputsDeserializer
-from settings import *
 
 
-class ProcessMetadata(Process):
+class ExecutableAdapter(Process):
 
-    def __init__(self, inputs, outputs, identifier, version, title, abstract):
-        super(ProcessMetadata, self).__init__(
+    def __init__(self, inputs, outputs, identifier, version, title, abstract, model, is_chain=False):
+        super(ExecutableAdapter, self).__init__(
             self._handle,
             identifier=identifier,
             version=version,
@@ -19,22 +18,16 @@ class ProcessMetadata(Process):
             store_supported=True,
             status_supported=True
         )
+        self.model = model
+        self.is_chain = is_chain
 
     def _handle(self, request, response):
+        executor = Executor()
 
-        broker = BrokerGateway(
-            BROKER_HOST,
-            BROKER_PROTOCOL,
-            BROKER_USERNAME,
-            BROKER_APPLICATION_NAME,
-            BROKER_TASK_NAME
-        )
-
-        promise = broker.run_process.delay(self.identifier, request.json)
-
-        result = promise.get(timeout=PROCESS_EXECUTION_TIMEOUT)
-
-        outputs = result.get('outputs')
+        if self.is_chain:
+            outputs = executor.execute_chain(self.model, request, self.uuid)
+        else:
+            outputs = executor.execute_process(self.identifier, request)
 
         for output in self.outputs:
             output_identifier = output.identifier
