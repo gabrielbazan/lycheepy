@@ -1,5 +1,8 @@
 FROM ubuntu:16.04
 
+# Add Geoserver configuration file
+ADD web.xml /root/
+
 # Upgrade
 RUN apt-get update && apt-get upgrade -y
 
@@ -24,7 +27,8 @@ RUN wget https://ufpr.dl.sourceforge.net/project/geoserver/GeoServer/2.12.2/exte
 RUN unzip -o csw.zip -d /usr/share/geoserver/geoserver-2.12.2/webapps/geoserver/WEB-INF/lib
 
 # Enable CORS
-RUN sed -i '/^#.* CORS /s/^#//' /usr/share/geoserver/geoserver-2.12.2/webapps/geoserver/WEB-INF/web.xml
+RUN rm /usr/share/geoserver/geoserver-2.12.2/webapps/geoserver/WEB-INF/web.xml
+RUN mv /root/web.xml /usr/share/geoserver/geoserver-2.12.2/webapps/geoserver/WEB-INF/
 
 # Start Geoserver
-CMD cd /usr/share/geoserver/geoserver-2.12.2/bin/; sh startup.sh
+CMD cd /usr/share/geoserver/geoserver-2.12.2/bin/ && sh startup.sh

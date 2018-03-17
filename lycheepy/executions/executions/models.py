@@ -23,6 +23,7 @@ class Execution(Model):
     end = Column(DateTime)
     chain_identifier = Column(Text, nullable=False)
     execution_id = Column(Text, nullable=False)
+    reason = Column(Text)
     status_id = Column(Integer, ForeignKey('execution_status.id'), nullable=False)
     status = relationship('ExecutionStatus')
 
