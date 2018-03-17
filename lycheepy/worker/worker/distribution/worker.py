@@ -1,5 +1,4 @@
 import uuid
-import json
 from celery import Celery
 from pywps import Service
 from pywps.app.WPSRequest import WPSRequest
@@ -26,10 +25,17 @@ def run_process(identifier, wps_request_json):
         PROCESSES_GATEWAY_DIRECTORY
     )
 
-    service = Service([processes.get_instance(identifier, LOCAL_PROCESSES_REPOSITORY)], 'the_cfg_file')
+    print identifier
+    print wps_request_json
+
+    i = processes.get_instance(identifier, LOCAL_PROCESSES_REPOSITORY)
+
+    print i
+
+    service = Service([i], 'the_cfg_file')
 
     request = WPSRequest()
-    request.json = json.loads(wps_request_json)
+    request.json = wps_request_json
     request.status = 'false'
 
     response = service.processes.get(identifier).execute(
@@ -50,11 +56,17 @@ def run_chain_process(identifier, wps_request_json, products, chain_identifier, 
 
 
 def publish(products, process, outputs, chain_identifier, execution_id):
-    for product in products:
-        product_identifier = '{}:{}:{}:{}'.format(
-            chain_identifier, execution_id, process, product
-        )
-        for output in outputs:
-            for kind, repositories in REPOSITORIES.iteritems():
-                for config in repositories:
-                    RepositoryFactory.create(kind, config).publish(product_identifier, output.get('file'))
+    print 'products: ', products
+    print 'outputs: ', outputs
+    for output_identifier, output in outputs.iteritems():
+        print output_identifier, output
+        if output_identifier in products:
+            product_identifier = '{}:{}:{}:{}'.format(
+                chain_identifier, execution_id, process, output_identifier
+            )
+            print product_identifier
+            for occurrence in output:
+                print occurrence
+                for kind, repositories in REPOSITORIES.iteritems():
+                    for config in repositories:
+                        RepositoryFactory.create(kind, config).publish(product_identifier, occurrence.get('file'))

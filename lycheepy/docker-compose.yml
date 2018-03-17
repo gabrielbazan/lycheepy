@@ -27,10 +27,10 @@ services:
       - configuration
     volumes:
       - workdir:/root/workdir
-#  repository:
-#    build: repository
-#    expose:
-#      - "8080"
+  repository:
+    build: repository
+    expose:
+      - "8080"
   proxy:
     build: proxy
     ports:
@@ -38,7 +38,7 @@ services:
     depends_on:
       - configuration
       - wps
-#      - repository
+      - repository
   worker:
     build: worker
     depends_on:

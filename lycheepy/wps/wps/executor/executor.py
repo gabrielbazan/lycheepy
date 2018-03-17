@@ -1,3 +1,4 @@
+import json
 from gateways.broker import BrokerGateway
 from settings import *
 from chain_builder import ChainBuilder
@@ -15,7 +16,7 @@ class Executor(object):
         )
 
     def execute_process(self, identifier, request):
-        result = self.broker.run_process.delay(identifier, request.json).get(
+        result = self.broker.run_process.delay(identifier, json.loads(request.json)).get(
             timeout=PROCESS_EXECUTION_TIMEOUT
         )
         return result.get('outputs')

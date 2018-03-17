@@ -16,6 +16,7 @@ class ChainBuilder(object):
             self._build_anti_chains(),
             self._build_predecessors(),
             self._get_nodes_without_predecessors(),
+            self._get_nodes_without_successors(),
             self._build_match(),
             self._build_products()
         )
@@ -52,3 +53,6 @@ class ChainBuilder(object):
 
     def _get_nodes_without_predecessors(self):
         return [node for node, degree in self.graph.in_degree_iter() if degree is 0]
+
+    def _get_nodes_without_successors(self):
+        return [node for node, degree in self.graph.in_degree_iter() if len(self.graph.successors(node)) is 0]

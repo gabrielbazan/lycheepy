@@ -9,10 +9,10 @@ class GeoServerRepository(Repository):
         self.catalog = Catalog('{}/{}'.format(self.url, path), username=username, password=password)
         self.workspace = self._get_workspace(workspace)
 
-    def _get_workspace(self, workspace):
-        workspace = self.catalog.get_workspace(workspace)
+    def _get_workspace(self, workspace_name):
+        workspace = self.catalog.get_workspace(workspace_name)
         if not workspace:
-            workspace = self.catalog.create_workspace(workspace, workspace)
+            workspace = self.catalog.create_workspace(workspace_name, workspace_name)
         return workspace
 
     def publish(self, name, raster_file):

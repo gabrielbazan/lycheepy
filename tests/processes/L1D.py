@@ -1,4 +1,4 @@
-from pywps import ComplexInput, Format, ComplexOutput, Process, LiteralInput
+from pywps import Format, ComplexOutput, Process, LiteralInput
 from pywps.app.Common import Metadata
 
 

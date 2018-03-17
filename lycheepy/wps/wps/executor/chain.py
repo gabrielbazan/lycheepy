@@ -4,11 +4,12 @@ from settings import PROCESS_EXECUTION_TIMEOUT
 
 class Chain(object):
 
-    def __init__(self, identifier, anti_chains, predecessors, without_predecessors, match, products):
+    def __init__(self, identifier, anti_chains, predecessors, without_predecessors, without_successors, match, products):
         self.identifier = identifier
         self.anti_chains = anti_chains
         self.predecessors = predecessors
         self.without_predecessors = without_predecessors
+        self.without_successors = without_successors
         self.match = match
         self.products = products
 
@@ -26,7 +27,14 @@ class Chain(object):
                 outputs
             )
 
-        return outputs
+        chain_outputs = {
+            output_identifier: process_output
+            for process_identifier, process_outputs in outputs.iteritems()
+            for output_identifier, process_output in process_outputs.iteritems()
+            if process_identifier in self.without_successors
+        }
+
+        return chain_outputs
 
     def _get_execution_group(self, processes, wps_request, outputs, execution_id):
         group = dict()
