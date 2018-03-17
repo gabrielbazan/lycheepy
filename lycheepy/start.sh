@@ -1,2 +1,4 @@
-docker-compose rm <<< "y" && sudo docker-compose build && sudo docker-compose up
+docker-compose rm || exit $?
+docker-compose build || exit $?
+sudo docker-compose up || exit $?
 
