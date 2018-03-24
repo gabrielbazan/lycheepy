@@ -21,4 +21,4 @@ class ProcessResource(Resource):
     @staticmethod
     def _validate_multipart():
         if not request.form:
-            raise Conflict('This endpoint only accepts multipart/formdata')
+            raise Conflict('This endpoint only accepts multipart/form-data')
