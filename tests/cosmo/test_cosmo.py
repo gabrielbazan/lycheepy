@@ -2,6 +2,7 @@ import re
 from xml.etree import ElementTree
 import unittest
 import json
+from string import Template
 from requests import post, get
 from settings import *
 
@@ -15,7 +16,7 @@ class TestCosmoSkymed(unittest.TestCase):
     def test_cosmo(self):
         execution_id = self.execute_chain()
         self.execution_is_published(execution_id)
-        # TODO: Verify automatic publication, through CSW query with the chain execution ID
+        self.products_are_published(execution_id)
 
     def create_processes(self):
         for process in PROCESSES:
@@ -48,6 +49,18 @@ class TestCosmoSkymed(unittest.TestCase):
         results = response.json().get('results')
         self.assertTrue(bool(results), 'Chain execution is not published')
         self.assertTrue(results[0].get('status').get('name') == 'SUCCESS', 'Chain execution is published, but is not a success')
+
+    def products_are_published(self, execution_id):
+        response = post(CSW_URL, Template(CSW_GET_RECORDS).safe_substitute(execution_id=execution_id))
+        self.assertEqual(response.status_code, 200, 'Failed to query execution products through CSW Get Records operation')
+        tree = ElementTree.ElementTree(ElementTree.fromstring(response.text)).getroot()
+        search_results = tree.find('csw:SearchResults', namespaces=dict(csw='http://www.opengis.net/cat/csw/2.0.2'))
+        number_of_records = int(search_results.get('numberOfRecordsReturned'))
+        self.assertEqual(
+            number_of_records,
+            5,
+            'Failed to retrieve automatically published products. Obtained {} results'.format(number_of_records)
+        )
 
     def process_exists(self, identifier):
         response = get('{}?identifier__eq={}'.format(PROCESSES_URL, identifier))

@@ -7,6 +7,7 @@ PROCESSES_URL = '{}/processes'.format(CONFIGURATION_URL)
 CHAINS_URL = '{}/chains'.format(CONFIGURATION_URL)
 WPS_URL = '{}/wps/'.format(HOST)
 EXECUTIONS_URL = '{}/executions/executions'.format(HOST)
+CSW_URL = '{}/repository/geoserver/csw'.format(HOST)
 
 
 DIR = dirname(__file__)
@@ -171,3 +172,7 @@ CHAIN = dict(
 
 with open(join(DIR, 'execute_cosmo.xml'), 'r') as execute:
     CHAIN_EXECUTE = execute.read()
+
+
+with open(join(DIR, 'csw_get_records.xml'), 'r') as csw:
+    CSW_GET_RECORDS = csw.read()
