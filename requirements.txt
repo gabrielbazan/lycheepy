@@ -1,8 +1,0 @@
-flask
-flask_cors
-sqlalchemy
-simplyrestful
-pywps
-networkx
-gsconfig
-celery

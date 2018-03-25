@@ -1,0 +1,75 @@
+version: '3'
+services:
+  persistence:
+    build: persistence
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: lycheepy
+      POSTGRES_PASSWORD: lycheepy
+      POSTGRES_DB: lycheepy
+  configuration:
+    build: configuration
+    expose:
+      - "80"
+    depends_on:
+      - persistence
+      - processes
+  broker:
+    build: broker
+    expose:
+      - "5672"
+  wps:
+    build: wps
+    expose:
+      - "80"
+    depends_on:
+      - configuration
+      - broker
+      - executions
+    volumes:
+      - workdir:/root/workdir
+  repository:
+    build: repository
+    expose:
+      - "8080"
+  proxy:
+    build: proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - configuration
+      - wps
+      - repository
+  worker:
+    build: worker
+    depends_on:
+      - broker
+      - processes
+    volumes:
+      - workdir:/root/workdir
+  processes:
+    build: processes
+    expose:
+      - "20"
+      - "21"
+    environment:
+      FTP_USER: lycheepy
+      FTP_PASS: lycheepy
+      LOG_STDOUT: "true"
+  executions-persistence:
+    build: persistence
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: lycheepy
+      POSTGRES_PASSWORD: lycheepy
+      POSTGRES_DB: lycheepy
+  executions:
+    build: executions
+    expose:
+      - "80"
+    depends_on:
+      - executions-persistence
+volumes:
+  workdir:

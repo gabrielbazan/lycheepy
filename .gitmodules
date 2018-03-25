@@ -1,0 +1,12 @@
+[submodule "lycheepy/configuration/configuration/lycheepy.index"]
+	path = lycheepy/configuration/configuration/gateways/index
+	url = https://github.com/gabrielbazan/lycheepy.index.git
+[submodule "lycheepy/configuration/configuration/lycheepy.processes"]
+	path = lycheepy/configuration/configuration/gateways/processes
+	url = https://github.com/gabrielbazan/lycheepy.processes.git
+[submodule "lycheepy/configuration/configuration/gateways/lycheepy.processes"]
+	path = lycheepy/configuration/configuration/gateways/processes
+	url = https://github.com/gabrielbazan/lycheepy.processes.git
+[submodule "lycheepy/worker/worker/gateways/lycheepy.processes"]
+	path = lycheepy/worker/worker/gateways/processes
+	url = https://github.com/gabrielbazan/lycheepy.processes.git

@@ -1,0 +1,8 @@
+flask
+flask_cors
+simplyrestful
+networkx==1.11
+gunicorn
+celery
+pywps
+requests
