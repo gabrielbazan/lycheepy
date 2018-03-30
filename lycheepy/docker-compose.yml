@@ -71,5 +71,18 @@ services:
       - "80"
     depends_on:
       - executions-persistence
+  ftp_repository:
+    build: ftp_repository
+    expose:
+      - "20"
+      - "21"
+    environment:
+      FTP_USER: lycheepy
+      FTP_PASS: lycheepy
+      LOG_STDOUT: "true"
+    ports:
+      - "20:20"
+      - "21:21"
+      - "21100-21110:21100-21110"
 volumes:
   workdir:
