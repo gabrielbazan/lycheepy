@@ -39,8 +39,7 @@ component itself.
 <development_view.png>
 LycheePy components diagram.
 
-On this view, we are able to see 13 components, being 5 of them Gateways. The LycheePy 
-development components are:
+On this view, we are able to distinguish 13 components, being 5 of them Gateways. The LycheePy development components are:
 
 * **WPS**: An implementation of the OGC WPS standard, which exposes the _WPS I_ interface, 
     through which is able to able to retrieve discovery and execution requests of processes
@@ -56,25 +55,17 @@ development components are:
 * **Executor**: A component which encapsulates the execution of chains and processes. 
     Depends on the Broker Gateway in order to enqueue processes executions, and on the 
     Executions Gateway in order to inform the executions status.
-* **Executions Gateway**: 
-* **Executions**: 
-* **Broker Gateway**: 
-* **Broker**:
+* **Executions Gateway**: A component which encapsulates the interaction whit the Executions I interface, of the Executions component.
+* **Executions**: A component which persists the status of all the chains executions. It exposes the Executions I interface, through which it is possible tu update or read those statuses.
+* **Broker Gateway**: A component which encapsulates all the interaction whith the Messages Queue interface, of the Broker component. Trough this component, it is possible to enqueue tasks.
+* **Broker**: 
 * **Worker**: 
 * **Processes Gateway**: 
 * **Processes**: 
 * **Repository Gateway**: 
 * **Repository**:
 
- Executions Gateway: Componente que encapsula la
-interacci´on con la interfaz Executions I, del componente
-Executions.
 
- Executions: Componente que almacena el estado de cada
-una de las ejecuciones que se llevaron y se est´an llevando
-a cabo en el servidor. Expone una interfaz Executions I,
-a trav´es de la cual es posible actualizar o leer estados de
-ejecuciones.
  Broker Gateway: Componente que encapsula la interacci
 ´on con la interfaz Messages Queue, del componente
 Broker, permitiendo la publicaci´on de tareas en esta
