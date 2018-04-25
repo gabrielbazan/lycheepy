@@ -58,46 +58,71 @@ On this view, we are able to distinguish 13 components, being 5 of them Gateways
 * **Executions Gateway**: A component which encapsulates the interaction whit the Executions I interface, of the Executions component.
 * **Executions**: A component which persists the status of all the chains executions. It exposes the Executions I interface, through which it is possible tu update or read those statuses.
 * **Broker Gateway**: A component which encapsulates all the interaction whith the Messages Queue interface, of the Broker component. Trough this component, it is possible to enqueue tasks.
-* **Broker**: 
-* **Worker**: 
-* **Processes Gateway**: 
-* **Processes**: 
-* **Repository Gateway**: 
-* **Repository**:
-
-
- Broker Gateway: Componente que encapsula la interacci
-´on con la interfaz Messages Queue, del componente
-Broker, permitiendo la publicaci´on de tareas en esta
-interfaz.
- Broker: Componente capaz de recibir tareas y de almacenarlas
-en una cola. Asegura que las tareas sean ejecutadas
-en el mismo orden con el que se encolaron.
- Worker: Componente que consume las tareas de la
-interfaz Messages Queue, y las ejecuta. Depende de
-Processes Gateway para obtener los procesos a ejecutar,
-y de Repository Gateway para realizar la publicaci´on
-autom´atica de productos geoespaciales.
- Processes Gateway: Componente que encapsula la interacci
-´on con la interfaz Processes I, del componente
-Processes.
- Processes: Componente que almacena los archivos de los
-procesos disponibles en el servidor.
- Repository Gateway: Componente que encapsula la
-interacci´on con la interfaz Repository I, del componente
-Repository.
- Repository: Componente capaz de almacenar datos
-geoespaciales. Expone una interfaz de configuraci´on,
-Repository I, y una interfaz para la consulta de datos
-geoespaciales, OWS.
-
+* **Broker**: A componen which is capable of receive tasks and store them on a queue. It ensures that those will be executed in the same order they where enqueued.
+* **Worker**: A component which consumes tasks from the Mesages Queue interface, and executes them. It depends on the Processes Gateway in order to obtain the processes to execute them, and ond the Repository Gateway in order to perform geospatial data automatic publication.
+* **Processes Gateway**: A component which encapsulates the interaction with the Processes I interface, of the Processes component.
+* **Processes**: A component which stores the files of those processes available on the server.
+* **Repository Gateway**: A component which encapsulates the interaction with the Repository I interface, of the Repository component.
+* **Repository**:A component capable of storing geospatial data. It exposes a configuration interface, Repository I, and OWS interfaces.
 
 
 ### Physical View
 
-<physical_view_maximum.png>
+The physical architecture is the mapping between the software and the hardware. It takes into account non-funcional requirements, such as availability, fault tolerance, performance, and scalability. The software its executed on a computers network (nodes).
+
+The software components of the development view have been delimitaded taking into account the posibility of
+
+La delimitacion de los componentes del software ´
+en la vista de desarrollo se llevo a cabo teniendo en mente la ´
+posibilidad de brindar la maxima flexibilidad posible para la ´
+distribucion de cada uno de ellos a trav ´ es de varios nodos ´
+interconectados en una red, sacando el maximo provecho ´
+posible del procesamiento distribuido, y desarrollando a su
+vez un sistema horizontalmente escalable.
+
+El despliegue del software puede llevarse a cabo teniendo en
+cuenta una disgregacion m ´ ´ınima y una disgregacion m ´ axima ´
+posibles, existiendo puntos intermedios entre estos dos extremos.
+La disgregacion m ´ ´ınima, representada en la Fig. 22, consiste
+en desplegar todos los componentes en un mismo nodo.
+Este esquema es completamente centralizado, y no realiza
+procesamiento distribuido, aunque puede existir la posibilidad
+de realizar proceso en paralelo, si es que el procesador de este
+nodo dispone de mas de un n ´ ucleo. A su vez, tiene todas las ´
+desventajas mencionadas en la seccion VI. 
 
 <physical_view_minimum.png>
+
+La disgregacion m ´ axima, representada en la Fig. 23, con- ´
+siste en desplegar cada uno de los componentes de desarrollo
+que exponen interfaces en un nodo dedicado. Ademas, despl- ´
+iega un proxy y aquellos componentes de persistencia necesarios.
+Este esquema trae consigo todas las ventajas descritas
+en la seccion VI, ya que permite: ´
+1) Aumentar (o reducir) las capacidades de cada uno de los
+nodos segun su necesidad. ´
+2) Podemos escalar horizontalmente la capacidad de procesamiento
+del servidor, agregando mas instancias del ´
+nodo Worker.
+3) La falla de uno de los nodos podr´ıa no resultar en una
+falla total en el sistema. Esto, por supuesto, dependera´
+del componente: Por ejemplo, si existiesen varios nodos
+Worker y perdieramos uno, la ´ unica consecuencia es ´
+que la capacidad de procesamiento disminuye, pero el
+sistema sigue funcionando a la perfeccion; mientras ´
+que si el componente Broker ha cesado de funcionar,
+entonces hemos perdido la capacidad de procesar pedidos
+de ejecucion, pero a ´ un podr ´ ´ıamos responder a
+operaciones de descubrimiento, porque Configuration
+sigue funcionando. Cual sea el caso, la recuperacion ante ´
+un error en uno de los nodos tiene que ser mas r ´ apida ´
+que en un esquema centralizado, porque el problema esta´
+aislado y es facil de identificar y resolver, o de generar ´
+un nodo identico.
+
+<physical_view_maximum.png>
+
+
 
 
 ## Implementation
