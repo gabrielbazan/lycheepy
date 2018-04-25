@@ -75,7 +75,57 @@ On the maximum disgregation, represented below, all the development components, 
 
 ### Publish a Process
 
+```json
+{
+  "identifier": "L0",
+  "title": "L0 Processor",
+  "abstract": "L0 Processor, which generates the RAW product",
+  "version": "0.1",
+  "metadata": ["Level 0", "Processor"],
+  "inputs": [
+    {
+      "identifier": "crude", 
+      "title": "crude",
+      "abstract": "Crude data",
+      "dataType": "string"
+    }
+  ],
+  "outputs": [
+    {
+      "identifier": "RAW", 
+      "title": "RAW output",
+      "abstract": "RAW data",
+      "format": "GEOTIFF"
+    }
+  ]
+}
+```
+
 ### Publish a Chain
+
+```json
+{
+  "identifier": "Cosmo Skymed",
+  "title": "CSK Standard Processing Model",
+  "abstract": "This chain is a demostration example",
+  "version": "0.1",
+  "metadata": ["CSK", "Mission", "Chain"],
+  "steps": [
+    {"before": "L0", "after": "L1A"},
+    {"before": "L1A", "after": "L1B"},
+    {"before": "L1B", "after": "L1C"},
+    {"before": "L1B", "after": "L1D"}
+  ],
+  "publish": {
+    "L0": ["RAW"],
+    "L1A": ["SCS"],
+    "L1B": ["MDG"],
+    "L1C": ["GEC"],
+    "L1D": ["GTC"]
+  }
+}
+```
+
 
 ### Automatic Products Publication
 
