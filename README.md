@@ -134,17 +134,172 @@ On the maximum disgregation, represented below, all the development components, 
 
 ### Discover
 
+{{wps}}?service=WPS&request=getcapabilities
+{{wps}}?service=WPS&request=describeprocess&version=1.0.0&identifier=L0
+
 ### Execute a Process
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
+  <ows:Identifier>L0</ows:Identifier>
+  <wps:DataInputs>
+    <wps:Input>
+      <ows:Identifier>crude</ows:Identifier>
+      <wps:Data>
+        <wps:LiteralData>/mission/crude/crude1.sar</wps:LiteralData>
+      </wps:Data>
+    </wps:Input>
+  </wps:DataInputs>
+</wps:Execute>
+```
 
 ### Execute a Chain
 
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
+  <ows:Identifier>Cosmo Skymed</ows:Identifier>
+  <wps:DataInputs>
+    <wps:Input>
+      <ows:Identifier>crude</ows:Identifier>
+      <wps:Data>
+        <wps:LiteralData>/sar/data/acquisition.sar</wps:LiteralData>
+      </wps:Data>
+    </wps:Input>
+  </wps:DataInputs>
+</wps:Execute>
+```
 
 ## Requesting Chain Executions Status
 
+{{executions}}/executions
+{{executions}}/executions?chain_identifier=Cosmo Skymed&order_by=start__desc
+{{executions}}/executions?execution_id=41838c1c-4847-11e8-9afe-0242ac12000a
 
+```json
+{
+  "count": 6,
+  "results": [
+    {
+      "status": {
+        "id": 2,
+        "name": "SUCCESS"
+      },
+      "end": "2018-04-25T05:13:05.713671Z",
+      "start": "2018-04-25T05:13:04.354559Z",
+      "reason": "",
+      "chain_identifier": "Cosmo Skymed",
+      "id": 6,
+      "execution_id": "551352d0-4847-11e8-9afe-0242ac12000a"
+    }
+  ]
+}
+```
 
 ## Discovering Automatically Published Products
 
+{{repository}}/geoserver/csw
+
+```xml
+<csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:ogc="http://www.opengis.net/ogc" service="CSW" version="2.0.2" resultType="results" startPosition="1" maxRecords="10" outputFormat="application/xml" outputSchema="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:apiso="http://www.opengis.net/cat/csw/apiso/1.0">
+  <csw:Query typeNames="csw:Record">
+    <csw:ElementSetName>full</csw:ElementSetName>
+    <csw:Constraint version="1.1.0">
+      <ogc:Filter>
+        <ogc:PropertyIsLike matchCase="false" wildCard="%" singleChar="_" escapeChar="\">
+          <ogc:PropertyName>dc:title</ogc:PropertyName>
+          <ogc:Literal>%2e389cae-2a2b-11e8-8048-0242ac12000a%</ogc:Literal>
+        </ogc:PropertyIsLike>
+      </ogc:Filter>
+    </csw:Constraint>
+  </csw:Query>
+</csw:GetRecords>
+```
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<csw:GetRecordsResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/" xmlns:ows="http://www.opengis.net/ows" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0.2" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://repository:8080/geoserver/schemas/csw/2.0.2/record.xsd">
+    <csw:SearchStatus timestamp="2018-04-25T05:22:58.854Z"/>
+    <csw:SearchResults numberOfRecordsMatched="5" numberOfRecordsReturned="5" nextRecord="0" recordSchema="http://www.opengis.net/cat/csw/2.0.2" elementSet="full">
+        <csw:Record>
+            <dc:identifier>lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L0:RAW</dc:identifier>
+            <dc:creator>GeoServer Catalog</dc:creator>
+            <dct:references scheme="OGC:WMS">http://repository:8080/geoserver/wms?service=WMS&amp;request=GetMap&amp;layers=lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L0:RAW</dct:references>
+            <dc:subject>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L0:RAW</dc:subject>
+            <dc:subject>WCS</dc:subject>
+            <dc:subject>GeoTIFF</dc:subject>
+            <dc:description>Generated from GeoTIFF</dc:description>
+            <dc:title>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L0:RAW</dc:title>
+            <dc:type>http://purl.org/dc/dcmitype/Dataset</dc:type>
+            <ows:BoundingBox crs="urn:x-ogc:def:crs:EPSG:6.11:4326">
+                <ows:LowerCorner>40.61211948610636 14.007123867581605</ows:LowerCorner>
+                <ows:UpperCorner>41.06318200414095 14.555170176382685</ows:UpperCorner>
+            </ows:BoundingBox>
+        </csw:Record>
+        <csw:Record>
+            <dc:identifier>lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1A:SCS</dc:identifier>
+            <dc:creator>GeoServer Catalog</dc:creator>
+            <dct:references scheme="OGC:WMS">http://repository:8080/geoserver/wms?service=WMS&amp;request=GetMap&amp;layers=lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1A:SCS</dct:references>
+            <dc:subject>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1A:SCS</dc:subject>
+            <dc:subject>WCS</dc:subject>
+            <dc:subject>GeoTIFF</dc:subject>
+            <dc:description>Generated from GeoTIFF</dc:description>
+            <dc:title>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1A:SCS</dc:title>
+            <dc:type>http://purl.org/dc/dcmitype/Dataset</dc:type>
+            <ows:BoundingBox crs="urn:x-ogc:def:crs:EPSG:6.11:4326">
+                <ows:LowerCorner>40.61211948610636 14.007123867581605</ows:LowerCorner>
+                <ows:UpperCorner>41.06318200414095 14.555170176382685</ows:UpperCorner>
+            </ows:BoundingBox>
+        </csw:Record>
+        <csw:Record>
+            <dc:identifier>lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1B:MDG</dc:identifier>
+            <dc:creator>GeoServer Catalog</dc:creator>
+            <dct:references scheme="OGC:WMS">http://repository:8080/geoserver/wms?service=WMS&amp;request=GetMap&amp;layers=lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1B:MDG</dct:references>
+            <dc:subject>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1B:MDG</dc:subject>
+            <dc:subject>WCS</dc:subject>
+            <dc:subject>GeoTIFF</dc:subject>
+            <dc:description>Generated from GeoTIFF</dc:description>
+            <dc:title>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1B:MDG</dc:title>
+            <dc:type>http://purl.org/dc/dcmitype/Dataset</dc:type>
+            <ows:BoundingBox crs="urn:x-ogc:def:crs:EPSG:6.11:4326">
+                <ows:LowerCorner>40.61211948610636 14.007123867581605</ows:LowerCorner>
+                <ows:UpperCorner>41.06318200414095 14.555170176382685</ows:UpperCorner>
+            </ows:BoundingBox>
+        </csw:Record>
+        <csw:Record>
+            <dc:identifier>lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1C:GEC</dc:identifier>
+            <dc:creator>GeoServer Catalog</dc:creator>
+            <dct:references scheme="OGC:WMS">http://repository:8080/geoserver/wms?service=WMS&amp;request=GetMap&amp;layers=lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1C:GEC</dct:references>
+            <dc:subject>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1C:GEC</dc:subject>
+            <dc:subject>WCS</dc:subject>
+            <dc:subject>GeoTIFF</dc:subject>
+            <dc:description>Generated from GeoTIFF</dc:description>
+            <dc:title>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1C:GEC</dc:title>
+            <dc:type>http://purl.org/dc/dcmitype/Dataset</dc:type>
+            <ows:BoundingBox crs="urn:x-ogc:def:crs:EPSG:6.11:4326">
+                <ows:LowerCorner>40.61211948610636 14.007123867581605</ows:LowerCorner>
+                <ows:UpperCorner>41.06318200414095 14.555170176382685</ows:UpperCorner>
+            </ows:BoundingBox>
+        </csw:Record>
+        <csw:Record>
+            <dc:identifier>lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1D:GTC</dc:identifier>
+            <dc:creator>GeoServer Catalog</dc:creator>
+            <dct:references scheme="OGC:WMS">http://repository:8080/geoserver/wms?service=WMS&amp;request=GetMap&amp;layers=lycheepy:Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1D:GTC</dct:references>
+            <dc:subject>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1D:GTC</dc:subject>
+            <dc:subject>WCS</dc:subject>
+            <dc:subject>GeoTIFF</dc:subject>
+            <dc:description>Generated from GeoTIFF</dc:description>
+            <dc:title>Cosmo Skymed:41838c1c-4847-11e8-9afe-0242ac12000a:L1D:GTC</dc:title>
+            <dc:type>http://purl.org/dc/dcmitype/Dataset</dc:type>
+            <ows:BoundingBox crs="urn:x-ogc:def:crs:EPSG:6.11:4326">
+                <ows:LowerCorner>40.61211948610636 14.007123867581605</ows:LowerCorner>
+                <ows:UpperCorner>41.06318200414095 14.555170176382685</ows:UpperCorner>
+            </ows:BoundingBox>
+        </csw:Record>
+    </csw:SearchResults>
+</csw:GetRecordsResponse>
+```
 
 
 ## TODO List
