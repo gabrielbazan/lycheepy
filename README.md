@@ -81,27 +81,9 @@ The minimum disgregation, represented below, consists of deloying all the develo
 On the maximum disgregation, represented below, all the development components, except gateways, are deployed on a dedicated node, plus a proxy and the necessary persistence components. This schema carries with all the advantages of a distributed system:
 1. We can increase (or reduce) each nodes capabilities, according to our needs.
 1. We can horizontally scale the processing capabilities, adding more Worker nodes.
-1. As a consecuence of some nodes failure, it may not result on a complete unavailability. Of course, it depends on which component fails: For example, if we had multiple Worker nodes, and one of them fails, the processing capability decreases and the chains execution may be slower, but all the system's functionalities will still work; while if the Broker component fails, then we have lost the capability of execute processes and chains, but the system will still be able to attend discovery operations, the products will still be accessible by the users, and so on. 
-
-3) La falla de uno de los nodos podr´ıa no resultar en una
-falla total en el sistema. Esto, por supuesto, dependera´
-del componente: Por ejemplo, si existiesen varios nodos
-Worker y perdieramos uno, la ´ unica consecuencia es ´
-que la capacidad de procesamiento disminuye, pero el
-sistema sigue funcionando a la perfeccion; mientras ´
-que si el componente Broker ha cesado de funcionar,
-entonces hemos perdido la capacidad de procesar pedidos
-de ejecucion, pero a ´ un podr ´ ´ıamos responder a
-operaciones de descubrimiento, porque Configuration
-sigue funcionando. Cual sea el caso, la recuperacion ante ´
-un error en uno de los nodos tiene que ser mas r ´ apida ´
-que en un esquema centralizado, porque el problema esta´
-aislado y es facil de identificar y resolver, o de generar ´
-un nodo identico.
+1. As a consecuence of some nodes failure, it may not result on a complete unavailability. Of course, it depends on which component fails: For example, if we had multiple Worker nodes, and one of them fails, the processing capability decreases and the chains execution may be slower, but all the system's functionalities will still work; while if the Broker component fails, then we have lost the capability of execute processes and chains, but the system will still be able to attend discovery operations, the products will still be accessible by the users, and so on. Whatever is the case, the recovery to this any kind of failure should be faster, because the problem is isolated and it is easier tho identify and resolve, or to replace the node.
 
 <physical_view_maximum.png>
-
-
 
 
 ## Implementation
