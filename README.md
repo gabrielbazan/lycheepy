@@ -70,40 +70,19 @@ On this view, we are able to distinguish 13 components, being 5 of them Gateways
 
 The physical architecture is the mapping between the software and the hardware. It takes into account non-funcional requirements, such as availability, fault tolerance, performance, and scalability. The software its executed on a computers network (nodes).
 
-The software components of the development view have been delimitaded taking into account the posibility of
+The design of the development components have been carried out takign into account their capability to be distributed across different nodes on a network, searching for the maximum flexibility and taking full advantage of the distributed processing, making the system horizontally scalable.
 
-La delimitacion de los componentes del software ´
-en la vista de desarrollo se llevo a cabo teniendo en mente la ´
-posibilidad de brindar la maxima flexibilidad posible para la ´
-distribucion de cada uno de ellos a trav ´ es de varios nodos ´
-interconectados en una red, sacando el maximo provecho ´
-posible del procesamiento distribuido, y desarrollando a su
-vez un sistema horizontalmente escalable.
+The deployment of the software can be carried out taking into account acount a maximum disgregation, and a minimum disgregation. Between this two extremes, exist many intermediate combinations. 
 
-El despliegue del software puede llevarse a cabo teniendo en
-cuenta una disgregacion m ´ ´ınima y una disgregacion m ´ axima ´
-posibles, existiendo puntos intermedios entre estos dos extremos.
-La disgregacion m ´ ´ınima, representada en la Fig. 22, consiste
-en desplegar todos los componentes en un mismo nodo.
-Este esquema es completamente centralizado, y no realiza
-procesamiento distribuido, aunque puede existir la posibilidad
-de realizar proceso en paralelo, si es que el procesador de este
-nodo dispone de mas de un n ´ ucleo. A su vez, tiene todas las ´
-desventajas mencionadas en la seccion VI. 
+The minimum disgregation, represented below, consists of deloying all the development components into the same node. This is a completely centralized schema, and it does not perform distributed processing, but there may be the possibiblity of perform paralell processing if the container's processor has multiple cores. It also carries with all the disvantages of a centralized system.
 
 <physical_view_minimum.png>
 
-La disgregacion m ´ axima, representada en la Fig. 23, con- ´
-siste en desplegar cada uno de los componentes de desarrollo
-que exponen interfaces en un nodo dedicado. Ademas, despl- ´
-iega un proxy y aquellos componentes de persistencia necesarios.
-Este esquema trae consigo todas las ventajas descritas
-en la seccion VI, ya que permite: ´
-1) Aumentar (o reducir) las capacidades de cada uno de los
-nodos segun su necesidad. ´
-2) Podemos escalar horizontalmente la capacidad de procesamiento
-del servidor, agregando mas instancias del ´
-nodo Worker.
+On the maximum disgregation, represented below, all the development components, except gateways, are deployed on a dedicated node, plus a proxy and the necessary persistence components. This schema carries with all the advantages of a distributed system:
+1. We can increase (or reduce) each nodes capabilities, according to our needs.
+1. We can horizontally scale the processing capabilities, adding more Worker nodes.
+1. As a consecuence of some nodes failure, it may not result on a complete unavailability. Of course, it depends on which component fails: For example, if we had multiple Worker nodes, and one of them fails, the processing capability decreases and the chains execution may be slower, but all the system's functionalities will still work; while if the Broker component fails, then we have lost the capability of execute processes and chains, but the system will still be able to attend discovery operations, the products will still be accessible by the users, and so on. 
+
 3) La falla de uno de los nodos podr´ıa no resultar en una
 falla total en el sistema. Esto, por supuesto, dependera´
 del componente: Por ejemplo, si existiesen varios nodos
