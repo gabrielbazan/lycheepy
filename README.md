@@ -1,3 +1,5 @@
+<img align="left" width="100" height="100" src="doc/architecture/lychee.jpg?raw=true">
+
 # LycheePy
 
 Lychee is a distributed, easy to scale, processing server of geo-spatial data.
