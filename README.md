@@ -22,7 +22,9 @@ Having their responsibilities and interfaces well defined, any component may be 
 
 When exists a dependency between a component, and interfaces of another component, then the first should use a Gateway, which encapsulates the interaction with those interfaces. This way, any change on those interfaces will only affect the Gateway and, ideally, not the component which uses the gateway.
 
-![Alt text](doc/architecture/development_view.png?raw=true "LycheePy components diagram.")
+<p align="center">
+  <img src="doc/architecture/development_view.png?raw=true">
+</p>
 
 On this view, we are able to distinguish 13 components, being 5 of them Gateways. The LycheePy development components are:
 
@@ -51,15 +53,18 @@ The deployment of the software can be carried out taking into account acount a m
 
 The minimum disgregation, represented below, consists of deloying all the development components into the same node. This is a completely centralized schema, and it does not perform distributed processing, but there may be the possibiblity of perform paralell processing if the container's processor has multiple cores. It also carries with all the disvantages of a centralized system.
 
-![Alt text](doc/architecture/physical_view_minimum.png?raw=true "LycheePy minimum disgregation.")
+<p align="center">
+  <img src="doc/architecture/physical_view_minimum.png?raw=true">
+</p>
 
 On the maximum disgregation, represented below, all the development components, except gateways, are deployed on a dedicated node, plus a proxy and the necessary persistence components. This schema carries with all the advantages of a distributed system:
 1. We can increase (or reduce) each nodes capabilities, according to our needs.
 1. We can horizontally scale the processing capabilities, adding more Worker nodes.
 1. As a consecuence of some nodes failure, it may not result on a complete unavailability. Of course, it depends on which component fails: For example, if we had multiple Worker nodes, and one of them fails, the processing capability decreases and the chains execution may be slower, but all the system's functionalities will still work; while if the Broker component fails, then we have lost the capability of execute processes and chains, but the system will still be able to attend discovery operations, the products will still be accessible by the users, and so on. Whatever is the case, the recovery to this any kind of failure should be faster, because the problem is isolated and it is easier tho identify and resolve, or to replace the node.
 
-![Alt text](doc/architecture/physical_view_maximum.png?raw=true "LycheePy maximum disgregation.")
-
+<p align="center">
+  <img src="doc/architecture/physical_view_maximum.png?raw=true">
+</p>
 
 ## Implementation
 
