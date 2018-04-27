@@ -69,6 +69,60 @@ On the maximum disgregation, represented below, all the development components, 
 
 ## Static Configuration
 
+You can configure on which repositories the geospatial data will be automaticly published on the _worker/worker/settings.py_ file. It is a dictionary where each key determines a supported repository kind, and for each one of them we specify a list of repositories of that kind. So we could, for example, publish on multiple geoserver instances and multiple FTP servers at the same time.
+```python
+REPOSITORIES = {
+    Repositories.GEO_SERVER: [
+        {
+            'protocol': 'http',
+            'host': 'repository',
+            'port': 8080
+        }
+    ],
+    Repositories.FTP: [
+        {
+            'ip': 'ftp_repository',
+            'username': 'lycheepy',
+            'password': 'lycheepy',
+            'timeout': 120
+        }
+    ]
+}
+```
+
+You can also configure the maximum amount of time that a process execution can take, on the _lycheepy/wps/wps/settings.py_ file:
+```python
+PROCESS_EXECUTION_TIMEOUT = 30
+```
+
+The PyWPS configuration file can be found in _lycheepy/wps/wps/pywps.cfg_.
+
+
+The _Configuration_ component settings are placed on the _lycheepy/configuration/configuration/settings.py_ file. There, you can:
+ 1. Configure its endpoints pagination. This takes effect on the chains list, the processes list, the supported formats list, and the supported data types list:
+  * _DEFAULT_PAGE_SIZE_ specifies how many results will be returned when the user does not specify the _limit_ query parameter.
+  * _MAX_PAGE_SIZE_ specifies the maximum amount of results can be returned, independently of the _limit_ query parameter.
+ 1. Configure on which _form/data_ keys you expect the process metadata, and the process file, when a process is uploaded or updated.
+  * _PROCESS_SPECIFICATION_FIELD_ specifies the key where you are expecting the process metadata.
+  * _PROCESS_FILE_FIELD_ specifies the key where you are expecting the process file.
+ 1. Configure the supported process file extensions, trough the _ALLOWED_PROCESSES_EXTENSIONS_ parameter. We are using PyWPS, though we only support _.py_ files.
+```python
+DEFAULT_PAGE_SIZE = 10
+MAX_PAGE_SIZE = 100
+
+PROCESS_SPECIFICATION_FIELD = 'specification'
+PROCESS_FILE_FIELD = 'file'
+
+ALLOWED_PROCESSES_EXTENSIONS = ['py']
+```
+
+The _Configuration_ component settings are placed on the _lycheepy/executions/executions/settings.py_ file. There, you can configure its endpoints pagination. This takes effect on the executions list:
+   * _DEFAULT_PAGE_SIZE_ specifies how many results will be returned when the user does not specify the _limit_ query parameter.
+   * _MAX_PAGE_SIZE_ specifies the maximum amount of results can be returned, independently of the _limit_ query parameter.
+```python
+DEFAULT_PAGE_SIZE = 10
+MAX_PAGE_SIZE = 100
+```
 
 
 ## Publishing
