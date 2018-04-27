@@ -1,4 +1,4 @@
-<img align="left" width="100" height="100" src="doc/architecture/lychee.png?raw=true">
+<img align="left" width="80" height="80" src="doc/architecture/lychee.png?raw=true">
 
 # LycheePy
 
