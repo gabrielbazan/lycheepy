@@ -2,12 +2,12 @@
 
 # LycheePy
 
-Lychee is a distributed, easy to scale, processing server of geo-spatial data.
+_LycheePy_ is a distributed, easy to scale, processing server of geo-spatial data.
 
 It allows you to: 
- * Publish pre-defined processing chains through a WPS interface. By doing so, users are abstracted about the chains complexity, because they do not have to build them each time they want to chain processes. From the consumer users perspective, a chain is just another process.
- * Automatize geo-spatial data publication through repositories, such as GeoServer, FTP servers, or any other kind of repository.
- * Easily scale. LycheePy is a distributed system. Worker nodes are the ones which provide the processing capabilities and execute processes, and you can add or remove as many you require. Also, LycheePy will concurrently execute processes when it is applicable to the chain's topology.
+ * Publish pre-defined processing chains through a _WPS_ interface. By doing so, users are abstracted about the chains complexity, because they do not have to build them each time they want to chain processes. From the consumer users perspective, a chain is just another process.
+ * Automatize geo-spatial data publication through repositories, such as _GeoServer_, _FTP_ servers, or any other kind of repository.
+ * Easily scale. LycheePy is a distributed system. _Worker_ nodes are the ones which provide the processing capabilities and execute processes, and you can add or remove as many you require. Also, LycheePy will concurrently execute processes when it is applicable to the chain's topology.
 
 
 ## Architecture
@@ -16,15 +16,15 @@ It allows you to:
 
 The development architecture focuses on the software organization into modules. The software is divided into little packages or subsystems which can be developed by small development teams, and they are organized on a layers hierarchy, where each one of them provide a well-defined interface.
 
-Each component responsibilities need to be very well delimited, so there is only one reason for it to change. This way, any change on the system will affect only component only. Having their responsibilities and interfaces well defined, any component may be replaced with another implementation without affecting the others, and they may be reused for other developments.
+Each component responsibilities need to be very well delimited, so there is only one reason for them to change. This way, any change on the system will affect one component only. Having their responsibilities and interfaces well defined, any component may be replaced with another with different implementation, without affecting the others, and they may be reused for other developments.
 
-When there is a dependency between a component and interfaces of another component, then the first should use a Gateway, which encapsulates the interaction with those interfaces. This way, any change on those interfaces will only affect the Gateway and, ideally, not the components which uses that gateway.
+When there is a dependency between a component and interfaces of another component, then the first should use a _Gateway_, which encapsulates the interaction with those interfaces. This way, any change on those interfaces will only affect the Gateway and, ideally, not the components which use that gateway.
 
 <p align="center">
   <img src="doc/architecture/development_view.png?raw=true" height="370px;">
 </p>
 
-On this view, we are able to distinguish 13 components, being 5 of them Gateways. The LycheePy development components are:
+On this view, we are able to distinguish 13 components, being 5 of them Gateways:
 
 * **WPS**: An implementation of the OGC WPS standard, which exposes the _WPS I_ interface, through which is able to able to retrieve discovery and execution requests of processes and chains. It depends on the _Configuration Gateway_ component in order to know the metadata of every available executables (processes and chains) available. Also depends on the _Executor_ component in order to delegate executions.
 * **Configuration Gateway**: A component which encapsulates the interaction with the _Configuration I_ interface, of the _Configuration_ component.
