@@ -26,19 +26,19 @@ When there is a dependency between a component and interfaces of another compone
 
 On this view, we are able to distinguish 13 components, being 5 of them Gateways:
 
-* **WPS**: An implementation of the OGC WPS standard, which exposes the _WPS I_ interface, through which is able to able to retrieve discovery and execution requests of processes and chains. It depends on the _Configuration Gateway_ component in order to know the metadata of every available executables (processes and chains) available. Also depends on the _Executor_ component in order to delegate executions.
-* **Configuration Gateway**: A component which encapsulates the interaction with the _Configuration I_ interface, of the _Configuration_ component.
-* **Configuration**: A component which exposes the _Configuration I_ interface, trough which it is possible to add, modify, and delete processes and chains. It requires some kind of persistence in order to store this configurations. Uses the _Processes Gateway_ in order to store and delete processes.
-* **Executor**: A component which encapsulates the execution of chains and processes. Depends on the _Broker Gateway_ in order to enqueue processes executions, and on the _Executions Gateway_ in order to inform the executions status.
-* **Executions Gateway**: A component which encapsulates the interaction whit the _Executions I_ interface, of the _Executions_ component.
-* **Executions**: A component which persists the status of all the chains executions. It exposes the _Executions I_ interface, through which it is possible tu update or read those statuses.
-* **Broker Gateway**: A component which encapsulates all the interaction whith the _Messages Queue_ interface, of the _Broker_ component. Trough this component, it is possible to enqueue tasks.
-* **Broker**: A component which is capable of receive tasks and store them on a queue. It ensures that those will be executed in the same order they where enqueued.
-* **Worker**: A component which consumes tasks from the _Mesages Queue_ interface, and executes them. It depends on the _Processes Gateway_ in order to obtain the processes to execute them, and ond the _Repository Gateway_ in order to perform geospatial data automatic publication.
-* **Processes Gateway**: A component which encapsulates the interaction with the _Processes I_ interface, of the _Processes_ component.
-* **Processes**: A component which stores the files of those processes available on the server.
-* **Repository Gateway**: A component which encapsulates the interaction with the _Repository I_ interface, of the _Repository_ component.
-* **Repository**: A component capable of storing geospatial data. It exposes a configuration interface, _Repository I_, and _OWS_ interfaces.
+* **WPS**: An implementation of the _OGC WPS_ standard, which exposes the _WPS I_ interface, through which is able to able to retrieve discovery and execution requests of processes and chains. It depends on the _Configuration Gateway_ component in order to know the metadata of every available executables (processes and chains). Also depends on the _Executor_ component in order to delegate execution requests.
+* **Configuration Gateway**: Encapsulates the interaction with the _Configuration I_ interface, of the _Configuration_ component.
+* **Configuration**: Exposes the _Configuration I_ interface, trough which it is possible to add, modify, and delete processes and chains. It requires some kind of persistence in order to store this configurations. Uses the _Processes Gateway_ in order to store and delete processes files.
+* **Executor**: Encapsulates the execution of chains and processes. It can attend every execution requests that may come from the WPS component, or some other component we may add in the future. Depends on the _Broker Gateway_ in order to enqueue processes executions, and on the _Executions Gateway_ in order to inform and update the executions statuses.
+* **Executions Gateway**: Encapsulates the interaction with the _Executions I_ interface, of the _Executions_ component.
+* **Executions**: Persists the status of all the chains executions that have finished (successfully or with errors), or are still running. It exposes the _Executions I_ interface, through which it is possible tu update or read those statuses.
+* **Broker Gateway**: Encapsulates every possible interaction whith the _Messages Queue_ interface, of the _Broker_ component. Trough this component, it is possible to enqueue tasks.
+* **Broker**: Capable of receive tasks and store them on a queue. It ensures that those will be executed in the same order they where enqueued. Publishers and consumers may be distributed across different hosts.
+* **Worker**: Consumes tasks from the _Mesages Queue_ interface, and executes them. It depends on the _Processes Gateway_, in order to obtain the processes files, which will be later executed. Also depends on the _Repository Gateway_ in order to perform geospatial data automatic publication.
+* **Processes Gateway**: Encapsulates the interaction with the _Processes I_ interface, of the _Processes_ component.
+* **Processes**: Stores the files of those processes available on the server.
+* **Repository Gateway**: Encapsulates the interaction with the _Repository I_ interface, of the _Repository_ component.
+* **Repository**: Capable of storing geospatial data. 
 
 
 ### Physical View
