@@ -79,6 +79,11 @@ Inside the [lycheepy](/lycheepy) directory, we will find one folder per each dev
  * The [docker-compose.yml](/lycheepy/docker-compose.yml) file. There are found all the containers definitions, their mutual dependencies, the ports they expose for mutual interaction, the ports they expose to the host, and so on.
  * A [start.sh](lycheepy/start.sh) executable file, which can be used to run all the containers for development purposes.
 
+Inside each development component's directory, we will find a _Dockerfile_ file, and the source code of the component itself. Lets see with an example: The _Configuration_ development component is inside the [lycheepy/configuration](lycheepy/configuration) directory, and there we can see:
+ * The _Dockerfile_.
+ * A folder with the same name of the component, which contains the source code, in this case named [configuration](/lycheepy/configuration/configuration). Inside this folder, you have complete freedom to organize the code.
+ * A [requirements.txt](lycheepy/configuration/requirements.txt) file, because we are talking about a component which is implemented with Python, and on this level we should place all install-related files. We will only use this file while the component's installation.
+ * A [wait-service.sh](/lycheepy/configuration/wait-service.sh) file, which is an utility to wait until a TCP port of another container is alive. You can read more about this [here](https://docs.docker.com/compose/startup-order/).
 
 
 
