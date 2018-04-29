@@ -83,9 +83,12 @@ Inside the [lycheepy](/lycheepy) directory, we will find one folder per each dev
 
 Inside each development component's directory, we will find a _Dockerfile_ file, and the source code of the component itself. Lets see with an example: The _Configuration_ development component is inside the [lycheepy/configuration](lycheepy/configuration) directory, and there we can see:
  * The _Dockerfile_.
- * A folder with the same name of the component, which contains the source code, in this case named [configuration](/lycheepy/configuration/configuration). Inside this folder, you have complete freedom to organize the code.
+ * A folder with the same name of the component, which contains the source code, in this case named [configuration](/lycheepy/configuration/configuration). Inside this folder you can organize your code just as you like.
  * A [requirements.txt](lycheepy/configuration/requirements.txt) file, because we are talking about a component which is implemented with Python, and on this level we should place all install-related files. We will only use this file while the component's installation.
  * A [wait-service.sh](/lycheepy/configuration/wait-service.sh) file, which is an utility to wait until a TCP port of another container starts listening. You can read more about this [here](https://docs.docker.com/compose/startup-order/).
+
+If your component is implemented with Python and uses gateways, then they should be placed on a _gateways_ package, inside the component's sources folder. Inside this package, you can place one folder per each component dependency. This way, we can quickly know which components the component depends on. For example: The [WPS](/lycheepy/wps) component depends on the _Configuration_ component, so inside its [sources folder](/lycheepy/wps/wps) we place a [gateways](/lycheepy/wps/wps/gateways) package, and there we place a [configuration](/lycheepy/wps/wps/gateways/configuration) package, which contains the gateway.
+
 
 ### Components
 
