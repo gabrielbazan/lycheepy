@@ -69,6 +69,8 @@ On the maximum decomposition, represented below, all the development components,
 
 This is the section we all might consider the most important, or at least the most attractive. Of course, it is important, but if you scrolled to here without reading about the [architecture](#architecture) then scroll up again :)
 
+### Repository Structure
+
 First of all, lets talk about the repository organization. At the root of it, we basically have three directories:
  * [lycheepy](/lycheepy), which contains the source code.
  * [doc](/doc), which contains the documentation.
@@ -83,8 +85,43 @@ Inside each development component's directory, we will find a _Dockerfile_ file,
  * The _Dockerfile_.
  * A folder with the same name of the component, which contains the source code, in this case named [configuration](/lycheepy/configuration/configuration). Inside this folder, you have complete freedom to organize the code.
  * A [requirements.txt](lycheepy/configuration/requirements.txt) file, because we are talking about a component which is implemented with Python, and on this level we should place all install-related files. We will only use this file while the component's installation.
- * A [wait-service.sh](/lycheepy/configuration/wait-service.sh) file, which is an utility to wait until a TCP port of another container is alive. You can read more about this [here](https://docs.docker.com/compose/startup-order/).
+ * A [wait-service.sh](/lycheepy/configuration/wait-service.sh) file, which is an utility to wait until a TCP port of another container starts listening. You can read more about this [here](https://docs.docker.com/compose/startup-order/).
 
+### Components
+
+Description here.
+
+#### WPS
+
+Description here.
+
+#### Configuration
+
+Description here.
+
+#### Executer
+
+Description here.
+
+#### Executions
+
+Description here.
+
+#### Broker
+
+Description here.
+
+#### Worker
+
+Description here.
+
+#### Processes
+
+Description here.
+
+#### Repository
+
+Description here.
 
 
 ## Deployment
