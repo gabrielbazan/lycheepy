@@ -24,7 +24,7 @@ When there is a dependency between a component and interfaces of another compone
   <img src="doc/architecture/development_view.png?raw=true" height="370px;">
 </p>
 
-On this view, we are able to distinguish 13 components, being 5 of them Gateways:
+On this view, we can distinguish 13 components, being 5 of them Gateways:
 
 * **WPS**: An implementation of the _OGC WPS_ standard, which exposes the _WPS I_ interface, through which is able to able to retrieve discovery and execution requests of processes and chains. It depends on the _Configuration Gateway_ component in order to know the metadata of every available executables (processes and chains). Also depends on the _Executor_ component in order to delegate execution requests.
 * **Configuration Gateway**: Encapsulates the interaction with the _Configuration I_ interface, of the _Configuration_ component.
