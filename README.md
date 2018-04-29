@@ -103,7 +103,7 @@ PyWPS uses a [configuration file](http://pywps.readthedocs.io/en/master/configur
  * Configure the WPS server. For example, specifying how many processes can be running in parallel.
  * Configure logging policies, such as the logging level.
 
-To make the processes and chains of the _Configuration_ component visible through the WPS interface, this component uses the [ConfigurationsGateway](/lycheepy/wps/wps/gateways/configuration).
+To make the processes and chains of the _Configuration_ component visible through the WPS interface, this component uses the [ConfigurationGateway](/lycheepy/wps/wps/gateways/configuration).
 
 To delegate the execution requests to the _Executor_ component, we use an [adapter](/lycheepy/wps/wps/adapter). This translates the metadata coming from the _Configuration_ component, into special PyWPS _Process_ instances. When those instances are executed, they simply delegate it to the _Executor_ component.
 
