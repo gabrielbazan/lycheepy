@@ -67,6 +67,19 @@ On the maximum decomposition, represented below, all the development components,
 
 ## Implementation
 
+This is the section we all might consider the most important, or at least the most attractive. Of course, it is important, but if you scrolled to here without reading about the [architecture](#architecture) then scroll up again :)
+
+First of all, lets talk about the repository organization. At the root of it, we basically have three directories:
+ * [lycheepy](/lycheepy), which contains the source code.
+ * [doc](/doc), which contains the documentation.
+ * [tests](/tests), which contains functional, and (in the future) unitary tests.
+
+Inside the [lycheepy](/lycheepy) directory, we will find one folder per each development component, and everything we need to install and run the application. To ensure the proper distribution of these development components across different containers while we are developing, and even in production, we use [Docker Compose](https://docs.docker.com/compose/), so on this directory we'll find:
+ * A [host_dependencies.sh](/lycheepy/host_dependencies.sh) executable file, which can be used in order to install the host dependencies, such as docker-compose.
+ * The [docker-compose.yml](/lycheepy/docker-compose.yml) file. There are found all the containers definitions, their mutual dependencies, the ports they expose for mutual interaction, the ports they expose to the host, and so on.
+ * A [start.sh](lycheepy/start.sh) executable file, which can be used to run all the containers for development purposes.
+
+
 
 
 ## Deployment
