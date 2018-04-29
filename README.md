@@ -116,7 +116,7 @@ This is a very simple component, which exposes a ReST API, through which we can 
 
 The interface is implemented with the [Simply Restful](https://github.com/gabrielbazan/simply-restful/) framework, which uses _Flask_ and _SQLAlchemy_.
 
-It uses a _PostgreSQL_ instance as persistence, but you could use other database supported by _SQLAlchemy_, such as _SQLLite_.
+It uses a _PostgreSQL_ instance as persistence, but you could use other database supported by _SQLAlchemy_, such as _SQLite_.
 
 It performs several validations over the chains topography, using [NetworkX](https://networkx.github.io/).
 
