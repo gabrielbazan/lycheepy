@@ -144,7 +144,12 @@ We use _NetworkX_ to obtain the antichains, and encapsulate it on the [AntiChain
 
 #### Executions
 
-Description here.
+This is a very simple component, which exposes a ReST API, through which we can read and update execution statuses. Right now, we are going to talk about its implementation, rather than [how to use its endpoints](#requesting-chain-executions-status).
+
+The interface is implemented with the [Simply Restful](https://github.com/gabrielbazan/simply-restful/) framework, which uses _Flask_ and _SQLAlchemy_.
+
+It uses a _PostgreSQL_ instance as persistence, but you could use other database supported by _SQLAlchemy_, such as _SQLite_.
+
 
 #### Broker
 
