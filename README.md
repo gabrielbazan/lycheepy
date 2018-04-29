@@ -26,15 +26,15 @@ When there is a dependency between a component and interfaces of another compone
 
 On this view, we can distinguish 13 components, being 5 of them Gateways:
 
-* **WPS**: An implementation of the _OGC WPS_ standard, which exposes the _WPS I_ interface, through which is able to able to retrieve discovery and execution requests of processes and chains. It depends on the _Configuration Gateway_ component in order to know the metadata of every available executables (processes and chains). Also depends on the _Executor_ component in order to delegate execution requests.
+* **WPS**: An implementation of the _OGC WPS_ standard, which exposes the _WPS I_ interface, through which can retrieve discovery and execution requests of processes and chains. It depends on the _Configuration Gateway_ component, through which it can access to the metadata of every available executables (processes and chains). Also depends on the _Executor_ component, to which it delegates the execution requests it receives.
 * **Configuration Gateway**: Encapsulates the interaction with the _Configuration I_ interface, of the _Configuration_ component.
-* **Configuration**: Exposes the _Configuration I_ interface, trough which it is possible to add, modify, and delete processes and chains. It requires some kind of persistence in order to store this configurations. Uses the _Processes Gateway_ in order to store and delete processes files.
-* **Executor**: Encapsulates the execution of chains and processes. It can attend every execution requests that may come from the WPS component, or some other component we may add in the future. Depends on the _Broker Gateway_ in order to enqueue processes executions, and on the _Executions Gateway_ in order to inform and update the executions statuses.
+* **Configuration**: Exposes the _Configuration I_ interface, trough which it is possible to add, modify, and delete processes and chains. It requires some kind of persistence in order to store this settings. Uses the _Processes Gateway_ in order to store and delete processes files.
+* **Executor**: Encapsulates the execution of chains and processes. It can attend every execution request that may come from the WPS component, or some other component we may add in the future. Depends on the _Broker Gateway_ to enqueue processes executions, and on the _Executions Gateway_ in order to inform and update the executions statuses.
 * **Executions Gateway**: Encapsulates the interaction with the _Executions I_ interface, of the _Executions_ component.
-* **Executions**: Persists the status of all the chains executions that have finished (successfully or with errors), or are still running. It exposes the _Executions I_ interface, through which it is possible tu update or read those statuses.
-* **Broker Gateway**: Encapsulates every possible interaction whith the _Messages Queue_ interface, of the _Broker_ component. Trough this component, it is possible to enqueue tasks.
+* **Executions**: Persists the status of all the chains executions that have finished (successfully or with errors) or are still running. It exposes the _Executions I_ interface, through which it is possible to update or read those statuses.
+* **Broker Gateway**: Encapsulates every possible interaction with the _Messages Queue_ interface, of the _Broker_ component. Trough this component, it is possible to enqueue tasks.
 * **Broker**: Capable of receive tasks and store them on a queue. It ensures that those will be executed in the same order they where enqueued. Publishers and consumers may be distributed across different hosts.
-* **Worker**: Consumes tasks from the _Mesages Queue_ interface, and executes them. It depends on the _Processes Gateway_, in order to obtain the processes files, which will be later executed. Also depends on the _Repository Gateway_ in order to perform geospatial data automatic publication.
+* **Worker**: Consumes tasks from the _Messages Queue_ interface and executes them. It depends on the _Processes Gateway_, to obtain the processes files, which will be later executed. Also depends on the _Repository Gateway_ to perform geospatial data automatic publication.
 * **Processes Gateway**: Encapsulates the interaction with the _Processes I_ interface, of the _Processes_ component.
 * **Processes**: Stores the files of those processes available on the server.
 * **Repository Gateway**: Encapsulates the interaction with the _Repository I_ interface, of the _Repository_ component.
@@ -43,22 +43,22 @@ On this view, we can distinguish 13 components, being 5 of them Gateways:
 
 ### Physical View
 
-The physical architecture is the mapping between the software and the hardware. It takes into account non-funcional requirements, such as availability, fault tolerance, performance, and scalability. The software its executed on a computers (_nodes_) network.
+The physical architecture is the mapping between the software and the hardware. It considers non-functional requirements, such as availability, fault tolerance, performance, and scalability. The software its executed on a computers (_nodes_) network.
 
-The design of the development components have been carried out takign into account their capability to be distributed across different nodes on a network, searching for the maximum flexibility, and taking full advantage of the distributed processing, making the system horizontally scalable.
+The design of the development components has been carried out considering their capability to be distributed across different nodes on a network, searching for the maximum flexibility, and taking full advantage of the distributed processing, making the system horizontally scalable.
 
-The deployment of the software can be carried out taking into account acount a maximum _disgregation_, and a minimum disgregation. Between this two extremes, exist many intermediate combinations. 
+The deployment of the software can be carried out considering a maximum _decomposition_, and a minimum decomposition. Between these two extremes, exist many intermediate combinations. 
 
-The minimum disgregation, represented below, consists of deloying all the development components into the same node. This is a completely centralized schema, and it does not perform distributed processing, but there may be the possibiblity of perform paralell processing if the container's processor has multiple cores. It also carries with all the disvantages of a centralized system.
+The minimum decomposition, represented below, consists of deploying all the development components into the same node. This is a completely centralized schema, and it does not perform distributed processing, but there may be the possibility of performing parallel processing if the container's processor has multiple cores. It also carries with all the disadvantages of a centralized system.
 
 <p align="center">
-  <img src="doc/architecture/physical_view_minimum.png?raw=true" height="70px">
+  <img src="doc/architecture/physical_view_minimum.png?raw=true" height="80px">
 </p>
 
-On the maximum disgregation, represented below, all the development components, except gateways, are deployed on a dedicated node, plus a proxy, and the necessary persistence components. This schema carries with all the advantages of a distributed system:
+On the maximum decomposition, represented below, all the development components, except gateways, are deployed on a dedicated node, plus a proxy, and the necessary persistence components. This schema carries with all the advantages of a distributed system:
 1. We can increase (or reduce) each nodes capabilities, according to our needs.
 1. We can horizontally scale the processing capabilities, adding more Worker nodes.
-1. As a consecuence of some nodes failure, it may not result on a complete system unavailability. Of course, it depends on which component fails: For example, if we had multiple Worker nodes, and one of them fails, the processing capability decreases and the chains execution may be slower, but all the system's functionalities will still work; while if the Broker component fails, then we have lost the capability of execute processes and chains, but the system will still be able to attend discovery operations, the products will still be accessible by the users, and so on. Whatever is the case, the recovery to any kind of failure should be faster, because the problem is isolated, and it is easier tho identify and resolve, or to replace the node.
+1. Because of some nodes failure, it may not result on a complete system unavailability. Of course, it depends on which component fails: For example, if we had multiple Worker nodes, and one of them fails, the processing capability decreases and the chains execution may be slower, but all the system's functionalities will still work; while if the Broker component fails, then we have lost the capability of execute processes and chains, but the system will still be able to attend discovery operations, the products will still be accessible by the users, and so on. Whatever is the case, the recovery to any kind of failure should be faster, because the problem is isolated, and it is easier to identify and resolve, or to replace the node.
 
 <p align="center">
   <img src="doc/architecture/physical_view_maximum.png?raw=true" height="370px">
