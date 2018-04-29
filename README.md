@@ -125,7 +125,14 @@ Finally, it publishes processes files on the _Processes_ component, so it uses a
 
 #### Executer
 
-Description here.
+It encapsulates the compexity that relies behind the distributed execution of processes and chains, while it provides a very clear interface.
+
+It also keeps the executions statuses updated on the _Executions_ component, through the [ExecutionsGateway](/lycheepy/wps/wps/gateways/executions). Also depends on the [BrokerGateway](/lycheepy/wps/wps/gateways/broker) to enqueue processes executions.
+
+It basically provides two public operations: _execute_process_, and _execute_chain_. When it comes to a process execution, it simply enqueue the process execution using the _BrokerGateway_. But the chains execution is a bit more complex.
+
+
+
 
 #### Executions
 
