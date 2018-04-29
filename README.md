@@ -89,11 +89,18 @@ Inside each development component's directory, we will find a _Dockerfile_ file,
 
 ### Components
 
-Description here.
+Just as we said before, the development components are placed inside the [lycheepy](/lycheepy) directory.
 
 #### WPS
 
-Description here.
+Placed on the [wps](/lycheepy/wps) directory, it is an implementation of the OGC WPS standard. More precisely, it is a Python implementation of that standard, called [PyWPS](http://pywps.org/). 
+
+PyWPS uses a [configuration file](/lycheepy/wps/wps/pywps.cfg). There, we can:
+ * Specify metadata about the server instance.
+ * Configure the WPS server. For example, specifying how many processes can be running in parallel.
+ * Configure logging policies, such as the logging level.
+
+
 
 #### Configuration
 
