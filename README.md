@@ -131,9 +131,15 @@ It also keeps the executions statuses updated on the _Executions_ component, thr
 
 It basically provides two public operations: _execute_process_, and _execute_chain_. When it comes to a process execution, it simply enqueues the process execution using the _BrokerGateway_. But the chains execution is a bit more complex.
 
+Chains are sliced into antichains by using the [AntiChains](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.dag.antichains.html) algorithm. Lets see it with an example:
+
 <p align="center">
   <img src="doc/architecture/antichains.png?raw=true" height="200px">
 </p>
+
+The algoritm produces a list of antichains, where an antichain is a list of processes. The particularity of each antichain is that there is no relationship between the processes it contains, so we could execute them in parallel (this means at the same time, using multiple processor cores, or in a distributed way).
+
+We use _NetworkX_ to obtain the antichains, and encapsulate it on the [AntiChains](/lycheepy/wps/wps/executor/anti_chains.py) class. To execute a chain, a _Chain_ instance is built using the _ChainBuilder_ class, starting from the metadata that comes from the _Configuration_ component. The _Chain_ class encapsulate all the execution logic, which basically consists of loop the antichains list, and send each antichain to the _Broker_ to be executed concurrently.
 
 
 #### Executions
