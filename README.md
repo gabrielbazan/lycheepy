@@ -131,7 +131,9 @@ It also keeps the executions statuses updated on the _Executions_ component, thr
 
 It basically provides two public operations: _execute_process_, and _execute_chain_. When it comes to a process execution, it simply enqueues the process execution using the _BrokerGateway_. But the chains execution is a bit more complex.
 
-
+<p align="center">
+  <img src="doc/architecture/antichains.png?raw=true" height="200px">
+</p>
 
 
 #### Executions
