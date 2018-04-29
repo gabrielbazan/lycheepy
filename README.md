@@ -95,11 +95,10 @@ Just as we said before, the development components are placed inside the [lychee
 
 Placed on the [wps](/lycheepy/wps) directory, it is an implementation of the OGC WPS standard. More precisely, it is a Python implementation of that standard, called [PyWPS](http://pywps.org/). 
 
-PyWPS uses a [configuration file](/lycheepy/wps/wps/pywps.cfg). There, we can:
+PyWPS uses a [configuration file](http://pywps.readthedocs.io/en/master/configuration.html), placed [here](/lycheepy/wps/wps/pywps.cfg), where you can:
  * Specify metadata about the server instance.
  * Configure the WPS server. For example, specifying how many processes can be running in parallel.
  * Configure logging policies, such as the logging level.
-
 
 
 #### Configuration
