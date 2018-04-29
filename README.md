@@ -96,12 +96,18 @@ Just as we said before, the development components are placed inside the [lychee
 
 #### WPS
 
-Placed on the [wps](/lycheepy/wps) directory, it is an implementation of the OGC WPS standard. More precisely, it is a Python implementation of that standard, called [PyWPS](http://pywps.org/). 
+Placed on the [wps](/lycheepy/wps) directory, it is an implementation of the OGC WPS standard. More precisely, it is a great Python implementation of that standard, named [PyWPS](http://pywps.org/). 
 
 PyWPS uses a [configuration file](http://pywps.readthedocs.io/en/master/configuration.html), placed [here](/lycheepy/wps/wps/pywps.cfg), where you can:
  * Specify metadata about the server instance.
  * Configure the WPS server. For example, specifying how many processes can be running in parallel.
  * Configure logging policies, such as the logging level.
+
+To make the processes and chains of the _Configuration_ component visible through the WPS interface, this component uses the [ConfigurationsGateway](/lycheepy/wps/wps/gateways/configuration).
+
+To delegate the execution requests to the _Executor_ component, we use an [adapter](/lycheepy/wps/wps/adapter). This translates the metadata coming from the _Configuration_ component, into special PyWPS _Process_ instances. When those instances are executed, they simply delegate it to the _Executor_ component.
+
+The [ServiceBuilder](/lycheepy/wps/wps/service) is the one that takes the metadata from the _ConfigurationGateway_, calls the adapter, and appends those special processes to a PyWPS _Service_ instance.
 
 
 #### Configuration
