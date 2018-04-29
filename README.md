@@ -112,7 +112,16 @@ The [ServiceBuilder](/lycheepy/wps/wps/service) is the one that takes the metada
 
 #### Configuration
 
-Description here.
+This is a very simple component, which exposes a ReST API, through which we can publish processes and chains. Right now, we are going to talk about its implementation, rather than [how to use its endpoints](#publishing).
+
+The interface is implemented with the [Simply Restful](https://github.com/gabrielbazan/simply-restful/) framework, which uses _Flask_ and _SQLAlchemy_.
+
+It uses a _PostgreSQL_ instance as persistence, but you could use other database supported by _SQLAlchemy_, such as _SQLLite_.
+
+It performs several validations over the chains topography, using [NetworkX](https://networkx.github.io/).
+
+Finally, it publishes processes files on the _Processes_ component, so it uses a [gateway](/lycheepy/configuration/configuration/gateways). This gateway is shared by the _Configuration_ and _Worker_ components, so it is on a separated repository, and referenced as a git-submodule by both components.
+
 
 #### Executer
 
