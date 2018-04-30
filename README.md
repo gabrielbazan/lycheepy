@@ -248,6 +248,10 @@ MAX_PAGE_SIZE = 100
 
 ## Publishing
 
+<p align="center">
+  <img src="doc/architecture/standard_processing_model.jpg?raw=true">
+</p>
+
 ### Publish a Process
 
 ```json
