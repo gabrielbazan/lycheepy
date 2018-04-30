@@ -202,7 +202,11 @@ The thing here is the [gateway](https://github.com/gabrielbazan/lycheepy.process
 
 #### Repository
 
-Description here.
+The _Repository_ is a component capable to store geospatial data. Some repositories may make this data available to users, and they can do it trough different kinds of interfaces. Examples are _GeoServer_, an _FTP_ repository, a _File System_, cloud services, and so on.
+
+Since the architecture design, we stablished several requirements for the repository to be chosen for this development. We said that it should make geospatial data available trough _OWS_ interfaces, and it should also have a some kind of configuration interface. So we've chosen _GeoServer_, which implements OWS services such as _WFS_, _WMS_, _WCS_, _CSW_, and so on, and provides a [ReST Configuration API](http://docs.geoserver.org/stable/en/user/rest/).
+
+We also said that the application shall be able to interact with instances of different kinds of repositories at the same time, and it should be possible to easily add integrations with new kinds of repositories.
 
 
 
