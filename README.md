@@ -171,11 +171,15 @@ The [Worker](/lycheepy/worker/worker/distribution/worker.py) defines two tasks:
 
 #### Processes
 
-Description here.
+This component responsibility is simple: It just stores the processes files. So we have so many alternatives to implement it, some better than others: A FTP server, a database, a shared filesystem, and so on. We've chosen [vsftpd](https://security.appspot.com/vsftpd.html), an FTP server.
+
+The thing here is the [gateway](https://github.com/gabrielbazan/lycheepy.processes/blob/master/gateway.py) to this component, which completely abstracts the gateway's clients about the "complexity" behind this. You can simply obtain a process instance by specifying its identifier.
+
 
 #### Repository
 
 Description here.
+
 
 
 ## Deployment
