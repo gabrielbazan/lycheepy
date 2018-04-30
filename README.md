@@ -153,11 +153,21 @@ It uses a _PostgreSQL_ instance as persistence, but you could use other database
 
 #### Broker
 
-Description here.
+In the architecture description, we said that this component receives tasks from the _Executor_ (the producer) trough the _BrokerGateway_. Then, these tasks are stored until the _Workers_ consume and execute them. The communication protocol between all these parts must consider that all of them may be located on different hosts, because our goal is to perform distributed processing.
+
+So, to carry out all these functional and not functional requirements, we chose [Celery](http://www.celeryproject.org/): "An asynchronous task queue/job queue based on distributed message passing". It just fits perfectly: "The execution units, called tasks, are executed concurrently on a single or more worker servers".
+
+So, in _Celery_, the workers define which tasks they can execute, and then begin to listen to a broker, which is usually a [RabbitMQ](https://www.rabbitmq.com/) instance, and the producers simply enqueue tasks into the broker. Yes, the _Broker_ component is a _RabbitMQ_ instance. 
+
+The [BrokerGateway](/lycheepy/wps/wps/gateways/broker/gateway.py) uses a _Celery_ application to "talk" with the _Broker_. It enqueues tasks with the same name and parameters that the _Workers_ are expecting.
+
 
 #### Worker
 
-Description here.
+The [Worker](/lycheepy/worker/worker/distribution/worker.py) defines two tasks:
+ * A _run_process_ task, which can execute a process, given its identifier and inputs values. Uses the [ProcessesGateway](https://github.com/gabrielbazan/lycheepy.processes) to obtain the process file.
+ * A _run_chain_process_ task, which first executes the process, using the _run_process_, and then performs the automatic products publication, making use of the [RepositoryGateway](/lycheepy/worker/worker/gateways/repository), if any of the process outputs have been configured as automaticly publishable.
+
 
 #### Processes
 
