@@ -14,6 +14,25 @@ It allows you to:
 
 - [Architecture](#architecture)
   * [Development View](#development-view)
+  * [Physical View](#physical-view)
+- [Implementation](#implementation)
+  * [Repository Structure](#repository-structure)
+  * [Components](#components)
+- [Deployment](#deployment)
+- [Static Configuration](#static-configuration)
+- [Publishing](#publishing)
+  * [Publish a Process](#publish-a-process)
+  * [Publish a Chain](#publish-a-chain)
+  * [Automatic Products Publication](#automatic-products-publication)
+- [Discovering and Executing](#discovering-and-executing)
+  * [Discover](#discover)
+  * [Execute a Process](#execute-a-process)
+  * [Execute a Chain](#execute-a-chain)
+- [Requesting Chain Executions Status](#requesting-chain-executions-status)
+- [Discovering Automatically Published Products](#discovering-automatically-published-products)
+- [TODO List](#todo-list)
+
+
 
 ## Architecture
 
