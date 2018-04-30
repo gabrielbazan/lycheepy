@@ -356,6 +356,40 @@ The following is an example of the [L0](/tests/cosmo/processes/L0.py) processor 
 
 Using the _{host}/configuration/processes_ URI with the _GET_ HTTP method, you'll retrieve a list which contains all the published proceses.
 
+```json
+{
+    "count": 5,
+    "results": [
+        {
+            "inputs": [
+                {
+                    "dataType": "string",
+                    "format": null,
+                    "abstract": "Crude data",
+                    "identifier": "crude",
+                    "title": "crude"
+                }
+            ],
+            "title": "L0 Processor",
+            "outputs": [
+                {
+                    "dataType": null,
+                    "format": "GEOTIFF",
+                    "abstract": "RAW data",
+                    "identifier": "RAW",
+                    "title": "RAW output"
+                }
+            ],
+            "abstract": "L0 Processor, which generates the RAW product",
+            "version": "0.1",
+            "identifier": "L0",
+            "id": 1,
+            "metadata": ["Level 0", "Processor"]
+        }
+    ]
+}
+```
+
 #### Updating a Process
 
 
