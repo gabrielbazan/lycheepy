@@ -206,11 +206,14 @@ The _Repository_ is a component capable to store geospatial data. Some repositor
 
 Since the architecture design, we stablished several requirements for the repository to be chosen for this development. We said that it should make geospatial data available trough _OWS_ interfaces, and it should also have a some kind of configuration interface. So we've chosen _GeoServer_, which implements OWS services such as _WFS_, _WMS_, _WCS_, _CSW_, and so on, and provides a [ReST Configuration API](http://docs.geoserver.org/stable/en/user/rest/).
 
-We also said that the application shall be able to interact with instances of different kinds of repositories at the same time, and it should be possible to easily add integrations with new kinds of repositories. 
+We also said that the application shall be able to interact with instances of different kinds of repositories at the same time, and it should be possible to easily add integrations with new kinds of repositories. So the [RepositoryGateway](/lycheepy/worker/worker/gateways/repository) defines a [Repository](/lycheepy/worker/worker/gateways/repository/repository.py) interface (in Python, the closest thing to an interface is an abstract class), which defines a single _publish_ method. This method is overriden by classes which implement this interface, while they specify the required behavior to interact with an specific kind of repository. 
 
 <p align="center">
   <img src="doc/architecture/repositories_strategy.png?raw=true" height="120px">
 </p>
+
+For example, the [GeoServerRepository](/lycheepy/worker/worker/gateways/repository/geo_server_repository.py) can publish rasters into a _GeoServer_ instance. To do so, it implements the _Repository_ interface, and uses the [gsconfig](https://github.com/boundlessgeo/gsconfig) client to interact with the _GeoServer_ instance.
+
 
 
 ## Deployment
