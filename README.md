@@ -218,6 +218,9 @@ For example, the [GeoServerRepository](/lycheepy/worker/worker/gateways/reposito
 
 ## Deployment
 
+For development purposes, all you need to run _LycheePy_ is clone the repository and execute the [start.sh](/lycheepy/start.sh) script. 
+
+I still did not figured out the best way of deploying an application with docker-compose into production. I will require some research.
 
 
 ## Static Configuration
