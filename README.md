@@ -218,13 +218,15 @@ The PyWPS configuration file can be found in _lycheepy/wps/wps/pywps.cfg_.
 
 
 The _Configuration_ component settings are placed on the _lycheepy/configuration/configuration/settings.py_ file. There, you can:
- 1. Configure its endpoints pagination. This takes effect on the chains list, the processes list, the supported formats list, and the supported data types list:
-  * _DEFAULT_PAGE_SIZE_ specifies how many results will be returned when the user does not specify the _limit_ query parameter.
-  * _MAX_PAGE_SIZE_ specifies the maximum amount of results can be returned, independently of the _limit_ query parameter.
- 1. Configure on which _form/data_ keys you expect the process metadata, and the process file, when a process is uploaded or updated.
-  * _PROCESS_SPECIFICATION_FIELD_ specifies the key where you are expecting the process metadata.
-  * _PROCESS_FILE_FIELD_ specifies the key where you are expecting the process file.
- 1. Configure the supported process file extensions, trough the _ALLOWED_PROCESSES_EXTENSIONS_ parameter. We are using PyWPS, though we only support _.py_ files.
+
+1. Configure its endpoints pagination. This takes effect on the chains list, the processes list, the supported formats list, and the supported data types list:
+    * _DEFAULT_PAGE_SIZE_ specifies how many results will be returned when the user does not specify the _limit_ query parameter.
+    * _MAX_PAGE_SIZE_ specifies the maximum amount of results can be returned, independently of the _limit_ query parameter.
+2. Configure on which _form/data_ keys you expect the process metadata, and the process file, when a process is uploaded or updated:
+    * _PROCESS_SPECIFICATION_FIELD_ specifies the key where you are expecting the process metadata.
+    * _PROCESS_FILE_FIELD_ specifies the key where you are expecting the process file.
+3. Configure the supported process file extensions, trough the _ALLOWED_PROCESSES_EXTENSIONS_ parameter. We are using PyWPS, though we only support _.py_ files.
+
 ```python
 DEFAULT_PAGE_SIZE = 10
 MAX_PAGE_SIZE = 100
