@@ -291,7 +291,7 @@ The _COSMO-Skymed_ mission, carried out by the _Italian Space Agency (ASI)_, con
 The COSMO-SkyMed products are divided in the following major classes:
 
 <p align="center">
-  <img src="doc/architecture/cosmo_products_classes.png?raw=true">
+  <img src="doc/architecture/cosmo_products_classes.png?raw=true" height="110px">
   <br>
   Taken from the <a href="http://www.e-geos.it/products/pdf/csk-product%20handbook.pdf">COSMO-Skymed Products Handbook<a>
 </p>
@@ -299,7 +299,7 @@ The COSMO-SkyMed products are divided in the following major classes:
 We will focus on the _SAR Standard_ products, which are the following:
 
 <p align="center">
-  <img src="doc/architecture/csk_products.png?raw=true">
+  <img src="doc/architecture/csk_products.png?raw=true" height="95px">
   <br>
   Taken from the <a href="http://www.e-geos.it/products/pdf/csk-product%20handbook.pdf">COSMO-Skymed Products Handbook<a>
 </p>
