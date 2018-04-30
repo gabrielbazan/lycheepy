@@ -283,7 +283,9 @@ MAX_PAGE_SIZE = 100
 ```
 
 
-## Publishing
+## Publishing, Discovering, and Executing
+
+### An Example
 
 <p align="center">
   <img src="doc/architecture/standard_processing_model.jpg?raw=true">
@@ -292,7 +294,7 @@ MAX_PAGE_SIZE = 100
 </p>
 
 
-### Publish a Process
+### Publishing a Process
 
 ```json
 {
@@ -320,7 +322,7 @@ MAX_PAGE_SIZE = 100
 }
 ```
 
-### Publish a Chain
+### Publishing a Chain
 
 ```json
 {
@@ -346,17 +348,18 @@ MAX_PAGE_SIZE = 100
 ```
 
 
-### Automatic Products Publication
+#### Publish Products Automaticly
 
 
-## Discovering and Executing
-
-### Discover
+### Discovering Executables
 
 {{wps}}?service=WPS&request=getcapabilities
 {{wps}}?service=WPS&request=describeprocess&version=1.0.0&identifier=L0
 
-### Execute a Process
+
+### Executing
+
+#### Executing a Process
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -373,7 +376,7 @@ MAX_PAGE_SIZE = 100
 </wps:Execute>
 ```
 
-### Execute a Chain
+#### Executing a Chain
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -390,7 +393,7 @@ MAX_PAGE_SIZE = 100
 </wps:Execute>
 ```
 
-## Requesting Chain Executions Status
+#### Requesting Chain Execution Statuses
 
 {{executions}}/executions
 {{executions}}/executions?chain_identifier=Cosmo Skymed&order_by=start__desc
@@ -416,7 +419,7 @@ MAX_PAGE_SIZE = 100
 }
 ```
 
-## Discovering Automatically Published Products
+### Discovering Automaticly Published Products
 
 {{repository}}/geoserver/csw
 
