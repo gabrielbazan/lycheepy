@@ -10,6 +10,11 @@ It allows you to:
  * Easily scale. LycheePy is a distributed system. _Worker_ nodes are the ones which provide the processing capabilities and execute processes, and you can add or remove as many you require. Also, LycheePy will concurrently execute processes when it is applicable to the chain's topology.
 
 
+## Table of Contents
+
+- [Architecture](#architecture)
+  * [Development View](#development-view)
+
 ## Architecture
 
 ### Development View
