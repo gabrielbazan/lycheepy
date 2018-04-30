@@ -250,7 +250,10 @@ MAX_PAGE_SIZE = 100
 
 <p align="center">
   <img src="doc/architecture/standard_processing_model.jpg?raw=true">
+  <br>
+  Taken from the <a href="http://www.e-geos.it/products/pdf/csk-product%20handbook.pdf">COSMO-Skymed Products Handbook<a>
 </p>
+
 
 ### Publish a Process
 
