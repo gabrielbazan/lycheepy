@@ -282,7 +282,11 @@ MAX_PAGE_SIZE = 100
 
 ## Publishing, Discovering, and Executing
 
+Here comes, I think, the best part. We will see how _LycheePy_ works with an example. 
+
 ### An Example
+
+
 
 <p align="center">
   <img src="doc/architecture/standard_processing_model.jpg?raw=true">
