@@ -208,6 +208,9 @@ Since the architecture design, we stablished several requirements for the reposi
 
 We also said that the application shall be able to interact with instances of different kinds of repositories at the same time, and it should be possible to easily add integrations with new kinds of repositories. 
 
+<p align="center">
+  <img src="doc/architecture/repositories_strategy.png?raw=true" height="120px">
+</p>
 
 
 ## Deployment
