@@ -321,7 +321,7 @@ The processes administration is done trough the _Configuration_ component. Its c
 
 #### Uploading a Process
 
-Using the _{host}/configuration/processes_ URI with the _POST_ HTTP method, you'll be able to publish processes. To do so, you have to send two things to the server, using the _multipart/form-data_ HTTP header:
+You can publish processes using the _{host}/configuration/processes_ URI with the HTTP _POST_ method. You have to send two things to the server, using the _multipart/form-data_ HTTP header:
  * The process metadata, in a key named "specification".
  * The process file, in a key named "file".
 
@@ -359,7 +359,7 @@ That's it. Your process is now uploaded and published trough the _WPS_ interface
 
 #### Listing Proceses
 
-Using the _{host}/configuration/processes_ URI with the _GET_ HTTP method, you'll retrieve a list which contains all the published proceses.
+You can retrieve a list of the published processes, using the _{host}/configuration/processes_ URI with the HTTP _GET_ method.
 
 ```json
 {
@@ -397,14 +397,16 @@ Using the _{host}/configuration/processes_ URI with the _GET_ HTTP method, you'l
 
 #### Updating a Process
 
-You can update a process using the _{host}/configuration/processes/{processId}_ URI, where _processId_ is the _id_ property of the process under edition. 
+You can update a process using the _{host}/configuration/processes/{processId}_ URI, where _processId_ is the _id_ property of the process under edition, with the HTTP _PUT_ method.
 
 It works equally than the process upload. With _multipart/form-data_ you'll send the process metadata in the same key, "specification", and optionally send the new process file in the same key, "file".
 
 
 ### Publishing Chains
 
-You can publish chains trough the _{host}/configuration/chains_ URI, using the HTTP _POST_ method.
+#### Publishing a Chain
+
+You can publish chains trough the _{host}/configuration/chains_ URI, using the HTTP _POST_ method, with "Content-type: application/json".
 
 Remember that chains are also published trough the _WPS_ interface, so they need to have identical metadata than a process. 
 
@@ -450,6 +452,72 @@ Here is an example of the SAR Standard Products chain:
 ```
 
 You can specify which outputs of which processes of the chain will be automaticly published. And you simply need to use the "publish" property of the chain, as you can see on the example above. That property is an object, where its keys are the processes identifiers, and each one of them have a list of which outputs we wish to publish. Just as simple as that.
+
+#### Listing Chains
+
+You can retrieve a list of the published chains, using the _{host}/configuration/chains_ URI with the HTTP _GET_ method.
+
+_LycheePy_ will calculate and show you which are inputs and the outputs of the chains. You can see it on the "inputs", and "outputs" properties:
+```json
+{
+    "count": 1,
+    "results": [
+        {
+            "id": 1,
+            "identifier": "Cosmo Skymed",
+            "version": "0.1",
+            "title": "CSK Standard Processing Model",
+            "abstract": "An implementation of the SAR Standard Products chain",
+            "publish": {
+                "L1D": ["GTC"],
+                "L1B": ["MDG"],
+                "L1A": ["SCS"],
+                "L0": ["RAW"],
+                "L1C": ["GEC"]
+            },
+            "steps": [
+                {"after": "L1A", "match": {}, "before": "L0"},
+                {"after": "L1B", "match": {}, "before": "L1A"},
+                {"after": "L1C", "match": {}, "before": "L1B"},
+                {"after": "L1D", "match": {}, "before": "L1B"}
+            ],
+            "metadata": ["Cosmo", "Skymed", "Mission", "Chain"],
+            "inputs": [
+                {
+                    "dataType": "string",
+                    "format": null,
+                    "abstract": "Downloaded from the satellite to the ground station",
+                    "identifier": "crude",
+                    "title": "Crude data"
+                }
+            ],
+            "outputs": [
+                {
+                    "dataType": null,
+                    "format": "GEOTIFF",
+                    "abstract": "GEC Product",
+                    "identifier": "GEC",
+                    "title": "GEC Product"
+                },
+                {
+                    "dataType": null,
+                    "format": "GEOTIFF",
+                    "abstract": "GTC Product",
+                    "identifier": "GTC",
+                    "title": "GTC Product"
+                }
+            ]
+        }
+    ]
+}
+```
+
+#### Updating a Chain
+
+You can update a process using the _{host}/configuration/chains/{chainId}_ URI, where _chainId_ is the _id_ property of the chain under edition, with the HTTP _PUT_ method and "Content-type: application-json".
+
+You simply need to send the chain metadata again. This will update the chain, and inmediately be reflected on the _WPS_ interface.
+
 
 
 ### Discovering Executables
