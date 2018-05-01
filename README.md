@@ -880,7 +880,7 @@ Or simply request the status of a very specific execution ID:
 
 Or the last execution sent to the server:
 ```
-{host}/executions/executions?order_by=start__asc&limit=1
+{host}/executions/executions?order_by=start__desc&limit=1
 ```
 
 And so on. Just combine filters as you like.
@@ -908,7 +908,26 @@ In all those cases, you'll retrieve a list like this:
 
 ### Discovering Automaticly Published Products
 
-{{repository}}/geoserver/csw
+You executed your chain, and want to access to the automaticly published products. Whatever is your repository, products are published using a naming convention, so you can quickly access them:
+```
+{Chain Identifier}:{Execution ID}:{Process Identifier}:{Output Identifier}
+```
+
+In our case, the _GeoServer_ instance we use includes the [CSW Plugin](http://docs.geoserver.org/latest/en/user/services/csw/index.html), so all the rasters we publish on it will be automaticly added to the _CSW_ catalog, allowing us to use its _GetRecords_ operation to filter and retrieve the products metadata.
+
+Making use of the naming convention, we can request different things:
+ * All the products, just without using any filter.
+ * All the products of a chain, using only the chain identifier.
+ * All the products of an chain execution, using only the Execution ID.
+ * All the products of a process, using only the process identifier.
+ * All the products of a process within an specific chain, using the chain identifier, and the process identifier.
+ * All the published outputs of an specific process, using the process identifier, and the output identifier.
+ * All the published outputs of an specific process within an execution, using the Execution ID, and the process identifier.
+ * And so on.
+
+
+
+_{host}/repository/geoserver/csw_
 
 ```xml
 <csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:ogc="http://www.opengis.net/ogc" service="CSW" version="2.0.2" resultType="results" startPosition="1" maxRecords="10" outputFormat="application/xml" outputSchema="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:apiso="http://www.opengis.net/cat/csw/apiso/1.0">
@@ -925,6 +944,7 @@ In all those cases, you'll retrieve a list like this:
   </csw:Query>
 </csw:GetRecords>
 ```
+
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
