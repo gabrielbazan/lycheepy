@@ -842,10 +842,50 @@ And all the processes outputs you made automaticly publishable on the chain meta
 
 #### Requesting Chain Execution Statuses
 
-{{executions}}/executions
-{{executions}}/executions?chain_identifier=Cosmo Skymed&order_by=start__desc
-{{executions}}/executions?execution_id=41838c1c-4847-11e8-9afe-0242ac12000a
+The _WPS_ standard, on its 1.X and 2.X versions, implement a mechanism through wich you can request execution statuses, which is specially useful when you are requesting asynchronous executions. This is done trough an identifier which the server will send you as a response for your execution request. But it is limited, because you can only request the status of a single execution ID.
 
+With _LycheePy_ you can still use the _WPS_ mechanism, but it also gives you the possibility of requesting more sophisticated queries. 
+
+Everything is done with the HTTP _GET_ method over the _{host}/executions/executions_ URI.
+
+Lets see. For example, you could request the status of all the executions of the server. Those will include the ones which are still runing, and those which already finished (successfully, or with errors):
+```
+{host}/executions/executions
+```
+
+Or you could need the same, but you want to see it chronologically ordered:
+```
+{host}/executions/executions?order_by=start__desc
+```
+
+Or you want to see all the executions of one specific chain:
+```
+{host}/executions/executions?chain_identifier=Cosmo Skymed&order_by=start__asc
+```
+
+Or you want to see all the failed executions of one specific chain:
+```
+{host}/executions/executions?chain_identifier=Cosmo Skymed&status__name__eq=FAILURE
+```
+
+Or to see the executions still running, together with the successful ones:
+```
+{host}/executions/executions?chain_identifier=Cosmo Skymed&status__name__in=SUCCESS;RUNNING
+```
+
+Or simply request the status of a very specific execution ID:
+```
+{host}/executions/executions?execution_id=41838c1c-4847-11e8-9afe-0242ac12000a
+```
+
+Or the last execution sent to the server:
+```
+{host}/executions/executions?order_by=start__asc&limit=1
+```
+
+And so on. Just combine filters as you like.
+
+In all those cases, you'll retrieve a list like this:
 ```json
 {
   "count": 1,
