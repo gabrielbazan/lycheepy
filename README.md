@@ -522,9 +522,224 @@ You simply need to send the chain metadata again. This will update the chain, an
 
 ### Discovering Executables
 
-{{wps}}?service=WPS&request=getcapabilities
-{{wps}}?service=WPS&request=describeprocess&version=1.0.0&identifier=L0
+That was it, you published your processes and the chain. They now they are available trough the WPS interface. If you perform a _GetCapabilities_ operation, you'll see something like this:
 
+_{host}/wps?service=WPS&request=getcapabilities_
+```xml
+<!-- PyWPS 4.0.0 -->
+<wps:Capabilities xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="WPS" version="1.0.0" xml:lang="en-US" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsGetCapabilities_response.xsd" updateSequence="1">
+    <ows:ServiceIdentification>
+        <ows:Title>LycheePy Server</ows:Title>
+        <ows:Abstract>LycheePy is a geospatial data processing server that allows you to expose predeterminated chains, and executes them in a distributed way. Also, it can be directly integrated with geospatial repositories, so you can configure these chains to automaticly publish outputs into them</ows:Abstract>
+        <ows:Keywords>
+            <ows:Keyword>LycheePy</ows:Keyword>
+            <ows:Keyword>WPS</ows:Keyword>
+            <ows:Keyword>PyWPS</ows:Keyword>
+            <ows:Keyword>Processes</ows:Keyword>
+            <ows:Keyword>Geospatial</ows:Keyword>
+            <ows:Keyword>Distribution</ows:Keyword>
+            <ows:Keyword>Automatic</ows:Keyword>
+            <ows:Keyword>Products</ows:Keyword>
+            <ows:Keyword>Publication</ows:Keyword>
+            <ows:Keyword>Repositories</ows:Keyword>
+            <ows:Type codeSpace="ISOTC211/19115">theme</ows:Type>
+        </ows:Keywords>
+        <ows:ServiceType>WPS</ows:ServiceType>
+        <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+        <ows:Fees>None</ows:Fees>
+        <ows:AccessConstraints>None</ows:AccessConstraints>
+    </ows:ServiceIdentification>
+    <ows:ServiceProvider>
+        <ows:ProviderName>LycheePy Development Team</ows:ProviderName>
+        <ows:ProviderSite xlink:href="http://lycheepy.org/"/>
+        <ows:ServiceContact>
+            <ows:IndividualName>Gabriel Jose Bazan</ows:IndividualName>
+            <ows:PositionName>Developer</ows:PositionName>
+            <ows:ContactInfo>
+                <ows:Phone>
+                    <ows:Voice>+54</ows:Voice>
+                </ows:Phone>
+                <ows:Address>
+                    <ows:AdministrativeArea>Argentina</ows:AdministrativeArea>
+                    <ows:PostalCode>0</ows:PostalCode>
+                    <ows:Country>World, Internet</ows:Country>
+                    <ows:ElectronicMailAddress>gbazan@outlook.com</ows:ElectronicMailAddress>
+                </ows:Address>
+                <ows:OnlineResource xlink:href="http://lycheepy.org"/>
+                <ows:HoursOfService>12:00-20:00UTC</ows:HoursOfService>
+                <ows:ContactInstructions>Knock on the heavens door</ows:ContactInstructions>
+            </ows:ContactInfo>
+            <ows:Role>hallo</ows:Role>
+        </ows:ServiceContact>
+    </ows:ServiceProvider>
+    <ows:OperationsMetadata>
+        <ows:Operation name="GetCapabilities">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://wps/wps"/>
+                    <ows:Post xlink:href="http://wps/wps"/>
+                </ows:HTTP>
+            </ows:DCP>
+        </ows:Operation>
+        <ows:Operation name="DescribeProcess">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://wps/wps"/>
+                    <ows:Post xlink:href="http://wps/wps"/>
+                </ows:HTTP>
+            </ows:DCP>
+        </ows:Operation>
+        <ows:Operation name="Execute">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://wps/wps"/>
+                    <ows:Post xlink:href="http://wps/wps"/>
+                </ows:HTTP>
+            </ows:DCP>
+        </ows:Operation>
+    </ows:OperationsMetadata>
+    <wps:ProcessOfferings>
+        <wps:Process wps:processVersion="0.1">
+            <ows:Identifier>L0</ows:Identifier>
+            <ows:Title>L0 Processor</ows:Title>
+            <ows:Abstract>The L0 processor generates the RAW product</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="0.1">
+            <ows:Identifier>L1D</ows:Identifier>
+            <ows:Title>L1D Processor</ows:Title>
+            <ows:Abstract>Level 1D Processor, which generates the GTC product</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="0.1">
+            <ows:Identifier>Cosmo Skymed</ows:Identifier>
+            <ows:Title>CSK Standard Processing Model</ows:Title>
+            <ows:Abstract>An implementation of the SAR Standard Products chain</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="0.1">
+            <ows:Identifier>L1A</ows:Identifier>
+            <ows:Title>Level 1A Process</ows:Title>
+            <ows:Abstract>Level 1A Processor, which generates the SCS product</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="1.0">
+            <ows:Identifier>L1B</ows:Identifier>
+            <ows:Title>L1B Processor</ows:Title>
+            <ows:Abstract>Level 1B Processor, which generates the MDG product</ows:Abstract>
+        </wps:Process>
+        <wps:Process wps:processVersion="1.0">
+            <ows:Identifier>L1C</ows:Identifier>
+            <ows:Title>L1C Processor</ows:Title>
+            <ows:Abstract>Level 1C Processor, which generates the GEC product</ows:Abstract>
+        </wps:Process>
+    </wps:ProcessOfferings>
+    <wps:Languages>
+        <wps:Default>
+            <ows:Language>en-US</ows:Language>
+        </wps:Default>
+        <wps:Supported>
+            <ows:Language>en-US</ows:Language>
+        </wps:Supported>
+    </wps:Languages>
+</wps:Capabilities>
+```
+
+You can retrieve more specific details about a process with the _DescribeProcess_ operation:
+
+_{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**L0**_
+```xml
+<!-- PyWPS 4.0.0 -->
+<wps:ProcessDescriptions xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US">
+    <ProcessDescription wps:processVersion="0.1" storeSupported="true" statusSupported="true">
+        <ows:Identifier>L0</ows:Identifier>
+        <ows:Title>L0 Processor</ows:Title>
+        <ows:Abstract>The L0 processor generates the RAW product</ows:Abstract>
+        <DataInputs>
+            <Input minOccurs="1" maxOccurs="1">
+                <ows:Identifier>crude</ows:Identifier>
+                <ows:Title>Crude data</ows:Title>
+                <LiteralData>
+                    <ows:DataType ows:reference="urn:ogc:def:dataType:OGC:1.1:string">string</ows:DataType>
+                    <ows:AnyValue/>
+                </LiteralData>
+            </Input>
+        </DataInputs>
+        <ProcessOutputs>
+            <Output>
+                <ows:Identifier>RAW</ows:Identifier>
+                <ows:Title>RAW product</ows:Title>
+                <ComplexOutput>
+                    <Default>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Default>
+                    <Supported>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Supported>
+                </ComplexOutput>
+            </Output>
+        </ProcessOutputs>
+    </ProcessDescription>
+</wps:ProcessDescriptions>
+```
+
+And about the chain:
+
+_{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**Cosmo Skymed**_
+```xml
+<!-- PyWPS 4.0.0 -->
+<wps:ProcessDescriptions xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US">
+    <ProcessDescription wps:processVersion="0.1" storeSupported="true" statusSupported="true">
+        <ows:Identifier>Cosmo Skymed</ows:Identifier>
+        <ows:Title>CSK Standard Processing Model</ows:Title>
+        <ows:Abstract>An implementation of the SAR Standard Products chain</ows:Abstract>
+        <DataInputs>
+            <Input minOccurs="1" maxOccurs="1">
+                <ows:Identifier>crude</ows:Identifier>
+                <ows:Title>Crude data</ows:Title>
+                <LiteralData>
+                    <ows:DataType ows:reference="urn:ogc:def:dataType:OGC:1.1:string">string</ows:DataType>
+                    <ows:AnyValue/>
+                </LiteralData>
+            </Input>
+        </DataInputs>
+        <ProcessOutputs>
+            <Output>
+                <ows:Identifier>GEC</ows:Identifier>
+                <ows:Title>GEC Product</ows:Title>
+                <ComplexOutput>
+                    <Default>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Default>
+                    <Supported>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Supported>
+                </ComplexOutput>
+            </Output>
+            <Output>
+                <ows:Identifier>GTC</ows:Identifier>
+                <ows:Title>GTC Product</ows:Title>
+                <ComplexOutput>
+                    <Default>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Default>
+                    <Supported>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Supported>
+                </ComplexOutput>
+            </Output>
+        </ProcessOutputs>
+    </ProcessDescription>
+</wps:ProcessDescriptions>
+```
 
 ### Executing
 
