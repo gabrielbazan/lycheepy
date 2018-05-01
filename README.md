@@ -354,6 +354,9 @@ Here you can see a metadata example for the [L0](/tests/cosmo/processes/L0.py) p
 }
 ```
 
+That's it. Your process is now uploaded and published trough the _WPS_ interface. 
+
+
 #### Listing Proceses
 
 Using the _{host}/configuration/processes_ URI with the _GET_ HTTP method, you'll retrieve a list which contains all the published proceses.
@@ -396,7 +399,7 @@ Using the _{host}/configuration/processes_ URI with the _GET_ HTTP method, you'l
 
 You can update a process using the _{host}/configuration/processes/{processId}_ URI, where _processId_ is the _id_ property of the process under edition. 
 
-It works identically than the process upload. With _multipart/form-data_ you'll send the process metadata in the same key, "specification", and optionally send the new process file in the same key, "file".
+It works equally than the process upload. With _multipart/form-data_ you'll send the process metadata in the same key, "specification", and optionally send the new process file in the same key, "file".
 
 
 ### Publishing Chains
@@ -405,9 +408,9 @@ It works identically than the process upload. With _multipart/form-data_ you'll 
 {
   "identifier": "Cosmo Skymed",
   "title": "CSK Standard Processing Model",
-  "abstract": "This chain is a demostration example",
+  "abstract": "An implementation of the SAR Standard Products chain",
   "version": "0.1",
-  "metadata": ["CSK", "Mission", "Chain"],
+  "metadata": ["Cosmo", "Skymed", "Mission", "Chain"],
   "steps": [
     {"before": "L0", "after": "L1A"},
     {"before": "L1A", "after": "L1B"},
