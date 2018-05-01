@@ -1035,6 +1035,6 @@ And as a result, you'll get something like the following, which contains all the
 To be defined.
 
 
-# Ideas
+## Ideas
 
 To be defined.
