@@ -683,7 +683,7 @@ _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**L0**_
 </wps:ProcessDescriptions>
 ```
 
-And about the chain:
+And about the chain, because it is just another process:
 
 _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**Cosmo Skymed**_
 ```xml
@@ -745,10 +745,13 @@ _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**Cosmo
 
 So, you published and discovered your processes and the chain. Lets execute them trough _WPS_.
 
+Proceses can be executed with the _Execute_ operation, where you specify the identifier of the process you wish to execute, and a list of values for its inputs.
+
+The examples below use the HTTP _POST_ method on the _{host}/wps/_ URI.
+
 #### Executing a Process
 
-
-_{host}/wps/_
+The following example will execute the _L0_ processor:
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
@@ -764,7 +767,7 @@ _{host}/wps/_
 </wps:Execute>
 ```
 
-
+As a response, you will receive something like this:
 ```xml
 <!-- PyWPS 4.0.0 -->
 <wps:ExecuteResponse xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US" serviceInstance="http://wps/wps?service=WPS&amp;request=GetCapabilities" statusLocation="http://wps/wps/outputs/f4a9ebf6-4d74-11e8-947e-0242ac12000a.xml">
@@ -789,6 +792,9 @@ _{host}/wps/_
 
 #### Executing a Chain
 
+The _Cosmo Skymed_ process (our chain) takes only one input, the _crude_ data, and produces two outputs, the _GEC_ and _GTC_ products, just as we explained [before](#publishing-a-chain).
+
+So, this request is identical to the [previous](#executing-a-process), since the _L0_ processor is the only with indegree 0, so it occupies the first place on the execution order:
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
@@ -804,7 +810,7 @@ _{host}/wps/_
 </wps:Execute>
 ```
 
-
+As a response, you will receive something like this:
 ```xml
 <!-- PyWPS 4.0.0 -->
 <wps:ExecuteResponse xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US" serviceInstance="http://wps/wps?service=WPS&amp;request=GetCapabilities" statusLocation="http://wps/wps/outputs/1fa4685e-4d75-11e8-947e-0242ac12000a.xml">
@@ -831,6 +837,9 @@ _{host}/wps/_
 </wps:ExecuteResponse>
 ```
 
+And all the processes outputs you made automaticly publishable on the chain metadata, now are just published.
+
+
 #### Requesting Chain Execution Statuses
 
 {{executions}}/executions
@@ -850,7 +859,7 @@ _{host}/wps/_
       "start": "2018-04-25T05:13:04.354559Z",
       "reason": "",
       "chain_identifier": "Cosmo Skymed",
-      "id": 6,
+      "id": 1,
       "execution_id": "551352d0-4847-11e8-9afe-0242ac12000a"
     }
   ]
