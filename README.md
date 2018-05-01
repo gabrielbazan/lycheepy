@@ -918,17 +918,16 @@ In our case, the _GeoServer_ instance we use includes the [CSW Plugin](http://do
 Making use of the naming convention, we can request different things:
  * All the products, just without using any filter.
  * All the products of a chain, using only the chain identifier.
- * All the products of an chain execution, using only the Execution ID.
+ * All the products of a chain execution, using only the Execution ID.
  * All the products of a process, using only the process identifier.
  * All the products of a process within an specific chain, using the chain identifier, and the process identifier.
- * All the published outputs of an specific process, using the process identifier, and the output identifier.
+ * All the products produced by an specific output of an specific process, using the process identifier, and the output identifier.
  * All the published outputs of an specific process within an execution, using the Execution ID, and the process identifier.
  * And so on.
 
+The _CSW_ catalog is available on the _{host}/repository/geoserver/csw_ URI.
 
-
-_{host}/repository/geoserver/csw_
-
+For example, you could request all the products of an specific execution, using the following filter:
 ```xml
 <csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:ogc="http://www.opengis.net/ogc" service="CSW" version="2.0.2" resultType="results" startPosition="1" maxRecords="10" outputFormat="application/xml" outputSchema="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:apiso="http://www.opengis.net/cat/csw/apiso/1.0">
   <csw:Query typeNames="csw:Record">
@@ -945,7 +944,7 @@ _{host}/repository/geoserver/csw_
 </csw:GetRecords>
 ```
 
-
+And as a result, you'll get something like the following, which contains all the _RAW_, _SSC_, _DGM_, _GEC_, and _GTC_ products:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <csw:GetRecordsResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/" xmlns:ows="http://www.opengis.net/ows" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0.2" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://repository:8080/geoserver/schemas/csw/2.0.2/record.xsd">
@@ -1033,5 +1032,9 @@ _{host}/repository/geoserver/csw_
 
 ## TODO List
 
- * TBD
- 
+To be defined.
+
+
+# Ideas
+
+To be defined.
