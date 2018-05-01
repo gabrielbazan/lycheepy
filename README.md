@@ -404,6 +404,12 @@ It works equally than the process upload. With _multipart/form-data_ you'll send
 
 ### Publishing Chains
 
+Using the _{host}/configuration/chains_ URI with the _POST_ HTTP method, you'll be able to publish chains.
+
+Remember that the chains are published trough the _WPS_ interface, so they shall have identical metadata. Except that they do not declare directly which are their inputs and outputs. Instead, you specify the "steps" of the chain, where a "step" is an edge of the directed graph, which comes from the "before" process to the "after" process. So, given these steps, _LycheePy_ will build the graph and know which are the inputs, and which the outputs:
+ * The chain inputs are the inputs of all the processes with indegree 0.
+ * The chain outputs are the outputs of all the processes with outdegree 0.
+
 ```json
 {
   "identifier": "Cosmo Skymed",
