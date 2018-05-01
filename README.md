@@ -26,9 +26,9 @@ It allows you to:
   * [Publishing Chains](#publishing-chains)
   * [Discovering Executables](#discovering-executables)
   * [Executing](#executing)
-  * [Discovering Automaticly Published Products](#discovering-automaticly-published-products)
+  * [Discovering Automatically Published Products](#discovering-automatically-published-products)
 - [TODO List](#todo-list)
-
+- [Ideas](#ideas)
 
 
 ## Architecture
@@ -49,7 +49,7 @@ On this view, we can distinguish 13 components, being 5 of them Gateways:
 
 * **WPS**: An implementation of the _OGC WPS_ standard, which exposes the _WPS I_ interface, through which can retrieve discovery and execution requests of processes and chains. It depends on the _Configuration Gateway_ component, through which it can access to the metadata of every available executables (processes and chains). Also depends on the _Executor_ component, to which it delegates the execution requests it receives.
 * **Configuration Gateway**: Encapsulates the interaction with the _Configuration I_ interface, of the _Configuration_ component.
-* **Configuration**: Exposes the _Configuration I_ interface, trough which it is possible to add, modify, and delete processes and chains. It requires some kind of persistence in order to store this settings. Uses the _Processes Gateway_ in order to store and delete processes files.
+* **Configuration**: Exposes the _Configuration I_ interface, trough which it is possible to add, modify, and delete processes and chains. It requires some kind of persistence in order to store these settings. Uses the _Processes Gateway_ to store and delete processes files.
 * **Executor**: Encapsulates the execution of chains and processes. It can attend every execution request that may come from the WPS component, or some other component we may add in the future. Depends on the _Broker Gateway_ to enqueue processes executions, and on the _Executions Gateway_ in order to inform and update the executions statuses.
 * **Executions Gateway**: Encapsulates the interaction with the _Executions I_ interface, of the _Executions_ component.
 * **Executions**: Persists the status of all the chains executions that have finished (successfully or with errors) or are still running. It exposes the _Executions I_ interface, through which it is possible to update or read those statuses.
@@ -92,7 +92,7 @@ This is the section we all might consider the most important, or at least the mo
 
 ### Repository Structure
 
-First of all, lets talk about the repository organization. At the root of it, we basically have three directories:
+First, lets talk about the repository organization. At the root of it, we basically have three directories:
  * [lycheepy](/lycheepy), which contains the source code.
  * [doc](/doc), which contains the documentation.
  * [tests](/tests), which contains functional, and (in the future) unitary tests.
@@ -102,7 +102,7 @@ Inside the [lycheepy](/lycheepy) directory, we will find one folder per each dev
  * The [docker-compose.yml](/lycheepy/docker-compose.yml) file. There are found all the containers definitions, their mutual dependencies, the ports they expose for mutual interaction, the ports they expose to the host, and so on.
  * A [start.sh](lycheepy/start.sh) executable file, which can be used to run all the containers for development purposes.
 
-Inside each development component's directory, we will find a _Dockerfile_ file, and the source code of the component itself. Lets see with an example: The _Configuration_ development component is inside the [lycheepy/configuration](lycheepy/configuration) directory, and there we can see:
+Inside each development component's directory, we will find a _Dockerfile_ file, and the source code of the component itself. Let's see with an example: The _Configuration_ development component is inside the [lycheepy/configuration](lycheepy/configuration) directory, and there we can see:
  * The _Dockerfile_.
  * A folder with the same name of the component, which contains the source code, in this case named [configuration](/lycheepy/configuration/configuration). Inside this folder you can organize your code just as you like.
  * A [requirements.txt](lycheepy/configuration/requirements.txt) file, because we are talking about a component which is implemented with Python, and on this level we should place all install-related files. We will only use this file while the component's installation.
@@ -137,7 +137,7 @@ This is a very simple component, which exposes a ReST API, through which we can 
 
 The interface is implemented with the [Simply Restful](https://github.com/gabrielbazan/simply-restful/) framework, which uses _Flask_ and _SQLAlchemy_.
 
-It uses a _PostgreSQL_ instance as persistence, but you could use other database supported by _SQLAlchemy_, such as _SQLite_.
+It uses a _PostgreSQL_ instance as persistence, but you could use another database supported by _SQLAlchemy_, such as _SQLite_.
 
 It performs several validations over the chains topography, using [NetworkX](https://networkx.github.io/).
 
@@ -146,13 +146,13 @@ Finally, it publishes processes files on the _Processes_ component, so it uses a
 
 #### Executer
 
-It encapsulates the compexity that relies behind the distributed execution of processes and chains, while it provides a very clear interface.
+It encapsulates the complexity that relies behind the distributed execution of processes and chains, while it provides a very clear interface.
 
 It also keeps the executions statuses updated on the _Executions_ component, through the [ExecutionsGateway](/lycheepy/wps/wps/gateways/executions). Also depends on the [BrokerGateway](/lycheepy/wps/wps/gateways/broker) to enqueue processes executions.
 
-It basically provides two public operations: _execute_process_, and _execute_chain_. When it comes to a process execution, it simply enqueues the process execution using the _BrokerGateway_. But the chains execution is a bit more complex.
+It basically provides two public operations: _execute_process_ and _execute_chain_. When it comes to a process execution, it simply enqueues the process execution using the _BrokerGateway_. But the chains execution is a bit more complex.
 
-On _LycheePy_, **a chain is a directed acyclic graph**, so they can be sliced into antichains by using the [AntiChains](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.dag.antichains.html) algorithm. Lets see it with an example:
+On _LycheePy_, **a chain is a directed acyclic graph**, so they can be sliced into antichains by using the [AntiChains](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.dag.antichains.html) algorithm. Let's see it with an example:
 
 <p align="center">
   <img src="doc/architecture/antichains.png?raw=true" height="200px">
@@ -169,7 +169,7 @@ This is a very simple component, which exposes a ReST API, through which we can 
 
 The interface is implemented with the [Simply Restful](https://github.com/gabrielbazan/simply-restful/) framework, which uses _Flask_ and _SQLAlchemy_.
 
-It uses a _PostgreSQL_ instance as persistence, but you could use other database supported by _SQLAlchemy_, such as _SQLite_.
+It uses a _PostgreSQL_ instance as persistence, but you could use another database supported by _SQLAlchemy_, such as _SQLite_.
 
 
 #### Broker
@@ -187,12 +187,12 @@ The [BrokerGateway](/lycheepy/wps/wps/gateways/broker/gateway.py) uses a _Celery
 
 The [Worker](/lycheepy/worker/worker/distribution/worker.py) defines two tasks:
  * A _run_process_ task, which can execute a process, given its identifier and inputs values. Uses the [ProcessesGateway](https://github.com/gabrielbazan/lycheepy.processes) to obtain the process file.
- * A _run_chain_process_ task, which first executes the process, using the _run_process_, and then performs the automatic products publication, making use of the [RepositoryGateway](/lycheepy/worker/worker/gateways/repository), if any of the process outputs have been configured as automaticly publishable.
+ * A _run_chain_process_ task, which first executes the process, using the _run_process_, and then performs the automatic products publication, making use of the [RepositoryGateway](/lycheepy/worker/worker/gateways/repository), if any of the process outputs have been configured as automatically publishable.
 
 
 #### Processes
 
-This component responsibility is simple: It just stores the processes files. So we have so many alternatives to implement it, some better than others: A FTP server, a database, a shared filesystem, and so on. We've chosen [vsftpd](https://security.appspot.com/vsftpd.html), an FTP server.
+This component responsibility is simple: It just stores the processes files. So, we have so many alternatives to implement it, some better than others: A FTP server, a database, a shared filesystem, and so on. We've chosen [vsftpd](https://security.appspot.com/vsftpd.html), an FTP server.
 
 The thing here is the [gateway](https://github.com/gabrielbazan/lycheepy.processes/blob/master/gateway.py) to this component, which completely abstracts the gateway's clients about the "complexity" behind this. You can simply obtain a process instance by specifying its identifier.
 
@@ -201,9 +201,9 @@ The thing here is the [gateway](https://github.com/gabrielbazan/lycheepy.process
 
 The _Repository_ is a component capable to store geospatial data. Some repositories may make this data available to users, and they can do it trough different kinds of interfaces. Examples are [GeoServer](http://geoserver.org/), an _FTP_ repository, a _File System_, cloud services, and so on.
 
-Since the architecture design, we stablished several requirements for the repository to be chosen for this development. We said that it should make geospatial data available trough _OWS_ interfaces, and it should also have a some kind of configuration interface. So we've chosen _GeoServer_, which implements OWS services such as _WFS_, _WMS_, _WCS_, _CSW_, and so on, and provides a [ReST Configuration API](http://docs.geoserver.org/stable/en/user/rest/).
+Since the architecture design, we stablished several requirements for the repository to be chosen for this development. We said that it should make geospatial data available trough _OWS_ interfaces, and it should also have some kind of configuration interface. So, we've chosen _GeoServer_, which implements OWS services such as _WFS_, _WMS_, _WCS_, _CSW_, and so on, and provides a [ReST Configuration API](http://docs.geoserver.org/stable/en/user/rest/).
 
-We also said that the application shall be able to interact with instances of different kinds of repositories at the same time, and it should be possible to easily add integrations with new kinds of repositories. So the [RepositoryGateway](/lycheepy/worker/worker/gateways/repository) defines a [Repository](/lycheepy/worker/worker/gateways/repository/repository.py) interface (in Python, the closest thing to an interface is an abstract class), which defines a single _publish_ method. This method is overriden by classes which implement this interface, while they specify the required behavior to interact with an specific kind of repository. 
+We also said that the application shall be able to interact with instances of different kinds of repositories at the same time, and it should be possible to easily add integrations with new kinds of repositories. So the [RepositoryGateway](/lycheepy/worker/worker/gateways/repository) defines a [Repository](/lycheepy/worker/worker/gateways/repository/repository.py) interface (in Python, the closest thing to an interface is an abstract class), which defines a single _publish_ method. This method is overridden by classes which implement this interface, while they specify the required behaviour to interact with a specific kind of repository. 
 
 <p align="center">
   <img src="doc/architecture/repositories_strategy.png?raw=true" height="120px">
@@ -217,12 +217,12 @@ For example, the [GeoServerRepository](/lycheepy/worker/worker/gateways/reposito
 
 For development purposes, all you need to run _LycheePy_ is clone the repository and execute the [start.sh](/lycheepy/start.sh) script. 
 
-I still did not figured out the best way of deploying an application with docker-compose into production. I will require some research.
+I still do not figure out the best way of deploying an application with docker-compose into production. I will require some more research.
 
 
 ## Static Configuration
 
-You can configure on which repositories the geospatial data will be automaticly published on the _worker/worker/settings.py_ file. It is a dictionary where each key determines a supported repository kind, and for each one of them we specify a list of repositories of that kind. So we could, for example, publish on multiple geoserver instances and multiple FTP servers at the same time.
+You can configure on which repositories the geospatial data will be automatically published on the _worker/worker/settings.py_ file. It is a dictionary where each key determines a supported repository kind, and for each one of them we specify a list of repositories of that kind. So, we could, for example, publish on multiple _GeoServer_ instances and multiple FTP servers at the same time.
 ```python
 REPOSITORIES = {
     Repositories.GEO_SERVER: [
@@ -410,13 +410,13 @@ You can publish chains trough the _{host}/configuration/chains_ URI, using the H
 
 Remember that chains are also published trough the _WPS_ interface, so they need to have identical metadata than a process. 
 
-You do not specify explicitly which are the inputs and outputs of a chian. Instead, you specify the "steps" of the chain, where a "step" is an edge of the directed acyclic graph. This edge goes from the "before" process to the "after" process. 
+You do not specify explicitly which are the inputs and outputs of a chain. Instead, you specify the "steps" of the chain, where a "step" is an edge of the directed acyclic graph. This edge goes from the "before" process to the "after" process. 
 
-Given the chain steps, _LycheePy_ can build the graph and know which are the inputs, and which the outputs:
+Given the chain steps, _LycheePy_ can build the graph and know which the inputs are, and which the outputs:
  * The chain inputs are the inputs of all the processes (nodes) with indegree 0.
  * The chain outputs are the outputs of all the processes (nodes) with outdegree 0.
 
-_LycheePy_ will automaticly try to map the outputs of the "before" process with the inputs of the "after" process, using their identifiers. It is case sensitive. If they do not match by identifier, you can specify an explicit mapping, like this:
+_LycheePy_ will automatically try to map the outputs of the "before" process with the inputs of the "after" process, using their identifiers. It is case sensitive. If they do not match by identifier, you can specify an explicit mapping, like this:
 ```json
 {
   "before": "ProcessA",
@@ -451,7 +451,7 @@ Here is an example of the SAR Standard Products chain:
 }
 ```
 
-You can specify which outputs of which processes of the chain will be automaticly published. And you simply need to use the "publish" property of the chain, as you can see on the example above. That property is an object, where its keys are the processes identifiers, and each one of them have a list of which outputs we wish to publish. Just as simple as that.
+You can specify which outputs of which processes of the chain will be automatically published. And you simply need to use the "publish" property of the chain, as you can see on the example above. That property is an object, where its keys are the processes identifiers, and each one of them have a list of which outputs we wish to publish. Just as simple as that.
 
 #### Listing Chains
 
@@ -516,7 +516,7 @@ _LycheePy_ will calculate and show you which are inputs and the outputs of the c
 
 You can update a process using the _{host}/configuration/chains/{chainId}_ URI, where _chainId_ is the _id_ property of the chain under edition, with the HTTP _PUT_ method and "Content-type: application-json".
 
-You simply need to send the chain metadata again. This will update the chain, and inmediately be reflected on the _WPS_ interface.
+You simply need to send the chain metadata again. This will update the chain, and immediately be reflected on the _WPS_ interface.
 
 
 
@@ -743,9 +743,9 @@ _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**Cosmo
 
 ### Executing
 
-So, you published and discovered your processes and the chain. Lets execute them trough _WPS_.
+So, you published and discovered your processes and the chain. Let's execute them trough _WPS_.
 
-Proceses can be executed with the _Execute_ operation, where you specify the identifier of the process you wish to execute, and a list of values for its inputs.
+Processes can be executed with the _Execute_ operation, where you specify the identifier of the process you wish to execute, and a list of values for its inputs.
 
 The examples below use the HTTP _POST_ method on the _{host}/wps/_ URI.
 
@@ -837,18 +837,18 @@ As a response, you will receive something like this:
 </wps:ExecuteResponse>
 ```
 
-And all the processes outputs you made automaticly publishable on the chain metadata, now are just published.
+And all the processes outputs you made automatically publishable on the chain metadata, now are just published.
 
 
 #### Requesting Chain Execution Statuses
 
-The _WPS_ standard, on its 1.X and 2.X versions, implement a mechanism through wich you can request execution statuses, which is specially useful when you are requesting asynchronous executions. This is done trough an identifier which the server will send you as a response for your execution request. But it is limited, because you can only request the status of a single execution ID.
+The _WPS_ standard, on its 1.X and 2.X versions, implement a mechanism through which you can request execution statuses, which is specially useful when you are requesting asynchronous executions. This is done trough an identifier which the server will send you as a response for your execution request. But it is limited, because you can only request the status of a single execution ID.
 
 With _LycheePy_ you can still use the _WPS_ mechanism, but it also gives you the possibility of requesting more sophisticated queries. 
 
 Everything is done with the HTTP _GET_ method over the _{host}/executions/executions_ URI.
 
-Lets see. For example, you could request the status of all the executions of the server. Those will include the ones which are still runing, and those which already finished (successfully, or with errors):
+Let's see. For example, you could request the status of all the executions of the server. Those will include the ones which are still running, and those which already finished (successfully, or with errors):
 ```
 {host}/executions/executions
 ```
@@ -906,23 +906,23 @@ In all those cases, you'll retrieve a list like this:
 }
 ```
 
-### Discovering Automaticly Published Products
+### Discovering Automatically Published Products
 
-You executed your chain, and want to access to the automaticly published products. Whatever is your repository, products are published using a naming convention, so you can quickly access them:
+You executed your chain, and want to access to the automatically published products. Whatever is your repository, products are published using a naming convention, so you can quickly access them:
 ```
 {Chain Identifier}:{Execution ID}:{Process Identifier}:{Output Identifier}
 ```
 
-In our case, the _GeoServer_ instance we use includes the [CSW Plugin](http://docs.geoserver.org/latest/en/user/services/csw/index.html), so all the rasters we publish on it will be automaticly added to the _CSW_ catalog, allowing us to use its _GetRecords_ operation to filter and retrieve the products metadata.
+In our case, the _GeoServer_ instance we use includes the [CSW Plugin](http://docs.geoserver.org/latest/en/user/services/csw/index.html), so all the rasters we publish on it will be automatically added to the _CSW_ catalog, allowing us to use its _GetRecords_ operation to filter and retrieve the products metadata.
 
 Making use of the naming convention, we can request different things:
  * All the products, just without using any filter.
  * All the products of a chain, using only the chain identifier.
  * All the products of a chain execution, using only the Execution ID.
  * All the products of a process, using only the process identifier.
- * All the products of a process within an specific chain, using the chain identifier, and the process identifier.
- * All the products produced by an specific output of an specific process, using the process identifier, and the output identifier.
- * All the published outputs of an specific process within an execution, using the Execution ID, and the process identifier.
+ * All the products of a process within a specific chain, using the chain identifier, and the process identifier.
+ * All the products produced by a specific output of an specific process, using the process identifier, and the output identifier.
+ * All the published outputs of a specific process within an execution, using the Execution ID, and the process identifier.
  * And so on.
 
 The _CSW_ catalog is available on the _{host}/repository/geoserver/csw_ URI.
