@@ -152,7 +152,7 @@ It also keeps the executions statuses updated on the _Executions_ component, thr
 
 It basically provides two public operations: _execute_process_, and _execute_chain_. When it comes to a process execution, it simply enqueues the process execution using the _BrokerGateway_. But the chains execution is a bit more complex.
 
-Chains are sliced into antichains by using the [AntiChains](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.dag.antichains.html) algorithm. Lets see it with an example:
+On _LycheePy_, **a chain is a directed acyclic graph**, so they can be sliced into antichains by using the [AntiChains](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.dag.antichains.html) algorithm. Lets see it with an example:
 
 <p align="center">
   <img src="doc/architecture/antichains.png?raw=true" height="200px">
