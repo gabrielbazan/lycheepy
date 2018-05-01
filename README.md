@@ -743,8 +743,12 @@ _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**Cosmo
 
 ### Executing
 
+So, you published and discovered your processes and the chain. Lets execute them trough _WPS_.
+
 #### Executing a Process
 
+
+_{host}/wps/_
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
@@ -753,12 +757,35 @@ _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**Cosmo
     <wps:Input>
       <ows:Identifier>crude</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>/mission/crude/crude1.sar</wps:LiteralData>
+        <wps:LiteralData>/cosmo/downlinks/matera/vesubio.sar</wps:LiteralData>
       </wps:Data>
     </wps:Input>
   </wps:DataInputs>
 </wps:Execute>
 ```
+
+
+```xml
+<!-- PyWPS 4.0.0 -->
+<wps:ExecuteResponse xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US" serviceInstance="http://wps/wps?service=WPS&amp;request=GetCapabilities" statusLocation="http://wps/wps/outputs/f4a9ebf6-4d74-11e8-947e-0242ac12000a.xml">
+    <wps:Process wps:processVersion="0.1">
+        <ows:Identifier>L0</ows:Identifier>
+        <ows:Title>L0 Processor</ows:Title>
+        <ows:Abstract>The L0 processor generates the RAW product</ows:Abstract>
+    </wps:Process>
+    <wps:Status creationTime="2018-05-01T19:22:15Z">
+        <wps:ProcessSucceeded>PyWPS Process L0 Processor finished</wps:ProcessSucceeded>
+    </wps:Status>
+    <wps:ProcessOutputs>
+        <wps:Output>
+            <ows:Identifier>RAW</ows:Identifier>
+            <ows:Title>RAW product</ows:Title>
+            <wps:Reference xlink:href="http://wps/wps/outputs/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLKwcDF6_.tif" mimeType="image/tiff; subtype=geotiff"/>
+        </wps:Output>
+    </wps:ProcessOutputs>
+</wps:ExecuteResponse>
+```
+
 
 #### Executing a Chain
 
@@ -770,11 +797,38 @@ _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**Cosmo
     <wps:Input>
       <ows:Identifier>crude</ows:Identifier>
       <wps:Data>
-        <wps:LiteralData>/sar/data/acquisition.sar</wps:LiteralData>
+        <wps:LiteralData>/cosmo/downlinks/matera/vesubio.sar</wps:LiteralData>
       </wps:Data>
     </wps:Input>
   </wps:DataInputs>
 </wps:Execute>
+```
+
+
+```xml
+<!-- PyWPS 4.0.0 -->
+<wps:ExecuteResponse xmlns:gml="http://www.opengis.net/gml" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US" serviceInstance="http://wps/wps?service=WPS&amp;request=GetCapabilities" statusLocation="http://wps/wps/outputs/1fa4685e-4d75-11e8-947e-0242ac12000a.xml">
+    <wps:Process wps:processVersion="0.1">
+        <ows:Identifier>Cosmo Skymed</ows:Identifier>
+        <ows:Title>CSK Standard Processing Model</ows:Title>
+        <ows:Abstract>An implementation of the SAR Standard Products chain</ows:Abstract>
+    </wps:Process>
+    <wps:Status creationTime="2018-05-01T19:23:29Z">
+        <wps:ProcessSucceeded>PyWPS Process CSK Standard Processing Model finished</wps:ProcessSucceeded>
+    </wps:Status>
+    <wps:ProcessOutputs>
+        <wps:Output>
+            <ows:Identifier>GEC</ows:Identifier>
+            <ows:Title>GEC Product</ows:Title>
+            <wps:Reference xlink:href="http://wps/wps/outputs/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLKOfl_oP.tif" mimeType="image/tiff; subtype=geotiff"/>
+        </wps:Output>
+        <wps:Output>
+            <ows:Identifier>GTC</ows:Identifier>
+            <ows:Title>GTC Product</ows:Title>
+            <wps:Reference xlink:href="http://wps/wps/outputs/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLKZShsyw.tif" mimeType="image/tiff; subtype=geotiff"/>
+        </wps:Output>
+    </wps:ProcessOutputs>
+</wps:ExecuteResponse>
 ```
 
 #### Requesting Chain Execution Statuses
@@ -785,7 +839,7 @@ _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**Cosmo
 
 ```json
 {
-  "count": 6,
+  "count": 1,
   "results": [
     {
       "status": {
