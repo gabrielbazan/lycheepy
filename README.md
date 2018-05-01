@@ -404,12 +404,28 @@ It works equally than the process upload. With _multipart/form-data_ you'll send
 
 ### Publishing Chains
 
-Using the _{host}/configuration/chains_ URI with the _POST_ HTTP method, you'll be able to publish chains.
+You can publish chains trough the _{host}/configuration/chains_ URI, using the HTTP _POST_ method.
 
-Remember that the chains are published trough the _WPS_ interface, so they shall have identical metadata. Except that they do not declare directly which are their inputs and outputs. Instead, you specify the "steps" of the chain, where a "step" is an edge of the directed graph, which comes from the "before" process to the "after" process. So, given these steps, _LycheePy_ will build the graph and know which are the inputs, and which the outputs:
- * The chain inputs are the inputs of all the processes with indegree 0.
- * The chain outputs are the outputs of all the processes with outdegree 0.
+Remember that chains are also published trough the _WPS_ interface, so they need to have identical metadata than a process. 
 
+You do not specify explicitly which are the inputs and outputs of a chian. Instead, you specify the "steps" of the chain, where a "step" is an edge of the directed acyclic graph. This edge goes from the "before" process to the "after" process. 
+
+Given the chain steps, _LycheePy_ can build the graph and know which are the inputs, and which the outputs:
+ * The chain inputs are the inputs of all the processes (nodes) with indegree 0.
+ * The chain outputs are the outputs of all the processes (nodes) with outdegree 0.
+
+_LycheePy_ will automaticly try to map the outputs of the "before" process with the inputs of the "after" process, using their identifiers. It is case sensitive. If they do not match by identifier, you can specify an explicit mapping, like this:
+```json
+{
+  "before": "ProcessA",
+  "after": "ProcessB",
+  "match": {
+    "processAoutput": "processBinput"
+  }
+}
+```
+ 
+Here is an example of the SAR Standard Products chain:
 ```json
 {
   "identifier": "Cosmo Skymed",
@@ -433,8 +449,7 @@ Remember that the chains are published trough the _WPS_ interface, so they shall
 }
 ```
 
-
-#### Publish Products Automaticly
+You can specify which outputs of which processes of the chain will be automaticly published. And you simply need to use the "publish" property of the chain, as you can see on the example above. That property is an object, where its keys are the processes identifiers, and each one of them have a list of which outputs we wish to publish. Just as simple as that.
 
 
 ### Discovering Executables
