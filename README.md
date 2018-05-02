@@ -2,7 +2,7 @@
 
 # LycheePy
 
-_LycheePy_ is a distributed, easy to scale, processing server of geo-spatial data.
+_LycheePy_ is a distributed, easy to scale, processing server of geospatial data.
 
 It allows you to: 
  * Publish pre-defined processing chains through a _WPS_ interface. By doing so, users are abstracted about the chains complexity, because they do not have to build them each time they want to chain processes. From the consumer users perspective, a chain is just another process.
