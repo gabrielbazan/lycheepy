@@ -27,6 +27,7 @@ It allows you to:
   * [Discovering Executables](#discovering-executables)
   * [Executing](#executing)
   * [Discovering Automatically Published Products](#discovering-automatically-published-products)
+- [Setting Up Your Development Environment](#setting-up-your-development-environment)
 - [TODO List](#todo-list)
 - [Ideas](#ideas)
 
@@ -1028,6 +1029,27 @@ And as a result, you'll get something like the following, which contains all the
     </csw:SearchResults>
 </csw:GetRecordsResponse>
 ```
+
+
+## Setting Up Your Development Environment
+
+First of all, clone the repository. LycheePy uses git-submodules, so you should clone recursively:
+```
+git clone https://github.com/gabrielbazan/lycheepy.git --recursive
+```
+
+Then, install _docker-ce_, and _docker-compose_, by running:
+```
+cd cd lycheepy/lycheepy/
+sudo ./host_dependencies.sh
+```
+
+Now everything we need is installed. To build an run, do the following:
+```
+sudo ./start.sh
+```
+
+And now you're able to use your LycheePy instance.
 
 
 ## TODO List
