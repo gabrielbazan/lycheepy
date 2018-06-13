@@ -1040,7 +1040,7 @@ git clone https://github.com/gabrielbazan/lycheepy.git --recursive
 
 Then, install _docker-ce_, and _docker-compose_, by running:
 ```
-cd cd lycheepy/lycheepy/
+cd lycheepy/lycheepy/
 sudo ./host_dependencies.sh
 ```
 
