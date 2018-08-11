@@ -10,10 +10,6 @@ WORKDIR /root/
 RUN virtualenv venv
 RUN /root/venv/bin/pip install -r requirements.txt
 
-
-#RUN git clone https://github.com/geopython/pywps.git
-#RUN cd pywps && /root/venv/bin/python setup.py install && cd -
-
 RUN /root/venv/bin/pip install -e git+https://github.com/geopython/pywps.git@master#egg=pywps-dev
 RUN /root/venv/bin/pip install flufl.enum
 
