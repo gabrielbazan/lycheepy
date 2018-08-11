@@ -8,7 +8,7 @@ REPOSITORIES = {
     Repositories.GEO_SERVER: [
         {
             'protocol': 'http',
-            'host': 'repository',
+            'host': '192.168.0.225',
             'port': 8080
         }
     ]
