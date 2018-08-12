@@ -14,7 +14,7 @@ app = Celery(BROKER_APPLICATION_NAME)
 app.config_from_object(configuration)
 
 
-@app.task(name=BROKER_TASK_NAME)
+@app.task(name=BROKER_PROCESS_EXECUTION_TASK_NAME)
 def run_process(identifier, wps_request_json):
 
     processes = ProcessesGateway(
@@ -41,7 +41,7 @@ def run_process(identifier, wps_request_json):
     return dict(process=identifier, outputs=outputs)
 
 
-@app.task(name='run_chain_process')
+@app.task(name=BROKER_CHAIN_PROCESS_EXECUTION_TASK_NAME)
 def run_chain_process(identifier, wps_request_json, products, chain_identifier, execution_id):
     outputs = run_process(identifier, wps_request_json).get('outputs')
     publish(products, identifier, outputs, chain_identifier, execution_id)
