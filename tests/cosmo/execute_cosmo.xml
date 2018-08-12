@@ -8,4 +8,8 @@
             </wps:Reference>
         </wps:Input>
     </wps:DataInputs>
+    <wps:ResponseForm>
+        <wps:ResponseDocument storeExecuteResponse="true" status="true">
+        </wps:ResponseDocument>
+    </wps:ResponseForm>
 </wps:Execute>

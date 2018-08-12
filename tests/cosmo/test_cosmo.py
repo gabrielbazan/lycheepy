@@ -5,6 +5,8 @@ import json
 from string import Template
 from requests import post, get
 from settings import *
+from time import sleep
+import urlparse
 
 
 class TestCosmoSkymed(unittest.TestCase):
@@ -28,7 +30,9 @@ class TestCosmoSkymed(unittest.TestCase):
                         file=(process.get('file'), open(process.get('file'), 'rb'), 'application/octet-stream')
                     )
                 )
-                self.assertEqual(response.status_code, 201, 'Failed to create process {}'.format(process.get('identifier')))
+                self.assertEqual(
+                    response.status_code, 201, 'Failed to create process {}'.format(process.get('identifier'))
+                )
 
     def create_chain(self):
         if not self.chain_exists(CHAIN.get('identifier')):
@@ -38,10 +42,37 @@ class TestCosmoSkymed(unittest.TestCase):
     def execute_chain(self):
         response = post(WPS_URL, CHAIN_EXECUTE)
         self.assertEqual(response.status_code, 200, 'Failed to execute chain')
-        print response.text
         tree = ElementTree.ElementTree(ElementTree.fromstring(response.text)).getroot()
         status_location = tree.get('statusLocation')
         execution_id = re.search('(.*)/(.*).xml', status_location).group(2)
+
+        seconds = .5
+        finished = False
+        timeout = 20
+        time_counter = 0
+
+        while not finished:
+
+            self.assertFalse(
+                time_counter >= timeout,
+                'Asynchronous chain executions take more than {} seconds'.format(timeout)
+            )
+
+            path = urlparse.urlparse(status_location).path
+
+            status_response = get('{}/{}/{}'.format(HOST, 'wps', path))
+            self.assertEqual(status_response.status_code, 200, 'Failed to retrieve chain Status Location')
+            status = status_response.text
+            status_tree = ElementTree.ElementTree(ElementTree.fromstring(status)).getroot()
+
+            namespaces = dict(wps='http://www.opengis.net/wps/1.0.0')
+
+            if status_tree.findall('wps:ProcessOutputs', namespaces):
+                finished = True
+
+            sleep(seconds)
+            time_counter += seconds
+
         return execution_id
 
     def execution_is_published(self, execution_id):
@@ -49,11 +80,15 @@ class TestCosmoSkymed(unittest.TestCase):
         self.assertEqual(response.status_code, 200, 'Failed to query chain executions')
         results = response.json().get('results')
         self.assertTrue(bool(results), 'Chain execution is not published')
-        self.assertTrue(results[0].get('status').get('name') == 'SUCCESS', 'Chain execution is published, but is not a success')
+        self.assertTrue(
+            results[0].get('status').get('name') == 'SUCCESS', 'Chain execution is published, but is not a success'
+        )
 
     def products_are_published(self, execution_id):
         response = post(CSW_URL, Template(CSW_GET_RECORDS).safe_substitute(execution_id=execution_id))
-        self.assertEqual(response.status_code, 200, 'Failed to query execution products through CSW Get Records operation')
+        self.assertEqual(
+            response.status_code, 200, 'Failed to query execution products through CSW Get Records operation'
+        )
         tree = ElementTree.ElementTree(ElementTree.fromstring(response.text)).getroot()
         search_results = tree.find('csw:SearchResults', namespaces=dict(csw='http://www.opengis.net/cat/csw/2.0.2'))
         number_of_records = int(search_results.get('numberOfRecordsReturned'))
