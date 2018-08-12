@@ -35,3 +35,6 @@ class ExecutableAdapter(Process):
                 OutputsDeserializer.add_data(result_output, response.outputs.get(output_identifier))
 
         return response
+
+    def clean(self):
+        pass
