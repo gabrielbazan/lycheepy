@@ -23,14 +23,13 @@ def wps():
     ).add_executables().build()
 
 
-@application.route('/outputs/<execution_id>/<filename>', methods=['GET'])
-def output_file(execution_id, filename):
+@application.route('/outputs/<path:filename>', methods=['GET'])
+def output_file(filename):
     outputs_dir = get_config_value('server', 'outputpath')
-    execution_dir = join(outputs_dir, execution_id)
-    target_file = join(execution_dir, filename)
+    target_file = join(outputs_dir, filename)
 
     if isfile(target_file):
-        return send_from_directory(execution_dir, filename)
+        return send_from_directory(outputs_dir, filename)
     else:
         abort(404)
 

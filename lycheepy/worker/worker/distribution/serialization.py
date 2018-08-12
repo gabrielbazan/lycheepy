@@ -21,12 +21,12 @@ class OutputsSerializer(object):
             if isinstance(output, ComplexOutput):
                 additional_properties = dict(
                     type='complex',
-                    file=output.file,  # TODO
+                    file=output.file,
                     source=output.source,
                     data_format=output.data_format.json,
                     supported_formats=[f.json for f in output.supported_formats],
-                    data = output.data if not output.as_reference else None,
-                    as_reference = output.as_reference
+                    data=output.data if not output.as_reference else None,
+                    as_reference=output.as_reference
                 )
             else:
                 additional_properties = dict(
@@ -40,7 +40,9 @@ class OutputsSerializer(object):
 
             output_json.update(additional_properties)
 
-            # TODO: Support multiple occurrences
-            outputs_json[identifier] = [output_json]
+            if identifier not in outputs_json:
+                outputs_json[identifier] = []
+
+            outputs_json[identifier].append(output_json)
 
         return outputs_json

@@ -38,6 +38,7 @@ class TestCosmoSkymed(unittest.TestCase):
     def execute_chain(self):
         response = post(WPS_URL, CHAIN_EXECUTE)
         self.assertEqual(response.status_code, 200, 'Failed to execute chain')
+        print response.text
         tree = ElementTree.ElementTree(ElementTree.fromstring(response.text)).getroot()
         status_location = tree.get('statusLocation')
         execution_id = re.search('(.*)/(.*).xml', status_location).group(2)
