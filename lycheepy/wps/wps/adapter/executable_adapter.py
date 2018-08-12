@@ -31,9 +31,7 @@ class ExecutableAdapter(Process):
 
         for output in self.outputs:
             output_identifier = output.identifier
-            OutputsDeserializer.add_data(
-                outputs.get(output_identifier)[0],  # TODO: Handle outputs with multiple occurrences
-                response.outputs.get(output_identifier)
-            )
+            for result_output in outputs.get(output_identifier):
+                OutputsDeserializer.add_data(result_output, response.outputs.get(output_identifier))
 
         return response
