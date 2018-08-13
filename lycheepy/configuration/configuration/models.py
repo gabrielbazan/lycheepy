@@ -23,6 +23,11 @@ class Process(Describable):
     version = Column(Text, nullable=False)
     meta_data = relationship('Metadata', secondary='process_metadata', backref='processes')
 
+    @property
+    def chains(self):
+        steps = self.steps_before + self.steps_after
+        return [step.chain for step in steps]
+
 
 class Chain(Describable):
     __tablename__ = 'chain'
@@ -94,9 +99,9 @@ class Step(Model):
     __tablename__ = 'step'
     id = Column(Integer, primary_key=True)
     after_id = Column(Integer, ForeignKey('process.id'), nullable=False)
-    after = relationship('Process', foreign_keys=after_id)
+    after = relationship('Process', foreign_keys=after_id, backref='steps_after')
     before_id = Column(Integer, ForeignKey('process.id'), nullable=False)
-    before = relationship('Process', foreign_keys=before_id)
+    before = relationship('Process', foreign_keys=before_id, backref='steps_before')
     chain_id = Column(Integer, ForeignKey('chain.id'), nullable=False)
     chain = relationship('Chain', backref='steps')
 
