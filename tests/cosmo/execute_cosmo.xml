@@ -4,9 +4,12 @@
     <wps:DataInputs>
         <wps:Input>
             <ows:Identifier>crude</ows:Identifier>
-            <wps:Data>
-                <wps:LiteralData>/sar/data/acquisition.sar</wps:LiteralData>
-            </wps:Data>
+            <wps:Reference xlink:href="http://repository:8080/geoserver/ows?service=WCS&amp;version=2.0.0&amp;request=GetCoverage&amp;coverageId=nurc:Img_Sample&amp;format=image/tiff">
+            </wps:Reference>
         </wps:Input>
     </wps:DataInputs>
+    <wps:ResponseForm>
+        <wps:ResponseDocument storeExecuteResponse="true" status="true">
+        </wps:ResponseDocument>
+    </wps:ResponseForm>
 </wps:Execute>

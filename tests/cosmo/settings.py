@@ -27,7 +27,7 @@ PROCESSES = [
                     identifier='crude',
                     title='crude',
                     abstract='Crude data',
-                    dataType='string'
+                    format='GEOTIFF'
                 )
             ],
             outputs=[

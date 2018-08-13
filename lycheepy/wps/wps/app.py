@@ -1,4 +1,4 @@
-import os
+from os.path import join, isfile
 
 from flask import abort, send_from_directory
 from flask_cors import CORS
@@ -23,11 +23,12 @@ def wps():
     ).add_executables().build()
 
 
-@application.route('/outputs/<filename>')
+@application.route('/outputs/<path:filename>', methods=['GET'])
 def output_file(filename):
     outputs_dir = get_config_value('server', 'outputpath')
-    target_file = os.path.join(outputs_dir, filename)
-    if os.path.isfile(target_file):
+    target_file = join(outputs_dir, filename)
+
+    if isfile(target_file):
         return send_from_directory(outputs_dir, filename)
     else:
         abort(404)

@@ -1,11 +1,11 @@
-from pywps import Format, ComplexOutput, Process, LiteralInput
+from pywps import Format, ComplexOutput, Process, ComplexInput
 from pywps.app.Common import Metadata
 
 
 class L1A(Process):
     def __init__(self):
         inputs = [
-            LiteralInput('RAW', 'RAW Data', data_type='string')
+            ComplexInput('RAW', 'RAW Data', [Format('image/tiff; subtype=geotiff')])
         ]
 
         outputs = [
@@ -27,8 +27,6 @@ class L1A(Process):
         )
 
     def _handler(self, request, response):
-
-        response.outputs['SCS'].file = '/root/workdir/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLK.tif'
+        response.outputs['SCS'].file = request.inputs['RAW'][0].file
         response.outputs['SCS'].as_reference = True
-
         return response

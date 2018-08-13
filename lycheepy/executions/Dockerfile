@@ -1,13 +1,14 @@
 FROM python:2
 
-ADD requirements.txt /root/
-ADD executions/ /root/executions/
-ADD wait-service.sh /root/
-
 WORKDIR /root/
+
+ADD requirements.txt /root/
 
 RUN virtualenv venv
 RUN /root/venv/bin/pip install -r requirements.txt
+
+ADD executions/ /root/executions/
+ADD wait-service.sh /root/
 
 CMD ./wait-service.sh executions-persistence 5432 && \
     /root/venv/bin/python /root/executions/models.py && \
