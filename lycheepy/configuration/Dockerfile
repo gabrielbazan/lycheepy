@@ -1,13 +1,14 @@
 FROM python:2
 
-ADD requirements.txt /root/
-ADD configuration/ /root/configuration/
-ADD wait-service.sh /root/
-
 WORKDIR /root/
+
+ADD requirements.txt /root/
 
 RUN virtualenv venv
 RUN /root/venv/bin/pip install -r requirements.txt
+
+ADD configuration/ /root/configuration/
+ADD wait-service.sh /root/
 
 CMD ./wait-service.sh persistence 5432 && \
     ./wait-service.sh processes 21 && \

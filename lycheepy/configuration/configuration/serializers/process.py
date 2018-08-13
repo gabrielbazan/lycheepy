@@ -19,13 +19,11 @@ class ProcessSerializer(Serializer):
 
     def create(self, data):
         self.save_file(data.get('identifier'), creation=True)
-        serial = super(ProcessSerializer, self).create(data)
-        return serial
+        return super(ProcessSerializer, self).create(data)
 
     def update(self, identifier, data):
         self.save_file(data.get('identifier'), creation=False)
-        serial = super(ProcessSerializer, self).update(identifier, data)
-        return serial
+        return super(ProcessSerializer, self).update(identifier, data)
 
     def deserialize(self, data, instance):
         instance.identifier = data.get('identifier', instance.identifier)
