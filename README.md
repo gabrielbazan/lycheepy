@@ -28,6 +28,7 @@ It allows you to:
   * [Executing](#executing)
   * [Discovering Automatically Published Products](#discovering-automatically-published-products)
 - [Setting Up Your Development Environment](#setting-up-your-development-environment)
+- [CLI](#cli)
 - [TODO List](#todo-list)
 - [Ideas](#ideas)
 
@@ -1050,6 +1051,11 @@ sudo ./start.sh
 ```
 
 And now you're able to use your LycheePy instance.
+
+
+## CLI
+
+LycheePy also has a web client, which you can find [here](https://github.com/gabrielbazan/lycheepy.cli).
 
 
 ## TODO List
