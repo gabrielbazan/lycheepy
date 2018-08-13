@@ -5,7 +5,7 @@ from flask import request
 from simplyrestful.serializers import Serializer
 from simplyrestful.database import session
 from simplyrestful.models import get_or_create
-from simplyrestful.exceptions import Conflict
+from simplyrestful.exceptions import Conflict, NotFound
 
 from models import *
 from validators import ProcessValidator
@@ -19,13 +19,11 @@ class ProcessSerializer(Serializer):
 
     def create(self, data):
         self.save_file(data.get('identifier'), creation=True)
-        serial = super(ProcessSerializer, self).create(data)
-        return serial
+        return super(ProcessSerializer, self).create(data)
 
     def update(self, identifier, data):
         self.save_file(data.get('identifier'), creation=False)
-        serial = super(ProcessSerializer, self).update(identifier, data)
-        return serial
+        return super(ProcessSerializer, self).update(identifier, data)
 
     def deserialize(self, data, instance):
         instance.identifier = data.get('identifier', instance.identifier)
@@ -112,3 +110,25 @@ class ProcessSerializer(Serializer):
     @staticmethod
     def is_valid_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_PROCESSES_EXTENSIONS
+
+    def delete(self, identifier):
+        try:
+            instance = self.query.filter_by(id=identifier).one_or_none()
+
+            if not instance:
+                raise NotFound('The process does not exist')
+
+            if instance.chains:
+                raise Conflict('The process belongs to a chain, so it cannot be deleted')
+
+            # Delete related objects
+            session.query(ProcessMetadata).filter_by(process_id=identifier).delete()
+            session.query(Output).filter_by(process_id=identifier).delete()
+            session.query(Input).filter_by(process_id=identifier).delete()
+
+            # Delete object
+            session.delete(instance)
+            session.commit()
+        except:
+            session.rollback()
+            raise

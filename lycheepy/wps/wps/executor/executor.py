@@ -13,7 +13,8 @@ class Executor(object):
             BROKER_PROTOCOL,
             BROKER_USERNAME,
             BROKER_APPLICATION_NAME,
-            BROKER_TASK_NAME
+            BROKER_PROCESS_EXECUTION_TASK_NAME,
+            BROKER_CHAIN_PROCESS_EXECUTION_TASK_NAME
         )
         self.executions = ExecutionsGateway(EXECUTIONS_URL)
 

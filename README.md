@@ -28,6 +28,7 @@ It allows you to:
   * [Executing](#executing)
   * [Discovering Automatically Published Products](#discovering-automatically-published-products)
 - [Setting Up Your Development Environment](#setting-up-your-development-environment)
+- [CLI](#cli)
 - [TODO List](#todo-list)
 - [Ideas](#ideas)
 
@@ -341,7 +342,7 @@ Here you can see a metadata example for the [L0](/tests/cosmo/processes/L0.py) p
       "identifier": "crude", 
       "title": "Crude data",
       "abstract": "Downloaded from the satellite to the ground station",
-      "dataType": "string"
+      "format": "GEOTIFF"
     }
   ],
   "outputs": [
@@ -375,7 +376,7 @@ You can retrieve a list of the published processes, using the _{host}/configurat
             "metadata": ["Level 0", "Processor"],
             "inputs": [
                 {
-                    "dataType": "string",
+                    "format": "GEOTIFF",
                     "format": null,
                     "abstract": "Downloaded from the satellite to the ground station",
                     "identifier": "crude",
@@ -485,7 +486,7 @@ _LycheePy_ will calculate and show you which are inputs and the outputs of the c
             "metadata": ["Cosmo", "Skymed", "Mission", "Chain"],
             "inputs": [
                 {
-                    "dataType": "string",
+                    "format": "GEOTIFF",
                     "format": null,
                     "abstract": "Downloaded from the satellite to the ground station",
                     "identifier": "crude",
@@ -656,10 +657,19 @@ _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**L0**_
             <Input minOccurs="1" maxOccurs="1">
                 <ows:Identifier>crude</ows:Identifier>
                 <ows:Title>Crude data</ows:Title>
-                <LiteralData>
-                    <ows:DataType ows:reference="urn:ogc:def:dataType:OGC:1.1:string">string</ows:DataType>
-                    <ows:AnyValue/>
-                </LiteralData>
+                <ows:Abstract></ows:Abstract>
+                <ComplexData maximumMegabytes="10">
+                    <Default>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Default>
+                    <Supported>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Supported>
+                </ComplexData>
             </Input>
         </DataInputs>
         <ProcessOutputs>
@@ -698,10 +708,19 @@ _{host}/wps?service=WPS&request=describeprocess&version=1.0.0&identifier=**Cosmo
             <Input minOccurs="1" maxOccurs="1">
                 <ows:Identifier>crude</ows:Identifier>
                 <ows:Title>Crude data</ows:Title>
-                <LiteralData>
-                    <ows:DataType ows:reference="urn:ogc:def:dataType:OGC:1.1:string">string</ows:DataType>
-                    <ows:AnyValue/>
-                </LiteralData>
+                <ows:Abstract></ows:Abstract>
+                <ComplexData maximumMegabytes="10">
+                    <Default>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Default>
+                    <Supported>
+                        <Format>
+                            <MimeType>image/tiff; subtype=geotiff</MimeType>
+                        </Format>
+                    </Supported>
+                </ComplexData>
             </Input>
         </DataInputs>
         <ProcessOutputs>
@@ -758,13 +777,12 @@ The following example will execute the _L0_ processor:
 <wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
   <ows:Identifier>L0</ows:Identifier>
   <wps:DataInputs>
-    <wps:Input>
-      <ows:Identifier>crude</ows:Identifier>
-      <wps:Data>
-        <wps:LiteralData>/cosmo/downlinks/matera/vesubio.sar</wps:LiteralData>
-      </wps:Data>
-    </wps:Input>
-  </wps:DataInputs>
+        <wps:Input>
+            <ows:Identifier>crude</ows:Identifier>
+            <wps:Reference xlink:href="http://repository:8080/geoserver/ows?service=WCS&amp;version=2.0.0&amp;request=GetCoverage&amp;coverageId=nurc:Img_Sample&amp;format=image/tiff">
+            </wps:Reference>
+        </wps:Input>
+    </wps:DataInputs>
 </wps:Execute>
 ```
 
@@ -784,7 +802,8 @@ As a response, you will receive something like this:
         <wps:Output>
             <ows:Identifier>RAW</ows:Identifier>
             <ows:Title>RAW product</ows:Title>
-            <wps:Reference xlink:href="http://wps/wps/outputs/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLKwcDF6_.tif" mimeType="image/tiff; subtype=geotiff"/>
+            <ows:Abstract></ows:Abstract>
+            <wps:Reference href="http://{host_name_or_ip}/outputs/1f638322-9e9f-11e8-b5db-0242ac12000a/ows_yu78Ak" mimeType="image/tiff; subtype=geotiff" encoding="" schema=""/>
         </wps:Output>
     </wps:ProcessOutputs>
 </wps:ExecuteResponse>
@@ -801,13 +820,12 @@ So, this request is identical to the [previous](#executing-a-process), since the
 <wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 ../wpsExecute_request.xsd">
   <ows:Identifier>Cosmo Skymed</ows:Identifier>
   <wps:DataInputs>
-    <wps:Input>
-      <ows:Identifier>crude</ows:Identifier>
-      <wps:Data>
-        <wps:LiteralData>/cosmo/downlinks/matera/vesubio.sar</wps:LiteralData>
-      </wps:Data>
-    </wps:Input>
-  </wps:DataInputs>
+        <wps:Input>
+            <ows:Identifier>crude</ows:Identifier>
+            <wps:Reference xlink:href="http://repository:8080/geoserver/ows?service=WCS&amp;version=2.0.0&amp;request=GetCoverage&amp;coverageId=nurc:Img_Sample&amp;format=image/tiff">
+            </wps:Reference>
+        </wps:Input>
+    </wps:DataInputs>
 </wps:Execute>
 ```
 
@@ -827,12 +845,12 @@ As a response, you will receive something like this:
         <wps:Output>
             <ows:Identifier>GEC</ows:Identifier>
             <ows:Title>GEC Product</ows:Title>
-            <wps:Reference xlink:href="http://wps/wps/outputs/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLKOfl_oP.tif" mimeType="image/tiff; subtype=geotiff"/>
+            <wps:Reference href="http://{host_name_or_ip}/outputs/1f638322-9e9f-11e8-b5db-0242ac12000a/ows_yu78Ak" mimeType="image/tiff; subtype=geotiff" encoding="" schema=""/>
         </wps:Output>
         <wps:Output>
             <ows:Identifier>GTC</ows:Identifier>
             <ows:Title>GTC Product</ows:Title>
-            <wps:Reference xlink:href="http://wps/wps/outputs/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLKZShsyw.tif" mimeType="image/tiff; subtype=geotiff"/>
+            <wps:Reference href="http://{host_name_or_ip}/outputs/1f638322-9e9f-11e8-b5db-0242ac12000a/ows_yu78Ak" mimeType="image/tiff; subtype=geotiff" encoding="" schema=""/>
         </wps:Output>
     </wps:ProcessOutputs>
 </wps:ExecuteResponse>
@@ -1050,6 +1068,11 @@ sudo ./start.sh
 ```
 
 And now you're able to use your LycheePy instance.
+
+
+## CLI
+
+LycheePy also has a web client, which you can find [here](https://github.com/gabrielbazan/lycheepy.cli).
 
 
 ## TODO List

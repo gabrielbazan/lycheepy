@@ -1,4 +1,4 @@
-from pywps import ComplexInput, Format, ComplexOutput, Process, LiteralInput
+from pywps import ComplexInput, Format, ComplexOutput, Process
 from pywps.app.Common import Metadata
 
 
@@ -27,8 +27,6 @@ class L1C(Process):
         )
 
     def _handler(self, request, response):
-
-        response.outputs['GEC'].file = '/root/workdir/CSKS2_GEC_B_HI_16_HH_RA_SF_20130301045754_20130301045801.S01.QLK.tif'
+        response.outputs['GEC'].file = request.inputs['MDG'][0].file
         response.outputs['GEC'].as_reference = True
-
         return response
