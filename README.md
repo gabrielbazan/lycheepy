@@ -329,7 +329,7 @@ You can publish processes using the _{host}/configuration/processes_ URI with th
 
 Processes parameters (inputs and outputs) have _dataType_ OR _format_, they cannot have both or none.
 
-Here you can see a metadata example for the [L0](/tests/cosmo/processes/L0.py) process:
+Here you can see a metadata example for the [L0](/tests/processes/cosmo/L0.py) process:
 ```json
 {
   "identifier": "L0",
