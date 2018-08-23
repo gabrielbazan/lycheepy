@@ -1,9 +1,12 @@
-FROM python:2
+FROM ubuntu:16.04
+
+RUN apt update && apt upgrade -y
 
 WORKDIR /root/
 
 ADD requirements.txt /root/
 
+RUN apt install python2.7 python-virtualenv -y
 RUN virtualenv venv
 RUN /root/venv/bin/pip install -r requirements.txt
 

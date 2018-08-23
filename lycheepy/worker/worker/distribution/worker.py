@@ -8,6 +8,9 @@ from serialization import OutputsSerializer
 from gateways.repository import RepositoryFactory
 from gateways.processes import ProcessesGateway
 
+import logging
+from json import dumps
+
 
 app = Celery(BROKER_APPLICATION_NAME)
 
@@ -31,12 +34,16 @@ def run_process(identifier, wps_request_json):
     request.json = wps_request_json
     request.status = 'false'
 
+    logging.critical('Request: {}'.format(dumps(wps_request_json)))
+
     response = service.processes.get(identifier).execute(
         request,
         uuid.uuid1()
     )
 
     outputs = OutputsSerializer.to_json(response.outputs)
+
+    logging.critical('Outputs: {}'.format(dumps(outputs)))
 
     return dict(process=identifier, outputs=outputs)
 
