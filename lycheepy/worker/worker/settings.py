@@ -14,14 +14,6 @@ REPOSITORIES = {
             'host': 'repository',
             'port': 8080
         }
-    ],
-    Repositories.FTP: [
-        {
-            'ip': 'ftp_repository',
-            'username': 'lycheepy',
-            'password': 'lycheepy',
-            'timeout': 120
-        }
     ]
 }
 
