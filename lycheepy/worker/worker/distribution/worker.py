@@ -1,4 +1,4 @@
-import uuid
+from uuid import uuid1
 from celery import Celery
 from pywps import Service
 from pywps.app.WPSRequest import WPSRequest
@@ -28,22 +28,18 @@ def run_process(identifier, wps_request_json):
         PROCESSES_GATEWAY_DIRECTORY
     )
 
-    service = Service([processes.get_instance(identifier, LOCAL_PROCESSES_REPOSITORY)], 'the_cfg_file')
-
     request = WPSRequest()
     request.json = wps_request_json
     request.status = 'false'
 
-    logging.critical('Request: {}'.format(dumps(wps_request_json)))
+    logging.info('WPS request: {}'.format(dumps(wps_request_json)))
 
-    response = service.processes.get(identifier).execute(
-        request,
-        uuid.uuid1()
-    )
+    with processes.get_process_context(identifier, LOCAL_PROCESSES_REPOSITORY) as process_context:
+        service = Service([process_context.get_process_instance()], CONFIGURATION_FILE)
+        response = service.processes.get(identifier).execute(request, uuid1())
+        outputs = OutputsSerializer.to_json(response.outputs)
 
-    outputs = OutputsSerializer.to_json(response.outputs)
-
-    logging.critical('Outputs: {}'.format(dumps(outputs)))
+    logging.info('Process outputs: {}'.format(dumps(outputs)))
 
     return dict(process=identifier, outputs=outputs)
 
