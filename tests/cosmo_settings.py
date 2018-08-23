@@ -1,17 +1,8 @@
-from os.path import join, dirname
+from os.path import join
+from settings import PROCESSES_DIRECTORY
 
 
-HOST = 'http://localhost'
-CONFIGURATION_URL = '{}/configuration'.format(HOST)
-PROCESSES_URL = '{}/processes'.format(CONFIGURATION_URL)
-CHAINS_URL = '{}/chains'.format(CONFIGURATION_URL)
-WPS_URL = '{}/wps/'.format(HOST)
-EXECUTIONS_URL = '{}/executions/executions'.format(HOST)
-CSW_URL = '{}/repository/geoserver/csw'.format(HOST)
-
-
-DIR = dirname(__file__)
-PROCESSES_DIRECTORY = join(DIR, 'processes')
+PROCESSES_DIRECTORY = join(PROCESSES_DIRECTORY, 'cosmo')
 
 
 PROCESSES = [
@@ -27,7 +18,7 @@ PROCESSES = [
                     identifier='crude',
                     title='crude',
                     abstract='Crude data',
-                    dataType='string'
+                    format='GEOTIFF'
                 )
             ],
             outputs=[
@@ -168,11 +159,3 @@ CHAIN = dict(
         L1C=['GEC']
     )
 )
-
-
-with open(join(DIR, 'execute_cosmo.xml'), 'r') as execute:
-    CHAIN_EXECUTE = execute.read()
-
-
-with open(join(DIR, 'csw_get_records.xml'), 'r') as csw:
-    CSW_GET_RECORDS = csw.read()

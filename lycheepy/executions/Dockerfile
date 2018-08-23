@@ -1,13 +1,17 @@
-FROM python:2
+FROM ubuntu:16.04
 
-ADD requirements.txt /root/
-ADD executions/ /root/executions/
-ADD wait-service.sh /root/
+RUN apt update && apt upgrade -y
 
 WORKDIR /root/
 
+ADD requirements.txt /root/
+
+RUN apt install python2.7 python-virtualenv -y
 RUN virtualenv venv
 RUN /root/venv/bin/pip install -r requirements.txt
+
+ADD executions/ /root/executions/
+ADD wait-service.sh /root/
 
 CMD ./wait-service.sh executions-persistence 5432 && \
     /root/venv/bin/python /root/executions/models.py && \

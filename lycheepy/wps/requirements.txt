@@ -4,5 +4,5 @@ simplyrestful
 networkx==1.11
 gunicorn
 celery
-pywps
+#pywps
 requests
