@@ -1,6 +1,6 @@
-from unittest import TestCase
+from unittest import TestCase, main
 from settings import CSW_URL, WPS_URL, PROCESSES_URL, CHAINS_URL, EXECUTIONS_URL, WCS_RASTER
-from tests.cosmo_settings import PROCESSES, CHAIN
+from cosmo_settings import PROCESSES, CHAIN
 from gateways import CswGateway, WpsGateway, ProcessesGateway, ChainsGateway, ExecutionsGateway
 
 
@@ -49,3 +49,7 @@ class TestCosmoSkymed(TestCase):
             5,
             'Failed to retrieve automatically published products. Obtained {} results'.format(records_count)
         )
+
+
+if __name__ == '__main__':
+    unittest.main()
