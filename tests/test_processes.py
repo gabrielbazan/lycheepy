@@ -1,6 +1,6 @@
 from json import loads
 from uuid import uuid4
-from unittest import TestCase
+from unittest import TestCase, main
 from settings import PROCESSES_URL, PROCESS_SPECIFICATION, PROCESS_FILE
 from gateways.processes import ProcessesGateway
 
@@ -53,3 +53,7 @@ class TestProcesses(TestCase):
             loads(text)
         except:
             raise AssertionError('Not a JSON: "{}"'.format(text))
+
+
+if __name__ == '__main__':
+    main()
