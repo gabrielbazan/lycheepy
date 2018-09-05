@@ -1,4 +1,4 @@
-import uuid
+from uuid import uuid1
 from celery import Celery
 from pywps import Service
 from pywps.app.WPSRequest import WPSRequest
@@ -7,6 +7,9 @@ import configuration
 from serialization import OutputsSerializer
 from gateways.repository import RepositoryFactory
 from gateways.processes import ProcessesGateway
+
+import logging
+from json import dumps
 
 
 app = Celery(BROKER_APPLICATION_NAME)
@@ -25,18 +28,18 @@ def run_process(identifier, wps_request_json):
         PROCESSES_GATEWAY_DIRECTORY
     )
 
-    service = Service([processes.get_instance(identifier, LOCAL_PROCESSES_REPOSITORY)], 'the_cfg_file')
-
     request = WPSRequest()
     request.json = wps_request_json
     request.status = 'false'
 
-    response = service.processes.get(identifier).execute(
-        request,
-        uuid.uuid1()
-    )
+    logging.info('WPS request: {}'.format(dumps(wps_request_json)))
 
-    outputs = OutputsSerializer.to_json(response.outputs)
+    with processes.get_process_context(identifier, LOCAL_PROCESSES_REPOSITORY) as process_context:
+        service = Service([process_context.get_process_instance()], CONFIGURATION_FILE)
+        response = service.processes.get(identifier).execute(request, uuid1())
+        outputs = OutputsSerializer.to_json(response.outputs)
+
+    logging.info('Process outputs: {}'.format(dumps(outputs)))
 
     return dict(process=identifier, outputs=outputs)
 
