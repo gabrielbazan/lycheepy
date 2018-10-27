@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.com/gabrielbazan/lycheepy.svg?branch=master)](https://travis-ci.com/gabrielbazan/lycheepy)
+
+
+
 <img align="left" width="80" height="80" src="doc/architecture/lychee.png?raw=true">
 
 # LycheePy
@@ -100,7 +104,7 @@ First, lets talk about the repository organization. At the root of it, we basica
  * [tests](/tests), which contains functional, and (in the future) unitary tests.
 
 Inside the [lycheepy](/lycheepy) directory, we will find one folder per each development component, and everything we need to install and run the application. To ensure the proper distribution of these development components across different containers while we are developing, and even in production, we use [Docker Compose](https://docs.docker.com/compose/), so on this directory we'll find:
- * A [host_dependencies.sh](/lycheepy/host_dependencies.sh) executable file, which can be used in order to install the host dependencies, such as docker-compose.
+ * A [install_host_dependencies.sh](/lycheepy/install_host_dependencies.sh) executable file, which can be used in order to install the host dependencies, such as docker-compose.
  * The [docker-compose.yml](/lycheepy/docker-compose.yml) file. There are found all the containers definitions, their mutual dependencies, the ports they expose for mutual interaction, the ports they expose to the host, and so on.
  * A [start.sh](lycheepy/start.sh) executable file, which can be used to run all the containers for development purposes.
 
@@ -1059,7 +1063,7 @@ git clone https://github.com/gabrielbazan/lycheepy.git --recursive
 Then, install _docker-ce_, and _docker-compose_, by running:
 ```
 cd lycheepy/lycheepy/
-sudo ./host_dependencies.sh
+sudo ./install_host_dependencies.sh
 ```
 
 Now everything we need is installed. To build an run, do the following:
