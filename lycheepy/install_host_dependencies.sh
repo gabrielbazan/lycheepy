@@ -3,7 +3,7 @@
 
 # Host Dependencies Installation Script
 
-sudo apt-get update && sudo apt-get -y upgrade
+sudo apt-get update
 
 # Docker CE installation
 sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
