@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.com/gabrielbazan/lycheepy.svg?branch=master)](https://travis-ci.com/gabrielbazan/lycheepy)
+
+
+
 <img align="left" width="80" height="80" src="doc/architecture/lychee.png?raw=true">
 
 # LycheePy
