@@ -1,0 +1,18 @@
+git:
+  submodules: true
+branches:
+  only:
+  - master
+  - development
+  - ci
+before_install:
+  - cd lycheepy
+  - sudo bash install_host_dependencies.sh
+install:
+  - cd lycheepy
+  - sudo docker-compose build
+  - sudo docker-compose up -d
+  - sleep 30
+script:
+  - cd tests
+  - bash run.sh
