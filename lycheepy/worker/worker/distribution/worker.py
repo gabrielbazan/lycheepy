@@ -1,20 +1,18 @@
+import logging
 from uuid import uuid1
+from json import dumps
 from celery import Celery
 from pywps import Service
 from pywps.app.WPSRequest import WPSRequest
 from settings import *
-import configuration
 from serialization import OutputsSerializer
 from gateways.repository import RepositoryFactory
 from gateways.processes import ProcessesGateway
 
-import logging
-from json import dumps
 
+broker_url = '{}://{}:{}@{}:{}//'.format(BROKER_PROTOCOL, BROKER_USERNAME, BROKER_PASSWORD, BROKER_HOST, BROKER_PORT)
 
-app = Celery(BROKER_APPLICATION_NAME)
-
-app.config_from_object(configuration)
+app = Celery(BROKER_APPLICATION_NAME, broker=broker_url, backend=broker_url)
 
 
 @app.task(name=BROKER_PROCESS_EXECUTION_TASK_NAME)
