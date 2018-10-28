@@ -9,7 +9,7 @@ configure_from_module('settings')
 
 from pywps.configuration import get_config_value
 
-from settings import CONFIGURATION_FILE, CONFIGURATION_URL
+from settings import CONFIGURATION_FILE
 from service import ServiceBuilder
 from executor import Executor
 
