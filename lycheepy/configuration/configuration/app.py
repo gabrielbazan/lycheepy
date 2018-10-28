@@ -5,7 +5,7 @@ from simplyrestful.settings import configure_from_module
 
 configure_from_module('settings')
 
-from resources import ProcessResource, ChainResource, FormatResource, DataTypeResource
+from resources import ProcessResource, ChainResource, FormatResource, DataTypeResource, ExecutableResource
 
 
 cross_origin = CORS(application, resources={r"*": {"origins": "*"}})
@@ -14,6 +14,7 @@ add_resource(api, ProcessResource)
 add_resource(api, ChainResource)
 add_resource(api, FormatResource)
 add_resource(api, DataTypeResource)
+add_resource(api, ExecutableResource)
 
 
 if __name__ == '__main__':
