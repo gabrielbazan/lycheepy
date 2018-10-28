@@ -5,10 +5,13 @@ from ftp import Ftp
 
 class FtpRepository(Repository):
 
-    def __init__(self, ip, username, password, timeout):
-        self.connection = Ftp(ip, username, password, timeout)
+    def __init__(self, host, username, password, timeout, path=''):
+        self.path = path
+        self.connection = Ftp(host, username, password, timeout)
 
     def publish(self, name, raster_file):
+        directory = join(self.path, name)
+
         with self.connection:
-            self.connection.create_directory_if_not_exists(name)
-            self.connection.upload_file(raster_file, join(name, basename(raster_file)))
+            self.connection.create_directory_if_not_exists(directory)
+            self.connection.upload_file(raster_file, join(directory, basename(raster_file)))
