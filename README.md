@@ -240,7 +240,7 @@ REPOSITORIES = {
     ],
     Repositories.FTP: [
         {
-            'ip': 'ftp_repository',
+            'host': 'ftp_repository',
             'username': 'lycheepy',
             'password': 'lycheepy',
             'timeout': 120
