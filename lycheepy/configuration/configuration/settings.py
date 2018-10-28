@@ -1,5 +1,4 @@
 DATABASE = 'postgresql://lycheepy:lycheepy@persistence/lycheepy'
-# DATABASE = 'postgresql://postgres:postgres@gpc/lycheepy'
 
 HOST = '0.0.0.0'
 PORT = 5000
