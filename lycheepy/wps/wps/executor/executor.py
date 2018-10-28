@@ -1,6 +1,7 @@
 import json
 from gateways.broker import BrokerGateway
 from gateways.executions import ExecutionsGateway
+from gateways.configuration import ConfigurationGateway
 from settings import *
 from chain_builder import ChainBuilder
 
@@ -8,15 +9,21 @@ from chain_builder import ChainBuilder
 class Executor(object):
 
     def __init__(self):
+        self.configuration = ConfigurationGateway(CONFIGURATION_URL)
+        self.executions = ExecutionsGateway(EXECUTIONS_URL)
         self.broker = BrokerGateway(
             BROKER_HOST,
+            BROKER_PORT,
             BROKER_PROTOCOL,
             BROKER_USERNAME,
+            BROKER_PASSWORD,
             BROKER_APPLICATION_NAME,
             BROKER_PROCESS_EXECUTION_TASK_NAME,
             BROKER_CHAIN_PROCESS_EXECUTION_TASK_NAME
         )
-        self.executions = ExecutionsGateway(EXECUTIONS_URL)
+
+    def get_executables(self):
+        return self.configuration.get_executables_metadata()
 
     def execute_process(self, identifier, request):
         result = self.broker.run_process.delay(identifier, json.loads(request.json)).get(

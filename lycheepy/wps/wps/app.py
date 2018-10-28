@@ -9,8 +9,10 @@ configure_from_module('settings')
 
 from pywps.configuration import get_config_value
 
-from settings import *
+from settings import CONFIGURATION_FILE, CONFIGURATION_URL
 from service import ServiceBuilder
+from executor import Executor
+
 
 cross_origin = CORS(application, resources={r"*": {"origins": "*"}})
 
@@ -18,8 +20,8 @@ cross_origin = CORS(application, resources={r"*": {"origins": "*"}})
 @application.route('/', methods=['GET', 'POST'])
 def wps():
     return ServiceBuilder(
-        CONFIGURATION_FILE,
-        CONFIGURATION_URL
+        Executor(),
+        CONFIGURATION_FILE
     ).add_executables().build()
 
 

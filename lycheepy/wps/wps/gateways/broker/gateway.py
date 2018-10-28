@@ -3,12 +3,14 @@ from celery import Celery,group
 
 class BrokerGateway(object):
 
-    def __init__(self, host, protocol, username, application_name, process_task_name, chain_process_task_name):
+    def __init__(self, host, port, protocol, username, password, application_name, process_task_name, chain_process_task_name):
         self.app = Celery(application_name)
-        url = '{}://{}@{}//'.format(protocol, username, host)
+
+        broker_url = '{}://{}:{}@{}:{}//'.format(protocol, username, password, host, port)
+
         self.app.conf.update(
-            broker_url=url,
-            result_backend=url
+            broker_url=broker_url,
+            result_backend=broker_url
         )
 
         @self.app.task(name=process_task_name)
