@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/gabrielbazan/lycheepy.svg?branch=master)](https://travis-ci.com/gabrielbazan/lycheepy)
-
+[![GitHub license](https://img.shields.io/github/license/gabrielbazan/lycheepy.svg)]()
 
 
 <img align="left" width="80" height="80" src="doc/architecture/lychee.png?raw=true">
