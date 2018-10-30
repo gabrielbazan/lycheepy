@@ -63,7 +63,8 @@ def publish_output_occurrences(process, chain_identifier, execution_id, output, 
     )
     for occurrence in output:
         for repository in repositories:
-            publish_output(occurrence, repository, product_identifier)
+            if repository['enabled']:
+                publish_output(occurrence, repository, product_identifier)
 
 
 def publish_output(occurrence, repository, product_identifier):

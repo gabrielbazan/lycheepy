@@ -28,7 +28,8 @@ class RepositorySerializer(Serializer):
         instance.name = data.get('name', instance.name)
         instance.enabled = data.get('enabled', instance.enabled)
 
-        instance.type = RepositoryType.query.filter_by(name=data.get('type')).one_or_none()
+        if not instance.type:
+            instance.type = RepositoryType.query.filter_by(name=data.get('type')).one()
 
         configurations = data.get('configurations')
 
