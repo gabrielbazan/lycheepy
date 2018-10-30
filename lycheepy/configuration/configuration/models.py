@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, Text, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, Text, ForeignKey, UniqueConstraint, Boolean, DateTime
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from simplyrestful.settings import configure_from_module
 configure_from_module('settings')
@@ -135,6 +136,62 @@ class DataType(Model):
     __tablename__ = 'data_type'
     id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False, unique=True)
+
+
+# REPOSITORIES TABLES
+
+class RepositoryType(Model):
+    __tablename__ = 'repository_type'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False, unique=True)
+
+    GEO_SERVER = 'GEO_SERVER'
+    FTP = 'FTP'
+
+
+class RepositorySetting(Model):
+    __tablename__ = 'repository_setting'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False, unique=True)
+
+    HOST = 'host'
+    USERNAME = 'username'
+    PASSWORD = 'password'
+    TIMEOUT = 'timeout'
+    PROTOCOL = 'protocol'
+    PORT = 'port'
+    PATH = 'path'
+    WORKSPACE = 'workspace'
+
+
+class RepositoryTypeSetting(Model):
+    __tablename__ = 'repository_type_setting'
+    __table_args__ = (UniqueConstraint('type_id', 'setting_id'),)
+    id = Column(Integer, primary_key=True)
+    type_id = Column(Integer, ForeignKey('repository_type.id'), nullable=False)
+    type = relationship('RepositoryType', backref='type_settings')
+    setting_id = Column(Integer, ForeignKey('repository_setting.id'), nullable=False)
+    setting = relationship('RepositorySetting')
+    mandatory = Column(Boolean, nullable=False, default=False)
+
+
+class Repository(Model):
+    __tablename__ = 'repository'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False, unique=True)
+    created = Column(DateTime, default=func.now())
+    enabled = Column(Boolean, nullable=False, default=True)
+    type_id = Column(Integer, ForeignKey('repository_type.id'), nullable=False)
+    type = relationship('RepositoryType', backref='repositories')
+
+
+class RepositoryConfiguration(Model):
+    __tablename__ = 'repository_configuration'
+    repository_id = Column(Integer, ForeignKey('repository.id'), primary_key=True)
+    repository = relationship('Repository', backref='configurations')
+    type_setting_id = Column(Integer, ForeignKey('repository_type_setting.id'), primary_key=True)
+    type_setting = relationship('RepositoryTypeSetting')
+    value = Column(Text)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/gabrielbazan/lycheepy.svg?branch=master)](https://travis-ci.com/gabrielbazan/lycheepy)
-
+[![GitHub license](https://img.shields.io/github/license/gabrielbazan/lycheepy.svg)]()
 
 
 <img align="left" width="80" height="80" src="doc/architecture/lychee.png?raw=true">
@@ -30,6 +30,7 @@ It allows you to:
   * [Publishing Chains](#publishing-chains)
   * [Discovering Executables](#discovering-executables)
   * [Executing](#executing)
+  * [Registering Repositories](#registering-repositories)
   * [Discovering Automatically Published Products](#discovering-automatically-published-products)
 - [Setting Up Your Development Environment](#setting-up-your-development-environment)
 - [CLI](#cli)
@@ -228,31 +229,11 @@ I still do not figure out the best way of deploying an application with docker-c
 
 ## Static Configuration
 
-You can configure on which repositories the geospatial data will be automatically published on the _worker/worker/settings.py_ file. It is a dictionary where each key determines a supported repository kind, and for each one of them we specify a list of repositories of that kind. So, we could, for example, publish on multiple _GeoServer_ instances and multiple FTP servers at the same time.
-```python
-REPOSITORIES = {
-    Repositories.GEO_SERVER: [
-        {
-            'protocol': 'http',
-            'host': 'repository',
-            'port': 8080
-        }
-    ],
-    Repositories.FTP: [
-        {
-            'ip': 'ftp_repository',
-            'username': 'lycheepy',
-            'password': 'lycheepy',
-            'timeout': 120
-        }
-    ]
-}
-```
-
-You can also configure the maximum amount of time that a process execution can take, on the _lycheepy/wps/wps/settings.py_ file:
+You can configure the maximum amount of time that a process execution can take, on the _lycheepy/wps/wps/settings.py_ file:
 ```python
 PROCESS_EXECUTION_TIMEOUT = 30
 ```
+
 
 The PyWPS configuration file can be found in _lycheepy/wps/wps/pywps.cfg_.
 
@@ -929,9 +910,181 @@ In all those cases, you'll retrieve a list like this:
 }
 ```
 
+
+### Registering Repositories
+
+You can dynamically configure the repositories where products will automatically published.
+
+As we've seen, on a chain you can configure which processes outputs need to be published.
+And when you do that, those outputs will be automatically published onto all the registered and enabled repositories.
+
+#### Register a Repository
+
+You can register a new repository using the _{host}/configuration/repositories_ URI with the HTTP _POST_ method. 
+
+For now, you can register _Geo Server_ and _FTP_ repositories. 
+
+For example, if you want to register a new _Geo Server_ repository:
+```json
+{
+  "name": "My GeoServer Repository",
+  "type": "GEO_SERVER",
+  "configurations": {
+    "host": "my_geoserver",
+    "port": 80,
+    "protocol": "http",
+    
+    "username": "me",
+    "password": "123",
+    "workspace": "lycheepy"
+  }
+}
+```
+Where _host_, _port_ and _protocol_ are mandatory settings.
+
+Or, if you want to register a new _FTP_ repository:
+```json
+{
+  "name": "My FTP Repository",
+  "type": "FTP",
+  "configurations": {
+    "host": "my_ftp",
+    "username": "me",
+    "password": "123",
+    "timeout": 60,
+    
+    "path": "lycheepy"
+  }
+}
+```
+Where _host_, _username_, _password_, and _timeout_ are mandatory settings.
+
+When you register a new repository, by default it is enabled. This means that since it has been registered, publishable outputs will be automatically published onto it. If you want to register a new repository, but not enable it yet, then add the _"enabled"_ property with _false_ as value. Something like this:
+```json
+{
+  "enabled": false,
+  "name": "My Disabled FTP Repository",
+  "type": "FTP",
+  "configurations": {
+    "host": "my_disabled_ftp",
+    "username": "me",
+    "password": "123",
+    "timeout": 40
+  }
+}
+```
+
+#### List Repositories
+
+Using the HTTP _GET_ method over the _{host}/configuration/repositories_ URI, you'll retrieve a list of all the registered repositories. Something like this:
+```json
+{
+  "count": 2,
+  "results": [
+    {
+      "id": 1,
+      "name": "My GeoServer Repository",
+      "type": "GEO_SERVER",
+      "enabled": true,
+      "configurations": {
+        "host": "my_geoserver",
+        "protocol": "http",
+        "port": "8080"
+      },
+      "created": "2018-10-30T04:37:41.198935Z",
+      "availableConfigurations": ["host", "username", "password", "protocol", "port", "path", "workspace"],
+      "mandatoryConfigurations": ["host", "protocol", "port"]
+    },
+    {
+      "id": 2,
+      "name": "My FTP Repository",
+      "type": "FTP",
+      "enabled": true,
+      "created": "2018-10-30T04:38:06.299574Z",
+      "configurations": {
+        "host": "my_ftp",
+        "username": "me",
+        "password": "",
+        "timeout": "5",
+        "path": "lycheepy"
+      },
+      "availableConfigurations": ["host", "username", "password", "timeout", "path"],
+      "mandatoryConfigurations": ["host", "username", "password", "timeout"]
+    }
+  ]
+}
+```
+
+#### Read a Repository
+
+Using the HTTP _GET_ method over the _{host}/configuration/repositories/{id}_ URI, you can retrieve a specific repository by its identifier. Something like this:
+```json
+{
+  "id": 1,
+  "name": "My GeoServer Repository",
+  "type": "GEO_SERVER",
+  "enabled": true,
+  "configurations": {
+    "host": "my_geoserver",
+    "protocol": "http",
+    "port": "8080"
+  },
+  "created": "2018-10-30T04:37:41.198935Z",
+  "availableConfigurations": ["host", "username", "password", "protocol", "port", "path", "workspace"],
+  "mandatoryConfigurations": ["host", "protocol", "port"]
+}
+```
+
+#### Update a Repository
+
+Using the HTTP _PUT_ method over the _{host}/configuration/repositories/{id}_ URI, you can update a specific repository by its identifier. You can send one or more of the representation keys. For example, you could only update its _name_ by sending something like:
+```json
+{
+  "name": "This is not my repository!"
+}
+```
+
+Or update its configurations, and its name:
+```json
+{
+  "name": "It was my repository",
+  "configurations": {
+    "host": "my_geoserver",
+    "protocol": "http",
+    "port": "8080"
+  }
+}
+```
+
+The repository type cannot be updated once it is created.
+
+#### Enabling and Disabling a Repository
+
+You can enable or disable a repository by simply using the HTTP _PUT_ method over the _{host}/configuration/repositories/{id}_ URI, and sending the "enabled" key. The _true_ value stands for enabled, and _false_ for deisabled.
+
+Enabling example:
+```json
+{
+  "enabled": true
+}
+```
+
+Disabling example:
+```json
+{
+  "enabled": false
+}
+```
+
+
+#### Delete a Repository
+
+And finally, using the HTTP _DELETE_ method over the _{host}/configuration/repositories/{id}_ URI, you can delete a specific repository by its identifier.
+
+
 ### Discovering Automatically Published Products
 
-You executed your chain, and want to access to the automatically published products. Whatever is your repository, products are published using a naming convention, so you can quickly access them:
+You finally configured your repository and executed your chain, and want to access to the automatically published products. Whatever is your repository, products are published using a naming convention, so you can quickly identify them:
 ```
 {Chain Identifier}:{Execution ID}:{Process Identifier}:{Output Identifier}
 ```

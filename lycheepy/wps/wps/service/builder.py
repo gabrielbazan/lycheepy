@@ -1,13 +1,12 @@
 from pywps import Service
-from gateways.configuration import ConfigurationGateway
 from adapter import ExecutableAdapterBuilder
 
 
 class ServiceBuilder(object):
 
-    def __init__(self, configuration_file, configuration_url):
+    def __init__(self, executor, configuration_file):
         self.service = Service(cfgfiles=[configuration_file])
-        self.configuration = ConfigurationGateway(configuration_url)
+        self.executor = executor
 
     def add(self, process):
         self.service.processes[process.identifier] = process
@@ -21,7 +20,7 @@ class ServiceBuilder(object):
         self.extend(
             {
                 executable.get('identifier'): ExecutableAdapterBuilder(executable).build()
-                for executable in self.configuration.get_executables_metadata()
+                for executable in self.executor.get_executables()
             }
         )
         return self

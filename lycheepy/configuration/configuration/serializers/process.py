@@ -18,11 +18,11 @@ class ProcessSerializer(Serializer):
     validators = [ProcessValidator]
 
     def create(self, data):
-        self.save_file(data.get('identifier'), creation=True)
+        self.save_file(data.get('identifier'))
         return super(ProcessSerializer, self).create(data)
 
     def update(self, identifier, data):
-        self.save_file(data.get('identifier'), creation=False)
+        self.save_file(data.get('identifier'), process_id=identifier)
         return super(ProcessSerializer, self).update(identifier, data)
 
     def deserialize(self, data, instance):
@@ -86,31 +86,6 @@ class ProcessSerializer(Serializer):
             metadata=[m.value for m in instance.meta_data]
         )
 
-    def save_file(self, identifier, creation=True):
-        process_file = request.files.get(PROCESS_FILE_FIELD)
-
-        if creation and not process_file:
-            raise Conflict('The process file is required')
-
-        if process_file and not self.is_valid_file(process_file.filename):
-            raise Conflict('The process file extension is not accepted')
-
-        if process_file:
-            path = os.path.join(mkdtemp(), secure_filename(process_file.filename))
-            process_file.save(path)
-            ProcessesGateway(
-                PROCESSES_GATEWAY_HOST,
-                PROCESSES_GATEWAY_USER,
-                PROCESSES_GATEWAY_PASS,
-                PROCESSES_GATEWAY_TIMEOUT,
-                PROCESSES_GATEWAY_DIRECTORY
-            ).add(identifier, path)
-            os.remove(path)
-
-    @staticmethod
-    def is_valid_file(filename):
-        return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_PROCESSES_EXTENSIONS
-
     def delete(self, identifier):
         try:
             instance = self.query.filter_by(id=identifier).one_or_none()
@@ -128,7 +103,53 @@ class ProcessSerializer(Serializer):
 
             # Delete object
             session.delete(instance)
+
+            # Delete process file
+            ProcessSerializer.delete_file(instance.identifier)
+
             session.commit()
         except:
             session.rollback()
             raise
+
+    def save_file(self, identifier, process_id=None):
+        process_file = request.files.get(PROCESS_FILE_FIELD)
+
+        if not process_id and not process_file:
+            raise Conflict('The process file is required')
+
+        if process_file:
+            if not ProcessSerializer.is_valid_file(process_file.filename):
+                raise Conflict('The process file extension is not accepted')
+
+            if process_id:
+                # Delete files for the previous identifier (in case it has been changed)
+                process = self.query.filter_by(id=process_id).one()
+                ProcessSerializer.delete_file(process.identifier)
+
+            ProcessSerializer.create_file(identifier, process_file)
+
+    @staticmethod
+    def create_file(identifier, process_file):
+        path = os.path.join(mkdtemp(), secure_filename(process_file.filename))
+        process_file.save(path)
+        ProcessSerializer.get_gateway().add(identifier, path)
+        os.remove(path)
+
+    @staticmethod
+    def delete_file(identifier):
+        return ProcessSerializer.get_gateway().remove(identifier)
+
+    @staticmethod
+    def is_valid_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_PROCESSES_EXTENSIONS
+
+    @staticmethod
+    def get_gateway():
+        return ProcessesGateway(
+            PROCESSES_GATEWAY_HOST,
+            PROCESSES_GATEWAY_USER,
+            PROCESSES_GATEWAY_PASS,
+            PROCESSES_GATEWAY_TIMEOUT,
+            PROCESSES_GATEWAY_DIRECTORY
+        )

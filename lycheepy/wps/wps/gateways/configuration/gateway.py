@@ -6,42 +6,35 @@ READ_SUCCESS_CODE = 200
 
 class ConfigurationGateway(object):
 
-    def __init__(self, url):
+    def __init__(self, url, executables_path, repositories_path, results_key):
         self.url = url
-
-    @property
-    def chains_uri(self):
-        return '{}/chains'.format(self.url)
-
-    @property
-    def processes_uri(self):
-        return '{}/processes'.format(self.url)
+        self.executables_path = executables_path
+        self.repositories_path = repositories_path
+        self.results_key = results_key
 
     @staticmethod
-    def get(uri, identifier):
-        response = get('{}?identifier__eq={}'.format(uri, identifier))
-        return response.json() if response.status_code == READ_SUCCESS_CODE else None
-
-    @staticmethod
-    def get_list(uri):
+    def request(uri, key=None):
         response = get(uri)
-        return response.json().get('results') if response.status_code == READ_SUCCESS_CODE else []
+        result = []
+        if response.status_code == READ_SUCCESS_CODE:
+            result = response.json()
+            if key:
+                result = result.get(key)
+        return result
 
-    def get_processes(self):
-        return self.get_list(self.processes_uri)
+    def build_uri(self, path):
+        return '{}/{}'.format(self.url, path)
 
-    def get_chains(self):
-        return self.get_list(self.chains_uri)
+    @property
+    def executables_uri(self):
+        return self.build_uri(self.executables_path)
 
-    def get_process(self, identifier):
-        return self.get(self.processes_uri, identifier=identifier)
-
-    def get_chain(self, identifier):
-        return self.get(self.chains_uri, identifier=identifier)
-
-    def get_executable_metadata(self, identifier):
-        process = self.get_process(identifier)
-        return process if process else self.get_chain(identifier)
+    @property
+    def repositories_uri(self):
+        return self.build_uri(self.repositories_path)
 
     def get_executables_metadata(self):
-        return self.get_processes() + self.get_chains()
+        return ConfigurationGateway.request(self.executables_uri)
+
+    def get_repositories(self):
+        return ConfigurationGateway.request(self.repositories_uri, key=self.results_key)
