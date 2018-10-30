@@ -43,19 +43,32 @@ def run_process(identifier, wps_request_json):
 
 
 @app.task(name=BROKER_CHAIN_PROCESS_EXECUTION_TASK_NAME)
-def run_chain_process(identifier, wps_request_json, products, chain_identifier, execution_id):
+def run_chain_process(identifier, wps_request_json, products, chain_identifier, execution_id, repositories):
     outputs = run_process(identifier, wps_request_json).get('outputs')
-    publish(products, identifier, outputs, chain_identifier, execution_id)
+    publish(products, identifier, outputs, chain_identifier, execution_id, repositories)
     return dict(process=identifier, outputs=outputs)
 
 
-def publish(products, process, outputs, chain_identifier, execution_id):
+def publish(products, process, outputs, chain_identifier, execution_id, repositories):
     for output_identifier, output in outputs.iteritems():
         if output_identifier in products:
-            product_identifier = '{}:{}:{}:{}'.format(
-                chain_identifier, execution_id, process, output_identifier
+            publish_output_occurrences(
+                process, chain_identifier, execution_id, output, output_identifier, repositories
             )
-            for occurrence in output:
-                for kind, repositories in REPOSITORIES.iteritems():
-                    for config in repositories:
-                        RepositoryFactory.create(kind, config).publish(product_identifier, occurrence.get('file'))
+
+
+def publish_output_occurrences(process, chain_identifier, execution_id, output, output_identifier, repositories):
+    product_identifier = '{}:{}:{}:{}'.format(
+        chain_identifier, execution_id, process, output_identifier
+    )
+    for occurrence in output:
+        for repository in repositories:
+            publish_output(occurrence, repository, product_identifier)
+
+
+def publish_output(occurrence, repository, product_identifier):
+    RepositoryFactory.create(repository['type'], repository['configurations']).publish(
+        product_identifier,
+        occurrence.get('file')
+    )
+    logging.info('Published "{}" product onto "{}" repository'.format(product_identifier, repository['name']))

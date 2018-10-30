@@ -13,7 +13,7 @@ class Chain(object):
         self.match = match
         self.products = products
 
-    def execute(self, broker, request, execution_id):
+    def execute(self, broker, request, execution_id, repositories):
         outputs = dict()
 
         for level in self.anti_chains:
@@ -22,7 +22,8 @@ class Chain(object):
                 broker.run_processes(
                     self._get_execution_group(
                         processes, request, outputs, execution_id
-                    )
+                    ),
+                    repositories
                 ).get(PROCESS_EXECUTION_TIMEOUT),
                 outputs
             )

@@ -1,7 +1,12 @@
 
 
 CONFIGURATION_URL = 'http://configuration'
+CONFIGURATION_EXECUTABLES_PATH = 'executables'
+CONFIGURATION_REPOSITORIES_PATH = 'repositories'
+
 EXECUTIONS_URL = 'http://executions'
+
+COLLECTION_RESULTS_KEY = 'results'
 
 CONFIGURATION_FILE = '/root/wps/pywps.cfg'
 
