@@ -9,8 +9,13 @@ from chain_builder import ChainBuilder
 class Executor(object):
 
     def __init__(self):
-        self.configuration = ConfigurationGateway(CONFIGURATION_URL)
         self.executions = ExecutionsGateway(EXECUTIONS_URL)
+        self.configuration = ConfigurationGateway(
+            CONFIGURATION_URL,
+            CONFIGURATION_EXECUTABLES_PATH,
+            CONFIGURATION_REPOSITORIES_PATH,
+            COLLECTION_RESULTS_KEY
+        )
         self.broker = BrokerGateway(
             BROKER_HOST,
             BROKER_PORT,
@@ -32,9 +37,10 @@ class Executor(object):
         return result.get('outputs')
 
     def execute_chain(self, model, request, execution_id):
+        repositories = self.configuration.get_repositories()
         self.executions.start(model.get('identifier'), str(execution_id))
         try:
-            outputs = ChainBuilder(model).build().execute(self.broker, request, execution_id)
+            outputs = ChainBuilder(model).build().execute(self.broker, request, execution_id, repositories)
             self.executions.success(str(execution_id))
             return outputs
         except Exception as e:

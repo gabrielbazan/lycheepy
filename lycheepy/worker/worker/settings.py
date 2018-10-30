@@ -1,4 +1,3 @@
-from gateways.repository import Repositories
 
 
 CONFIGURATION_FILE = '/root/worker/pywps.cfg'
@@ -11,16 +10,6 @@ BROKER_PASSWORD = 'guest'
 BROKER_APPLICATION_NAME = 'lycheepy'
 BROKER_PROCESS_EXECUTION_TASK_NAME = 'run_process'
 BROKER_CHAIN_PROCESS_EXECUTION_TASK_NAME = 'run_chain_process'
-
-REPOSITORIES = {
-    Repositories.GEO_SERVER: [
-        {
-            'protocol': 'http',
-            'host': 'repository',
-            'port': 8080
-        }
-    ]
-}
 
 PROCESSES_GATEWAY_HOST = 'processes'
 PROCESSES_GATEWAY_USER = 'lycheepy'
