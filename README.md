@@ -24,13 +24,13 @@ It allows you to:
   * [Components](#components)
 - [Deployment](#deployment)
 - [Static Configuration](#static-configuration)
-- [Repositories Configuration](#repositories-configuration)
 - [Publishing, Discovering, and Executing](#publishing-discovering-and-executing)
   * [An Example](#an-example)
   * [Publishing Processes](#publishing-processes)
   * [Publishing Chains](#publishing-chains)
   * [Discovering Executables](#discovering-executables)
   * [Executing](#executing)
+  * [Registering Repositories](#registering-repositories)
   * [Discovering Automatically Published Products](#discovering-automatically-published-products)
 - [Setting Up Your Development Environment](#setting-up-your-development-environment)
 - [CLI](#cli)
@@ -265,56 +265,6 @@ The _Executions_ component settings are placed on the _lycheepy/executions/execu
 DEFAULT_PAGE_SIZE = 10
 MAX_PAGE_SIZE = 100
 ```
-
-## Repositories Configuration
-
-You can dynamically configure the repositories where products will automatically published.
-
-As we'll see later, on a chain you can configure which processes outputs need to be published.
-And when you do that, those outputs will be automatically published onto all the registered and enabled repositories.
-
-### Registering Repositories
-
-You can register a new repository using the _{host}/configuration/repositories_ URI with the HTTP _POST_ method. 
-
-For now, you can register _Geo Server_ and _FTP_ repositories. 
-
-For example, if you want to register a new _Geo Server_ repository:
-```json
-{
-	"name": "My GeoServer Repository",
-	"type": "GEO_SERVER",
-	"configurations": {
-		"host": "localhost",
-		"port": 80,
-		"protocol": "http",
-		
-		"username": "me",
-		"password": "123",
-		"workspace": "lycheepy"
-	}
-}
-```
-Where _host_, _port_ and _protocol_ are mandatory settings.
-
-Or, if you want to register a new _FTP_ repository:
-```json
-{
-	"name": "My FTP Repository",
-	"type": "FTP",
-	"configurations": {
-		"host": "localhost",
-		"username": "test",
-		"password": "",
-		"timeout": 5,
-		
-		"path": "lycheepy"
-	}
-}
-```
-Where _host_, _username_, _password_, and _timeout_ are mandatory settings.
-
-When you register a new repository, by default it is enabled. This means that since it has been registered, publishable outputs will be automatically published onto it. If you want to register a new repository, but not enable it yet, then add the _"enabled"_ property with _false_ as value.
 
 
 ## Publishing, Discovering, and Executing
@@ -957,6 +907,72 @@ In all those cases, you'll retrieve a list like this:
       "execution_id": "551352d0-4847-11e8-9afe-0242ac12000a"
     }
   ]
+}
+```
+
+
+### Registering Repositories
+
+You can dynamically configure the repositories where products will automatically published.
+
+As we've seen, on a chain you can configure which processes outputs need to be published.
+And when you do that, those outputs will be automatically published onto all the registered and enabled repositories.
+
+#### Register a Repository
+
+You can register a new repository using the _{host}/configuration/repositories_ URI with the HTTP _POST_ method. 
+
+For now, you can register _Geo Server_ and _FTP_ repositories. 
+
+For example, if you want to register a new _Geo Server_ repository:
+```json
+{
+  "name": "My GeoServer Repository",
+  "type": "GEO_SERVER",
+  "configurations": {
+    "host": "localhost",
+    "port": 80,
+    "protocol": "http",
+    
+    "username": "me",
+    "password": "123",
+    "workspace": "lycheepy"
+  }
+}
+```
+Where _host_, _port_ and _protocol_ are mandatory settings.
+
+Or, if you want to register a new _FTP_ repository:
+```json
+{
+  "name": "My FTP Repository",
+  "type": "FTP",
+  "configurations": {
+    "host": "localhost",
+    "username": "test",
+    "password": "",
+    "timeout": 5,
+    
+    "path": "lycheepy"
+  }
+}
+```
+Where _host_, _username_, _password_, and _timeout_ are mandatory settings.
+
+When you register a new repository, by default it is enabled. This means that since it has been registered, publishable outputs will be automatically published onto it. If you want to register a new repository, but not enable it yet, then add the _"enabled"_ property with _false_ as value. Something like this:
+```json
+{
+  "enabled": false,
+  "name": "My Disabled FTP Repository",
+  "type": "FTP",
+  "configurations": {
+    "host": "localhost",
+    "username": "test",
+    "password": "",
+    "timeout": 5,
+    
+    "path": "lycheepy"
+  }
 }
 ```
 
