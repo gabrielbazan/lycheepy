@@ -10,7 +10,7 @@ _LycheePy_ is a distributed processing server of geospatial data.
 
 It allows you to: 
  * Publish pre-defined processing chains through a _WPS_ interface. By doing so, users are abstracted about the chains complexity, because they do not have to build them each time they want to chain processes. From the consumer users perspective, a chain is just another process.
- * Automatize geo-spatial data publication onto repositories, such as _GeoServer_, _FTP_ servers, or any other kind of repository. You can easily add integrations to new kinds of repositories besides the currently supported.
+ * Automatize geo-spatial data publication into repositories, such as _GeoServer_, _FTP_ servers, or any other kind of repository. You can easily add integrations to new kinds of repositories besides the currently supported.
  * Easily scale. LycheePy is a distributed system. _Worker_ nodes provide processing capabilities and execute processes, and you can add or remove as many you require. Also, LycheePy will concurrently execute processes when possible, according to the chains topology.
 
 
