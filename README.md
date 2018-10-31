@@ -6,12 +6,12 @@
 
 # LycheePy
 
-_LycheePy_ is a distributed, easy to scale, processing server of geospatial data.
+_LycheePy_ is a distributed processing server of geospatial data.
 
 It allows you to: 
  * Publish pre-defined processing chains through a _WPS_ interface. By doing so, users are abstracted about the chains complexity, because they do not have to build them each time they want to chain processes. From the consumer users perspective, a chain is just another process.
- * Automatize geo-spatial data publication through repositories, such as _GeoServer_, _FTP_ servers, or any other kind of repository.
- * Easily scale. LycheePy is a distributed system. _Worker_ nodes are the ones which provide the processing capabilities and execute processes, and you can add or remove as many you require. Also, LycheePy will concurrently execute processes when it is applicable to the chain's topology.
+ * Automatize geo-spatial data publication onto repositories, such as _GeoServer_, _FTP_ servers, or any other kind of repository. You can easily add integrations to new kinds of repositories besides the currently supported.
+ * Easily scale. LycheePy is a distributed system. _Worker_ nodes provide processing capabilities and execute processes, and you can add or remove as many you require. Also, LycheePy will concurrently execute processes when possible, according to the chains topology.
 
 
 ## Table of Contents
@@ -65,8 +65,7 @@ On this view, we can distinguish 13 components, being 5 of them Gateways:
 * **Worker**: Consumes tasks from the _Messages Queue_ interface and executes them. It depends on the _Processes Gateway_, to obtain the processes files, which will be later executed. Also depends on the _Repository Gateway_ to perform geospatial data automatic publication.
 * **Processes Gateway**: Encapsulates the interaction with the _Processes I_ interface, of the _Processes_ component.
 * **Processes**: Stores the files of those processes available on the server.
-* **Repository Gateway**: Encapsulates the interaction with the _Repository I_ interface, of the _Repository_ component.
-* **Repository**: Capable of storing geospatial data. 
+* **Repository Gateway**: Encapsulates the interaction with repositories for products publishing. This component implements an strategy for each supported repository type.
 
 
 ### Physical View
@@ -151,7 +150,7 @@ It performs several validations over the chains topography, using [NetworkX](htt
 Finally, it publishes processes files on the _Processes_ component, so it uses a [gateway](/lycheepy/configuration/configuration/gateways). This gateway is shared by the _Configuration_ and _Worker_ components, so it is on a separated repository, and referenced as a git-submodule by both components.
 
 
-#### Executer
+#### Executor
 
 It encapsulates the complexity that relies behind the distributed execution of processes and chains, while it provides a very clear interface.
 
@@ -204,20 +203,22 @@ This component responsibility is simple: It just stores the processes files. So,
 The thing here is the [gateway](https://github.com/gabrielbazan/lycheepy.processes/blob/master/gateway.py) to this component, which completely abstracts the gateway's clients about the "complexity" behind this. You can simply obtain a process instance by specifying its identifier.
 
 
-#### Repository
+#### Repository Gateway
 
-The _Repository_ is a component capable to store geospatial data. Some repositories may make this data available to users, and they can do it trough different kinds of interfaces. Examples are [GeoServer](http://geoserver.org/), an _FTP_ repository, a _File System_, cloud services, and so on.
+The _Repository_ is an external System, capable to store geospatial data. Some repositories may make this data available to users, and they can do it trough different kinds of interfaces. Examples are [GeoServer](http://geoserver.org/), an _FTP_ repository, a _File System_, cloud services, and so on.
 
-Since the architecture design, we stablished several requirements for the repository to be chosen for this development. We said that it should make geospatial data available trough _OWS_ interfaces, and it should also have some kind of configuration interface. So, we've chosen _GeoServer_, which implements OWS services such as _WFS_, _WMS_, _WCS_, _CSW_, and so on, and provides a [ReST Configuration API](http://docs.geoserver.org/stable/en/user/rest/).
+The [_Repository Gateway_](/lycheepy/worker/worker/gateways/repository) is the component which encapsulates the interaction with those external repositories, to perform products publication. The _Worker_ component makes use of this gateway, so LycheePy can publish products on multiple instances of different kinds of repositories, at the same time. You are not limited to a single repository, or to a single repository type.
 
-We also said that the application shall be able to interact with instances of different kinds of repositories at the same time, and it should be possible to easily add integrations with new kinds of repositories. So the [RepositoryGateway](/lycheepy/worker/worker/gateways/repository) defines a [Repository](/lycheepy/worker/worker/gateways/repository/repository.py) interface (in Python, the closest thing to an interface is an abstract class), which defines a single _publish_ method. This method is overridden by classes which implement this interface, while they specify the required behaviour to interact with a specific kind of repository. 
+You can easily add integrations with new kinds of repositories: 
+There is a [Repository](/lycheepy/worker/worker/gateways/repository/repository.py) "interface" (in Python, the closest thing to an interface is an abstract class), which defines a single _publish_ method. So, all you got to do is create a class that implements that interface, and implements the "_publish_" method, which is the one to be invoked to perform products publication. Yes, it is a _Strategy_ pattern.
 
 <p align="center">
   <img src="doc/architecture/repositories_strategy.png?raw=true" height="120px">
 </p>
 
-For example, the [GeoServerRepository](/lycheepy/worker/worker/gateways/repository/geo_server_repository.py) can publish rasters into a _GeoServer_ instance. To do so, it implements the _Repository_ interface, and uses the [gsconfig](https://github.com/boundlessgeo/gsconfig) client to interact with the _GeoServer_ instance.
-
+LycheePy already provides integrations with _GeoServer_ and with _FTP_ servers. So yes, there are two strategies: 
+ * The [GeoServerRepository](/lycheepy/worker/worker/gateways/repository/geo_server_repository.py) can publish rasters into a _GeoServer_ instance. It uses the [gsconfig](https://github.com/boundlessgeo/gsconfig) client to interact with a _GeoServer_ instance through its [ReST Configuration API](http://docs.geoserver.org/stable/en/user/rest/).
+ * The[FtpRepository](/lycheepy/worker/worker/gateways/repository/ftp_repository.py) can publish any output file into any _FTP_ server.
 
 
 ## Deployment
