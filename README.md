@@ -210,7 +210,7 @@ The _Repository_ is an external System, capable to store geospatial data. Some r
 The [_Repository Gateway_](/lycheepy/worker/worker/gateways/repository) is the component which encapsulates the interaction with those external repositories, to perform products publication. The _Worker_ component makes use of this gateway, so LycheePy can publish products on multiple instances of different kinds of repositories, at the same time. You are not limited to a single repository, or to a single repository type.
 
 You can easily add integrations with new kinds of repositories: 
-There is a [Repository](/lycheepy/worker/worker/gateways/repository/repository.py) "interface" (in Python, the closest thing to an interface is an abstract class), which defines a single _publish_ method. So, all you got to do is create a class that implements that interface, and implements the "_publish_" method, which is the one to be invoked to perform products publication. Yes, it is a _Strategy_ pattern.
+There is a [Repository](/lycheepy/worker/worker/gateways/repository/repository.py) "interface" (in Python, the closest thing to an interface is an abstract class), which defines a single _publish_ method. So, all you got to do is create a class that implements that interface and its "_publish_" method, which is the one to be invoked to perform products publication. Yes, it is a _Strategy_ pattern.
 
 <p align="center">
   <img src="doc/architecture/repositories_strategy.png?raw=true" height="120px">
@@ -218,7 +218,7 @@ There is a [Repository](/lycheepy/worker/worker/gateways/repository/repository.p
 
 LycheePy already provides integrations with _GeoServer_ and with _FTP_ servers. So yes, there are two strategies: 
  * The [GeoServerRepository](/lycheepy/worker/worker/gateways/repository/geo_server_repository.py) can publish rasters into a _GeoServer_ instance. It uses the [gsconfig](https://github.com/boundlessgeo/gsconfig) client to interact with a _GeoServer_ instance through its [ReST Configuration API](http://docs.geoserver.org/stable/en/user/rest/).
- * The[FtpRepository](/lycheepy/worker/worker/gateways/repository/ftp_repository.py) can publish any output file into any _FTP_ server.
+ * The [FtpRepository](/lycheepy/worker/worker/gateways/repository/ftp_repository.py) can publish any output file into any _FTP_ server.
 
 
 ## Deployment
