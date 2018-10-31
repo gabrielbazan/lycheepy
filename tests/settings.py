@@ -10,9 +10,8 @@ PROCESSES_URL = '{}/processes'.format(CONFIGURATION_URL)
 CHAINS_URL = '{}/chains'.format(CONFIGURATION_URL)
 WPS_URL = '{}/wps/'.format(HOST)
 EXECUTIONS_URL = '{}/executions/executions'.format(HOST)
-CSW_URL = '{}/repository/geoserver/csw'.format(HOST)
 
-WCS_RASTER = 'http://repository:8080/geoserver/ows?service=WCS&amp;version=2.0.0&amp;request=GetCoverage&amp;coverageId=nurc:Img_Sample&amp;format=image/tiff'
+RASTER_DOWNLOAD_URL = 'https://www.mapbox.com/help/data/landsat.tif'
 
 
 PROCESS_SPECIFICATION = dict(

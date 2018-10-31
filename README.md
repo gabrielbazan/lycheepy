@@ -6,12 +6,12 @@
 
 # LycheePy
 
-_LycheePy_ is a distributed, easy to scale, processing server of geospatial data.
+_LycheePy_ is a distributed processing server of geospatial data.
 
 It allows you to: 
  * Publish pre-defined processing chains through a _WPS_ interface. By doing so, users are abstracted about the chains complexity, because they do not have to build them each time they want to chain processes. From the consumer users perspective, a chain is just another process.
- * Automatize geo-spatial data publication through repositories, such as _GeoServer_, _FTP_ servers, or any other kind of repository.
- * Easily scale. LycheePy is a distributed system. _Worker_ nodes are the ones which provide the processing capabilities and execute processes, and you can add or remove as many you require. Also, LycheePy will concurrently execute processes when it is applicable to the chain's topology.
+ * Automatize geo-spatial data publication into repositories, such as _GeoServer_, _FTP_ servers, or any other kind of repository. You can easily add integrations to new kinds of repositories besides the currently supported.
+ * Easily scale. LycheePy is a distributed system. _Worker_ nodes provide processing capabilities and execute processes, and you can add or remove as many you require. Also, LycheePy will concurrently execute processes when possible, according to the chains topology.
 
 
 ## Table of Contents
@@ -33,8 +33,7 @@ It allows you to:
   * [Registering Repositories](#registering-repositories)
   * [Discovering Automatically Published Products](#discovering-automatically-published-products)
 - [Setting Up Your Development Environment](#setting-up-your-development-environment)
-- [CLI](#cli)
-- [TODO List](#todo-list)
+- [The Graphic User Interface](#the-graphic-user-interface)
 - [Ideas](#ideas)
 
 
@@ -65,8 +64,7 @@ On this view, we can distinguish 13 components, being 5 of them Gateways:
 * **Worker**: Consumes tasks from the _Messages Queue_ interface and executes them. It depends on the _Processes Gateway_, to obtain the processes files, which will be later executed. Also depends on the _Repository Gateway_ to perform geospatial data automatic publication.
 * **Processes Gateway**: Encapsulates the interaction with the _Processes I_ interface, of the _Processes_ component.
 * **Processes**: Stores the files of those processes available on the server.
-* **Repository Gateway**: Encapsulates the interaction with the _Repository I_ interface, of the _Repository_ component.
-* **Repository**: Capable of storing geospatial data. 
+* **Repository Gateway**: Encapsulates the interaction with repositories for products publishing. This component implements an strategy for each supported repository type.
 
 
 ### Physical View
@@ -151,7 +149,7 @@ It performs several validations over the chains topography, using [NetworkX](htt
 Finally, it publishes processes files on the _Processes_ component, so it uses a [gateway](/lycheepy/configuration/configuration/gateways). This gateway is shared by the _Configuration_ and _Worker_ components, so it is on a separated repository, and referenced as a git-submodule by both components.
 
 
-#### Executer
+#### Executor
 
 It encapsulates the complexity that relies behind the distributed execution of processes and chains, while it provides a very clear interface.
 
@@ -204,20 +202,22 @@ This component responsibility is simple: It just stores the processes files. So,
 The thing here is the [gateway](https://github.com/gabrielbazan/lycheepy.processes/blob/master/gateway.py) to this component, which completely abstracts the gateway's clients about the "complexity" behind this. You can simply obtain a process instance by specifying its identifier.
 
 
-#### Repository
+#### Repository Gateway
 
-The _Repository_ is a component capable to store geospatial data. Some repositories may make this data available to users, and they can do it trough different kinds of interfaces. Examples are [GeoServer](http://geoserver.org/), an _FTP_ repository, a _File System_, cloud services, and so on.
+The _Repository_ is an external System, capable to store geospatial data. Some repositories may make this data available to users, and they can do it trough different kinds of interfaces. Examples are [GeoServer](http://geoserver.org/), an _FTP_ repository, a _File System_, cloud services, and so on.
 
-Since the architecture design, we stablished several requirements for the repository to be chosen for this development. We said that it should make geospatial data available trough _OWS_ interfaces, and it should also have some kind of configuration interface. So, we've chosen _GeoServer_, which implements OWS services such as _WFS_, _WMS_, _WCS_, _CSW_, and so on, and provides a [ReST Configuration API](http://docs.geoserver.org/stable/en/user/rest/).
+The [_Repository Gateway_](/lycheepy/worker/worker/gateways/repository) is the component which encapsulates the interaction with those external repositories, to perform products publication. The _Worker_ component makes use of this gateway, so LycheePy can publish products on multiple instances of different kinds of repositories, at the same time. You are not limited to a single repository, or to a single repository type.
 
-We also said that the application shall be able to interact with instances of different kinds of repositories at the same time, and it should be possible to easily add integrations with new kinds of repositories. So the [RepositoryGateway](/lycheepy/worker/worker/gateways/repository) defines a [Repository](/lycheepy/worker/worker/gateways/repository/repository.py) interface (in Python, the closest thing to an interface is an abstract class), which defines a single _publish_ method. This method is overridden by classes which implement this interface, while they specify the required behaviour to interact with a specific kind of repository. 
+You can easily add integrations with new kinds of repositories: 
+There is a [Repository](/lycheepy/worker/worker/gateways/repository/repository.py) "interface" (in Python, the closest thing to an interface is an abstract class), which defines a single _publish_ method. So, all you got to do is create a class that implements that interface and its "_publish_" method, which is the one to be invoked to perform products publication. Yes, it is a _Strategy_ pattern.
 
 <p align="center">
   <img src="doc/architecture/repositories_strategy.png?raw=true" height="120px">
 </p>
 
-For example, the [GeoServerRepository](/lycheepy/worker/worker/gateways/repository/geo_server_repository.py) can publish rasters into a _GeoServer_ instance. To do so, it implements the _Repository_ interface, and uses the [gsconfig](https://github.com/boundlessgeo/gsconfig) client to interact with the _GeoServer_ instance.
-
+LycheePy already provides integrations with _GeoServer_ and with _FTP_ servers. So yes, there are two strategies: 
+ * The [GeoServerRepository](/lycheepy/worker/worker/gateways/repository/geo_server_repository.py) can publish rasters into a _GeoServer_ instance. It uses the [gsconfig](https://github.com/boundlessgeo/gsconfig) client to interact with a _GeoServer_ instance through its [ReST Configuration API](http://docs.geoserver.org/stable/en/user/rest/).
+ * The [FtpRepository](/lycheepy/worker/worker/gateways/repository/ftp_repository.py) can publish any output file into any _FTP_ server.
 
 
 ## Deployment
@@ -1084,15 +1084,19 @@ And finally, using the HTTP _DELETE_ method over the _{host}/configuration/repos
 
 ### Discovering Automatically Published Products
 
-You finally configured your repository and executed your chain, and want to access to the automatically published products. Whatever is your repository, products are published using a naming convention, so you can quickly identify them:
+So, you (finally!) configured your repositories, your processes, some chains, and began executing some chains. Now, you want to access the automatically published products on the resistered repositories. 
+
+Whatever is your repository, products are published using a naming convention, so you can quickly identify them:
 ```
 {Chain Identifier}:{Execution ID}:{Process Identifier}:{Output Identifier}
 ```
 
-In our case, the _GeoServer_ instance we use includes the [CSW Plugin](http://docs.geoserver.org/latest/en/user/services/csw/index.html), so all the rasters we publish on it will be automatically added to the _CSW_ catalog, allowing us to use its _GetRecords_ operation to filter and retrieve the products metadata.
+#### The GeoServer Example
 
-Making use of the naming convention, we can request different things:
- * All the products, just without using any filter.
+If you're using a _GeoServer_ instance, you could install the [CSW Plugin](http://docs.geoserver.org/latest/en/user/services/csw/index.html) to it. This exposes a new _OGC_ service: The _Catalog Service for the Web_ (_CSW_). This catalog is filled automatically as you publish data into the repository.
+
+So, making use of the _CSW_ catalog, its _GetRecords_ operation, and the previously explained naming convention, we can request things like:
+ * All the products, by simply not specifying any filter.
  * All the products of a chain, using only the chain identifier.
  * All the products of a chain execution, using only the Execution ID.
  * All the products of a process, using only the process identifier.
@@ -1101,9 +1105,8 @@ Making use of the naming convention, we can request different things:
  * All the published outputs of a specific process within an execution, using the Execution ID, and the process identifier.
  * And so on.
 
-The _CSW_ catalog is available on the _{host}/repository/geoserver/csw_ URI.
 
-For example, you could request all the products of an specific execution, using the following filter:
+For example, you could request all the products of an specific execution, using a filter like the following (replace your execution identifier):
 ```xml
 <csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:ogc="http://www.opengis.net/ogc" service="CSW" version="2.0.2" resultType="results" startPosition="1" maxRecords="10" outputFormat="application/xml" outputSchema="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:apiso="http://www.opengis.net/cat/csw/apiso/1.0">
   <csw:Query typeNames="csw:Record">
@@ -1120,7 +1123,7 @@ For example, you could request all the products of an specific execution, using 
 </csw:GetRecords>
 ```
 
-And as a result, you'll get something like the following, which contains all the _RAW_, _SSC_, _DGM_, _GEC_, and _GTC_ products:
+And as a result, you'll get something like the following, which contains all the _RAW_, _SSC_, _DGM_, _GEC_, and _GTC_ products (in the case of our example):
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <csw:GetRecordsResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/" xmlns:ows="http://www.opengis.net/ows" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0.2" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://repository:8080/geoserver/schemas/csw/2.0.2/record.xsd">
@@ -1227,16 +1230,11 @@ sudo ./start.sh
 And now you're able to use your LycheePy instance.
 
 
-## CLI
+## The Graphic User Interface
 
-LycheePy also has a web client, which you can find [here](https://github.com/gabrielbazan/lycheepy.cli).
-
-
-## TODO List
-
-To be defined.
+LycheePy also has a web client! You you can find [here](https://github.com/gabrielbazan/lycheepy.cli).
 
 
 ## Ideas
 
-To be defined.
+Feel free to contribute, or come up with some ideas!

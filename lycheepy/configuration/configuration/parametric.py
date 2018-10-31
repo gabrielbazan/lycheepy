@@ -20,32 +20,6 @@ port = RepositorySetting(name=RepositorySetting.PORT)
 path = RepositorySetting(name=RepositorySetting.PATH)
 workspace = RepositorySetting(name=RepositorySetting.WORKSPACE)
 
-# Repository type settings
-geo_server_host = RepositoryTypeSetting(type=geo_server, setting=host, mandatory=True)
-geo_server_username = RepositoryTypeSetting(type=geo_server, setting=username)
-geo_server_password = RepositoryTypeSetting(type=geo_server, setting=password)
-geo_server_protocol = RepositoryTypeSetting(type=geo_server, setting=protocol, mandatory=True)
-geo_server_port = RepositoryTypeSetting(type=geo_server, setting=port, mandatory=True)
-geo_server_path = RepositoryTypeSetting(type=geo_server, setting=path)
-geo_server_workspace = RepositoryTypeSetting(type=geo_server, setting=workspace)
-ftp_host = RepositoryTypeSetting(type=ftp, setting=host, mandatory=True)
-ftp_username = RepositoryTypeSetting(type=ftp, setting=username, mandatory=True)
-ftp_password = RepositoryTypeSetting(type=ftp, setting=password, mandatory=True)
-ftp_timeout = RepositoryTypeSetting(type=ftp, setting=timeout, mandatory=True)
-ftp_path = RepositoryTypeSetting(type=ftp, setting=path)
-
-# Default repository
-# TODO: The default repository will be removed someday
-default_repository = Repository(
-    type=geo_server,
-    name='Default repository',
-    configurations=[
-        RepositoryConfiguration(type_setting=geo_server_host, value='repository'),
-        RepositoryConfiguration(type_setting=geo_server_port, value='8080'),
-        RepositoryConfiguration(type_setting=geo_server_protocol, value='http')
-    ]
-)
-
 
 objects = [
     DataType(name='float'),
@@ -92,20 +66,18 @@ objects = [
     path,
     workspace,
 
-    geo_server_host,
-    geo_server_username,
-    geo_server_password,
-    geo_server_protocol,
-    geo_server_port,
-    geo_server_path,
-    geo_server_workspace,
-    ftp_host,
-    ftp_username,
-    ftp_password,
-    ftp_timeout,
-    ftp_path,
-
-    default_repository
+    RepositoryTypeSetting(type=geo_server, setting=host, mandatory=True),
+    RepositoryTypeSetting(type=geo_server, setting=username),
+    RepositoryTypeSetting(type=geo_server, setting=password),
+    RepositoryTypeSetting(type=geo_server, setting=protocol, mandatory=True),
+    RepositoryTypeSetting(type=geo_server, setting=port, mandatory=True),
+    RepositoryTypeSetting(type=geo_server, setting=path),
+    RepositoryTypeSetting(type=geo_server, setting=workspace),
+    RepositoryTypeSetting(type=ftp, setting=host, mandatory=True),
+    RepositoryTypeSetting(type=ftp, setting=username, mandatory=True),
+    RepositoryTypeSetting(type=ftp, setting=password, mandatory=True),
+    RepositoryTypeSetting(type=ftp, setting=timeout, mandatory=True),
+    RepositoryTypeSetting(type=ftp, setting=path)
 ]
 
 
