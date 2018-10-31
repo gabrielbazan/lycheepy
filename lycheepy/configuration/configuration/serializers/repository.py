@@ -1,3 +1,4 @@
+from simplyrestful.database import session
 from simplyrestful.serializers import Serializer
 from models import Repository, RepositoryType, RepositoryConfiguration, RepositoryTypeSetting, RepositorySetting
 from validators import RepositoryValidator
@@ -11,6 +12,7 @@ class RepositorySerializer(Serializer):
         serialized = super(RepositorySerializer, self).serialize(instance)
 
         del serialized['type_id']
+        del serialized['deleted']
 
         serialized.update(
             type=instance.type.name,
@@ -56,3 +58,39 @@ class RepositorySerializer(Serializer):
             for type_setting in instance.type.type_settings
             if not mandatory or type_setting.mandatory
         ]
+
+    def _delete(self, identifier):
+        instance = self._get_instance(identifier)
+        instance.name = None  # Not longer taken into account for name uniqueness
+        instance.enabled = False
+        instance.deleted = True
+        session.add(instance)
+
+    def _list_filters(self):
+        return self.model.deleted == False,
+
+    def list(self, filtering):
+        from simplyrestful.filtering import Filter
+        try:
+            filters = Filter(self.model, filtering)
+
+            query = self.query.join(
+                * filters.joins
+            ).filter(
+                * self._list_filters()
+            ).filter(
+                filters.orm_filters
+            ).order_by(
+                * filters.order_by
+            )
+
+            return dict(
+                results=[
+                    self.serialize(m)
+                    for m in query.limit(filters.limit).offset(filters.offset).all()
+                ],
+                count=query.count()
+            )
+        except:
+            session.rollback()
+            raise
