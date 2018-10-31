@@ -178,9 +178,10 @@ class RepositoryTypeSetting(Model):
 class Repository(Model):
     __tablename__ = 'repository'
     id = Column(Integer, primary_key=True)
-    name = Column(Text, nullable=False, unique=True)
+    name = Column(Text, unique=True)
     created = Column(DateTime, default=func.now())
     enabled = Column(Boolean, nullable=False, default=True)
+    deleted = Column(Boolean, nullable=False, default=False)
     type_id = Column(Integer, ForeignKey('repository_type.id'), nullable=False)
     type = relationship('RepositoryType', backref='repositories')
 
