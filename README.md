@@ -33,8 +33,7 @@ It allows you to:
   * [Registering Repositories](#registering-repositories)
   * [Discovering Automatically Published Products](#discovering-automatically-published-products)
 - [Setting Up Your Development Environment](#setting-up-your-development-environment)
-- [CLI](#cli)
-- [TODO List](#todo-list)
+- [The Graphic User Interface](#the-graphic-user-interface)
 - [Ideas](#ideas)
 
 
@@ -1085,15 +1084,19 @@ And finally, using the HTTP _DELETE_ method over the _{host}/configuration/repos
 
 ### Discovering Automatically Published Products
 
-You finally configured your repository and executed your chain, and want to access to the automatically published products. Whatever is your repository, products are published using a naming convention, so you can quickly identify them:
+So, you (finally!) configured your repositories, your processes, some chains, and began executing some chains. Now, you want to access the automatically published products on the resistered repositories. 
+
+Whatever is your repository, products are published using a naming convention, so you can quickly identify them:
 ```
 {Chain Identifier}:{Execution ID}:{Process Identifier}:{Output Identifier}
 ```
 
-In our case, the _GeoServer_ instance we use includes the [CSW Plugin](http://docs.geoserver.org/latest/en/user/services/csw/index.html), so all the rasters we publish on it will be automatically added to the _CSW_ catalog, allowing us to use its _GetRecords_ operation to filter and retrieve the products metadata.
+#### The GeoServer Example
 
-Making use of the naming convention, we can request different things:
- * All the products, just without using any filter.
+If you're using a _GeoServer_ instance, you could install the [CSW Plugin](http://docs.geoserver.org/latest/en/user/services/csw/index.html) to it. This exposes a new _OGC_ service: The _Catalog Service for the Web_ (_CSW_). This catalog is filled automatically as you publish data into the repository.
+
+So, making use of the _CSW_ catalog, its _GetRecords_ operation, and the previously explained naming convention, we can request things like:
+ * All the products, by simply not specifying any filter.
  * All the products of a chain, using only the chain identifier.
  * All the products of a chain execution, using only the Execution ID.
  * All the products of a process, using only the process identifier.
@@ -1102,9 +1105,8 @@ Making use of the naming convention, we can request different things:
  * All the published outputs of a specific process within an execution, using the Execution ID, and the process identifier.
  * And so on.
 
-The _CSW_ catalog is available on the _{host}/repository/geoserver/csw_ URI.
 
-For example, you could request all the products of an specific execution, using the following filter:
+For example, you could request all the products of an specific execution, using a filter like the following (replace your execution identifier):
 ```xml
 <csw:GetRecords xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:ogc="http://www.opengis.net/ogc" service="CSW" version="2.0.2" resultType="results" startPosition="1" maxRecords="10" outputFormat="application/xml" outputSchema="http://www.opengis.net/cat/csw/2.0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://schemas.opengis.net/csw/2.0.2/CSW-discovery.xsd" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:apiso="http://www.opengis.net/cat/csw/apiso/1.0">
   <csw:Query typeNames="csw:Record">
@@ -1121,7 +1123,7 @@ For example, you could request all the products of an specific execution, using 
 </csw:GetRecords>
 ```
 
-And as a result, you'll get something like the following, which contains all the _RAW_, _SSC_, _DGM_, _GEC_, and _GTC_ products:
+And as a result, you'll get something like the following, which contains all the _RAW_, _SSC_, _DGM_, _GEC_, and _GTC_ products (in the case of our example):
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <csw:GetRecordsResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/" xmlns:ows="http://www.opengis.net/ows" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0.2" xsi:schemaLocation="http://www.opengis.net/cat/csw/2.0.2 http://repository:8080/geoserver/schemas/csw/2.0.2/record.xsd">
@@ -1228,16 +1230,11 @@ sudo ./start.sh
 And now you're able to use your LycheePy instance.
 
 
-## CLI
+## The Graphic User Interface
 
-LycheePy also has a web client, which you can find [here](https://github.com/gabrielbazan/lycheepy.cli).
-
-
-## TODO List
-
-To be defined.
+LycheePy also has a web client! You you can find [here](https://github.com/gabrielbazan/lycheepy.cli).
 
 
 ## Ideas
 
-To be defined.
+Feel free to contribute, or come up with some ideas!
