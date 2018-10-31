@@ -68,29 +68,3 @@ class RepositorySerializer(Serializer):
 
     def _list_filters(self):
         return self.model.deleted == False,
-
-    def list(self, filtering):
-        from simplyrestful.filtering import Filter
-        try:
-            filters = Filter(self.model, filtering)
-
-            query = self.query.join(
-                * filters.joins
-            ).filter(
-                * self._list_filters()
-            ).filter(
-                filters.orm_filters
-            ).order_by(
-                * filters.order_by
-            )
-
-            return dict(
-                results=[
-                    self.serialize(m)
-                    for m in query.limit(filters.limit).offset(filters.offset).all()
-                ],
-                count=query.count()
-            )
-        except:
-            session.rollback()
-            raise
