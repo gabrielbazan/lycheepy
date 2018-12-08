@@ -16,10 +16,11 @@ class RepositoryValidator(Validator):
         if instance:
             if type_name and type_name != instance.type.name:
                 raise Conflict('The repository type cannot be changed')
-            repository_type = instance.type.name
+            repository_type = instance.type
         else:
             if not type_name:
                 raise Conflict('Please, specify the repository type')
+
             repository_type = RepositoryType.query.filter_by(name=type_name).one_or_none()
 
             if not repository_type:
