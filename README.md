@@ -34,6 +34,7 @@ It allows you to:
   * [Discovering Automatically Published Products](#discovering-automatically-published-products)
 - [Setting Up Your Development Environment](#setting-up-your-development-environment)
 - [The Graphic User Interface](#the-graphic-user-interface)
+- [Who Uses LycheePy?](#who-uses-lycheepy)
 - [Ideas](#ideas)
 
 
@@ -1233,6 +1234,17 @@ And now you're able to use your LycheePy instance.
 ## The Graphic User Interface
 
 LycheePy also has a web client! You you can find [here](https://github.com/gabrielbazan/lycheepy.cli).
+
+
+## Who Uses LycheePy?
+
+<a href="https://www.spacesur.com/">
+    <img src="https://media.licdn.com/dms/image/C4E0BAQEQOjb-MHjTDQ/company-logo_200_200/0?e=2159024400&v=beta&t=YiOE6cXePgO8_jLtLiAIdZUdZ7wHCIf3Dsp98R8TL28" height="100px" width="100px">
+</a>
+
+
+
+Do you use it? Add yourself! :)
 
 
 ## Ideas
