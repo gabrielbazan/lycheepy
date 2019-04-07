@@ -26,6 +26,7 @@ class ProcessSerializer(Serializer):
         return super(ProcessSerializer, self).update(identifier, data)
 
     def deserialize(self, data, instance):
+        instance.id = None
         instance.identifier = data.get('identifier', instance.identifier)
         instance.title = data.get('title', instance.title)
         instance.abstract = data.get('abstract', instance.abstract)
